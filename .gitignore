@@ -38,3 +38,6 @@ yarn-error.*
 
 # potential certificates
 .certs/
+
+#misc
+.vscode/

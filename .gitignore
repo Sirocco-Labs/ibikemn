@@ -41,3 +41,5 @@ yarn-error.*
 
 #misc
 .vscode/
+ios/
+android/

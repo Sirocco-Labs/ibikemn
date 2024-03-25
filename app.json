@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "org.ibikemn",
     "name": "ibikemn",
     "slug": "ibikemn",
     "version": "1.0.0",
@@ -15,13 +16,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "org.ibikemn"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "org.ibikemn"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"

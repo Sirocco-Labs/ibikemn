@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform} from "react-native";
 import { Button, Input, Text } from "@rneui/themed";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
@@ -22,7 +22,7 @@ export default function LoginScreen() {
 		email: process.env.EXPO_PUBLIC_TEST_EMAIL,
 		password: process.env.EXPO_PUBLIC_TEST_PASSWORD,
 	};
-	const [loginForm, setLoginForm] = useState[loginData];
+	const [loginForm, setLoginForm] = useState(loginData);
 
 	const close = () => {
 		dispatch(clearLoginFeedback());
@@ -38,67 +38,90 @@ export default function LoginScreen() {
 	};
 
 	return (
-		<View style={styles.container}>
-			{/* AUTOFILL TEXT AND CLEAR ASYNC BUTTON ARE FOR DEVELOPMENT ONLY */}
-			<Text
-				style={styles.boldText}
-				onPress={() => {
-					setLoginForm(testData);
-				}}
-			>
-				AUTOFILL
-			</Text>
-			<View style={[styles.verticallySpaced]}>
-				<Input
-					label="Email"
-					leftIcon={{ type: "font-awesome", name: "envelope" }}
-					onChangeText={(text) =>
-						setLoginForm({ ...loginForm, email: text })
-					}
-					value={loginForm.email}
-					placeholder="email@address.com"
-					autoCapitalize={"none"}
-				/>
-			</View>
-			<View style={styles.verticallySpaced}>
-				<Input
-					label="Password"
-					leftIcon={{ type: "font-awesome", name: "lock" }}
-					onChangeText={(text) =>
-						setLoginForm({ ...loginForm, password: text })
-					}
-					value={loginForm.password}
-					secureTextEntry={true}
-					placeholder="Password"
-					autoCapitalize={"none"}
-				/>
-			</View>
-			{feedback.error &&
-				Alert.alert(
-					"Log in error",
-					`${feedback.message}`,
-					[{ text: "TRY AGAIN", onPress: close }],
-					{ cancelable: false }
-				)}
-			<View style={[styles.verticallySpaced, styles.mt20]}>
-				<Button
-					title="Log In"
-					disabled={feedback.error}
-					onPress={() => dispatch(loginUser({ email, password }))}
-				/>
-			</View>
-			<View style={[styles.verticallySpaced, styles.mt20]}>
-				<Button
-					title="CLEAR ASYNC STORAGE"
-					onPress={clearAsyncStorage}
-				/>
-			</View>
-		</View>
+		<KeyboardAvoidingView
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			style={styles.flexOne}
+		>
+			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+				<View style={styles.container}>
+					{/* AUTOFILL TEXT AND CLEAR ASYNC BUTTON ARE FOR DEVELOPMENT ONLY */}
+					<Text
+						style={styles.boldText}
+						onPress={() => {
+							setLoginForm(testData);
+						}}
+					>
+						AUTOFILL
+					</Text>
+					<View style={[styles.verticallySpaced]}>
+						<Input
+							autoFocus={true}
+							label="Email"
+							leftIcon={{
+								type: "font-awesome",
+								name: "envelope",
+							}}
+							onChangeText={(text) =>
+								setLoginForm({ ...loginForm, email: text })
+							}
+							value={loginForm.email}
+							placeholder="email@address.com"
+							autoCapitalize={"none"}
+							errorStyle={styles.errorStyle}
+							labelStyle={styles.labelStyle}
+						/>
+					</View>
+					<View style={styles.verticallySpaced}>
+						<Input
+							label="Password"
+							leftIcon={{ type: "font-awesome", name: "lock" }}
+							onChangeText={(text) =>
+								setLoginForm({ ...loginForm, password: text })
+							}
+							value={loginForm.password}
+							secureTextEntry={true}
+							placeholder="Password"
+							autoCapitalize={"none"}
+							errorStyle={styles.errorStyle}
+							labelStyle={styles.labelStyle}
+						/>
+					</View>
+					{feedback.error &&
+						Alert.alert(
+							"Log in error",
+							`${feedback.message}`,
+							[{ text: "TRY AGAIN", onPress: close }],
+							{ cancelable: false }
+						)}
+					<View style={[styles.verticallySpaced, styles.mt20]}>
+						<Button
+							title="Log In"
+							disabled={feedback.error}
+							onPress={() =>
+								dispatch(loginUser({ email, password }))
+							}
+						/>
+					</View>
+					<View style={[styles.verticallySpaced, styles.mt20]}>
+						<Button
+							title="CLEAR ASYNC STORAGE"
+							onPress={clearAsyncStorage}
+						/>
+					</View>
+				</View>
+			</TouchableWithoutFeedback>
+		</KeyboardAvoidingView>
 	);
 }
 const styles = StyleSheet.create({
+	flexOne: {
+		flex: 1,
+	},
 	container: {
-		marginTop: 40,
+		flex: 1,
+		justifyContent: "space-around",
+		// marginTop: 10,
+		// marginBottom:40,
 		padding: 12,
 	},
 	verticallySpaced: {
@@ -119,5 +142,24 @@ const styles = StyleSheet.create({
 	boldText: {
 		fontWeight: "bold",
 		fontSize: 20,
+	},
+	mt0: {
+		marginTop: 0,
+	},
+	mb0: {
+		marginTop: 0,
+	},
+	mv0: {
+		marginVertical: 0,
+	},
+	labelStyle: {
+		fontSize: 14,
+		marginVertical: -10,
+	},
+	errorStyle: {
+		fontSize: 12,
+		// marginVertical:3,
+		marginTop: 1,
+		marginBottom: 13,
 	},
 });

@@ -2,15 +2,17 @@ import { View, StyleSheet } from "react-native"
 import { Text } from "@rneui/themed"
 
 import AuthScreen from "../screens/AuthScreen"
+import PublicUserNavTabs from "../components/PublicUserNavTabs/PublicUserNavTabs"
 
 function App(){
     return(
-        <View style={styles.container}>
-            <Text>
+        <>
+            <PublicUserNavTabs />
+            {/* <Text>
                 Welcome!
             </Text>
-            <AuthScreen />
-        </View>
+            <AuthScreen /> */}
+        </>
     )
 }
 

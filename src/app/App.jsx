@@ -1,17 +1,22 @@
 import { View, StyleSheet } from "react-native"
 import { Text } from "@rneui/themed"
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import AuthScreen from "../screens/AuthScreen"
 import PublicUserNavTabs from "../components/PublicUserNavTabs/PublicUserNavTabs"
+import StaffUserNavTabs from "../components/StaffUserNavTabs/StaffUserNavTabs"
+import AuthNavTabs from "../components/AuthNavTabs/AuthNavTabs";
+import SplashScreen from "../screens/SplashScreen";
+
 
 function App(){
+
     return(
         <>
             <PublicUserNavTabs />
-            {/* <Text>
-                Welcome!
-            </Text>
-            <AuthScreen /> */}
+            {/* <StaffUserNavTabs /> */}
+            {/* <AuthNavTabs /> */}
+
         </>
     )
 }

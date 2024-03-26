@@ -3,9 +3,13 @@ import {
 	StyleSheet,
 	View,
 	ScrollView,
+	KeyboardAvoidingView,
+	Platform,
+	TouchableWithoutFeedback,
+	Keyboard,
 } from "react-native";
 
-import { Button, Input, Text, Icon } from "react-native-elements";
+import { Button, Input, Text, Icon } from "@rneui/themed";
 
 import { emailSignUp } from "../redux/thunks/authThunk";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +17,7 @@ import React, { useState } from "react";
 
 function RegisterScreen() {
 	const dispatch = useDispatch();
-    const feedback = useSelector((store)=>store.feedback.registration)
+	const feedback = useSelector((store) => store.feedback.registration);
 
 	const [loading, setLoading] = useState(false);
 	const verify = { main: false, check: false };
@@ -36,22 +40,28 @@ function RegisterScreen() {
 	const [error, setError] = useState(noError);
 	const [regData, setRegData] = useState(formData);
 
-
 	return (
-		<View style={styles.container}>
-			<ScrollView>
-				<Text
-					onPress={() => {
-						setRegData(testData);
-					}}
-				>
-					Fill
-				</Text>
-				<View style={[styles.verticallySpaced]}>
+		<KeyboardAvoidingView
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			style={styles.flexOne}
+		>
+			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+				<View style={styles.container}>
+					<Text
+						onPress={() => {
+							setRegData(testData);
+						}}
+					>
+						Fill
+					</Text>
+					{/* <View style={[styles.verticallySpaced]}> */}
 					<Input
-						style={styles.ml10}
+						style={[styles.ml10, styles.mv0]}
 						label="Email"
-						leftIcon={{ type: "font-awesome", name: "envelope" }}
+						leftIcon={{
+							type: "font-awesome",
+							name: "envelope",
+						}}
 						onChangeText={(text) => {
 							setRegData({ ...regData, email: text });
 						}}
@@ -66,9 +76,11 @@ function RegisterScreen() {
 								: setError({ ...error, email: true });
 						}}
 						errorMessage={error.email && "This is a required field"}
+						errorStyle={styles.errorStyle}
+						labelStyle={styles.labelStyle}
 					/>
-				</View>
-				<View style={styles.verticallySpaced}>
+					{/* </View> */}
+					{/* <View style={styles.verticallySpaced}> */}
 					<Input
 						style={styles.ml10}
 						label="Password"
@@ -95,9 +107,11 @@ function RegisterScreen() {
 						errorMessage={
 							error.password ? "These passwords do not match" : ""
 						}
+						errorStyle={styles.errorStyle}
+						labelStyle={styles.labelStyle}
 					/>
-				</View>
-				<View style={styles.verticallySpaced}>
+					{/* </View> */}
+					{/* <View style={styles.verticallySpaced}> */}
 					<Input
 						style={styles.ml10}
 						label="Verify password"
@@ -124,10 +138,11 @@ function RegisterScreen() {
 						errorMessage={
 							error.password ? "These passwords do not match" : ""
 						}
+						errorStyle={styles.errorStyle}
+						labelStyle={styles.labelStyle}
 					/>
-				</View>
-
-				<View style={styles.mb20}>
+					{/* </View> */}
+					{/* <View style={styles.mb20}> */}
 					<Button
 						title="Register"
 						disabled={feedback.error}
@@ -137,17 +152,23 @@ function RegisterScreen() {
 							setError(noError);
 						}}
 					/>
+					{/* </View> */}
 				</View>
-			</ScrollView>
-		</View>
+			</TouchableWithoutFeedback>
+		</KeyboardAvoidingView>
 	);
 }
 
 export default RegisterScreen;
 
 const styles = StyleSheet.create({
+	flexOne: {
+		flex: 1,
+	},
 	container: {
-		marginTop: 10,
+		flex: 1,
+		justifyContent: "space-around",
+		// marginTop: 10,
 		// marginBottom:40,
 		padding: 12,
 	},
@@ -181,5 +202,24 @@ const styles = StyleSheet.create({
 	},
 	ml10: {
 		marginLeft: 10,
+	},
+	mt0: {
+		marginTop: 0,
+	},
+	mb0: {
+		marginTop: 0,
+	},
+	mv0: {
+		marginVertical: 0,
+	},
+	labelStyle: {
+		fontSize: 14,
+		marginVertical: -10,
+	},
+	errorStyle: {
+		fontSize: 12,
+        // marginVertical:3,
+        marginTop:1,
+        marginBottom:13
 	},
 });

@@ -33,7 +33,7 @@ export default function PublicUserNavTabs() {
 								? "home-circle"
 								: "home-circle-outline";
 						} else if (route.name === "Commute") {
-							iconName = focused ? "bike-fast" : "bike";
+							iconName = focused ? "road-variant" : "road";
 						} else if (route.name === "Account") {
 							iconName = focused ? "account" : "account-outline";
 						}

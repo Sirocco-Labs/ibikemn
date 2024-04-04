@@ -1,5 +1,5 @@
 import MCIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
+import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../../screens/HomeScreen";
@@ -8,9 +8,12 @@ import UserAccountScreen from "../../screens/UserAccountScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
 import SurveyScreen from "../../screens/SurveyScreen";
 import IncentiveScreen from "../../screens/IncentiveScreen";
+import { useSelector } from "react-redux";
 
 export default function PublicUserNavTabs() {
 	const Tab = createBottomTabNavigator();
+	const user = useSelector((store) => store.user)
+
 	return (
 		<NavigationContainer>
 			<Tab.Navigator
@@ -54,7 +57,7 @@ export default function PublicUserNavTabs() {
 				<Tab.Screen name="Account" component={UserAccountScreen} />
 			</Tab.Navigator>
 		</NavigationContainer>
-	);
+	)
 }
 
 const cruft = [

@@ -9,12 +9,13 @@ import {
 	setLoginSuccess,
 	clearLoginFeedback,
 } from "../redux/slices/feedbackSlice";
-import { fetchDiscoveryAsync } from "expo-auth-session";
+
+import { loginUser } from "../redux/thunks/authThunk";
 
 export default function LoginScreen() {
 	const dispatch = useDispatch();
 	const feedback = useSelector((store) => store.feedback.login);
-	const loginData = {
+	const loginFormData = {
 		email: "",
 		password: "",
 	};
@@ -22,7 +23,7 @@ export default function LoginScreen() {
 		email: process.env.EXPO_PUBLIC_TEST_EMAIL,
 		password: process.env.EXPO_PUBLIC_TEST_PASSWORD,
 	};
-	const [loginForm, setLoginForm] = useState(loginData);
+	const [loginData, setLoginData] = useState(loginFormData);
 
 	const close = () => {
 		dispatch(clearLoginFeedback());
@@ -48,7 +49,7 @@ export default function LoginScreen() {
 					<Text
 						style={styles.boldText}
 						onPress={() => {
-							setLoginForm(testData);
+							setLoginData(testData);
 						}}
 					>
 						AUTOFILL
@@ -62,9 +63,9 @@ export default function LoginScreen() {
 								name: "envelope",
 							}}
 							onChangeText={(text) =>
-								setLoginForm({ ...loginForm, email: text })
+								setLoginData({ ...loginData, email: text })
 							}
-							value={loginForm.email}
+							value={loginData.email}
 							placeholder="email@address.com"
 							autoCapitalize={"none"}
 							errorStyle={styles.errorStyle}
@@ -76,9 +77,9 @@ export default function LoginScreen() {
 							label="Password"
 							leftIcon={{ type: "font-awesome", name: "lock" }}
 							onChangeText={(text) =>
-								setLoginForm({ ...loginForm, password: text })
+								setLoginData({ ...loginData, password: text })
 							}
-							value={loginForm.password}
+							value={loginData.password}
 							secureTextEntry={true}
 							placeholder="Password"
 							autoCapitalize={"none"}
@@ -98,7 +99,7 @@ export default function LoginScreen() {
 							title="Log In"
 							disabled={feedback.error}
 							onPress={() =>
-								dispatch(loginUser({ email, password }))
+								dispatch(loginUser(loginData))
 							}
 						/>
 					</View>

@@ -9,13 +9,18 @@ export default function ModalWrapper({
 	screen,
 	component: Component,
 }) {
-	const close = ()=>{
+	const close = () => {
 		action((prevState) => ({
 			...prevState,
 			[screen]: false,
 		}));
-
-	}
+	};
+	const first = screen.at(0).toUpperCase();
+	const remainder = screen.slice(1, screen.length);
+	const title =
+		remainder.at(remainder.length - 1) === "s"
+			? first.concat(remainder)
+			: first.concat(remainder, "s");
 	return (
 		<Modal
 			transitionDuration={1000}
@@ -38,9 +43,24 @@ export default function ModalWrapper({
 					paddingTop: 60,
 				}}
 			>
-				<Text
-				style={{fontWeight:'bold', size:30}}
-				>{screen}</Text>
+				<View
+					style={{
+						alignSelf: "flex-start",
+						marginLeft: 15,
+						flex:1,
+						alignItems:'center',
+						justifyContent:'center',
+					}}
+				>
+					<Text
+						style={{
+							fontWeight: "bold",
+							fontSize: 20,
+						}}
+					>
+						{title}
+					</Text>
+				</View>
 				<Component />
 				<FAB
 					style={{ marginBottom: 30, marginRight: 20 }}

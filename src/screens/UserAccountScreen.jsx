@@ -1,10 +1,20 @@
 import { SafeAreaView, View, StyleSheet } from "react-native";
-import { Text } from "@rneui/themed";
+import { Text, Button } from "@rneui/themed";
+import { logoutUser } from "../redux/thunks/authThunk";
+import { useDispatch } from "react-redux";
+import { clearUserData } from "../redux/slices/userSlice";
 
 export default function UserAccountScreen() {
+	const dispatch = useDispatch()
+	const clearUserThenLogout = () =>{
+		dispatch(clearUserData())
+		dispatch(logoutUser())
+	}
 	return (
 		<View style={styles.container}>
 			<Text>ACCOUNT</Text>
+			<Button onPress={()=> dispatch(clearUserData())}>Clear User</Button>
+			<Button onPress={clearUserThenLogout}>Logout</Button>
 		</View>
 	);
 }

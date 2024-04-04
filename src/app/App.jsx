@@ -12,10 +12,13 @@ import SplashScreen from "../screens/SplashScreen";
 
 import { supabase } from "../services/supabase/supabase";
 import { getUserQuery } from "../redux/thunks/userThunk";
+import CreateProfileScreen from "../screens/CreateProfileScreen";
+import { clearUserData } from "../redux/slices/userSlice";
 
 function App() {
 	const dispatch = useDispatch();
 	const [authenticated, setAuthenticated] = useState("");
+	const [userSession, setUserSession] = useState("");
 	const [loading, setLoading] = useState(true);
 
 	const user = useSelector((store) => store.user);
@@ -31,13 +34,14 @@ function App() {
 				session
 			);
 			if (event === "INITIAL_SESSION") {
-				setLoading(false);
+				dispatch(getUserQuery(session?.user.id));
 				setAuthenticated(session?.user.aud);
+				setLoading(false);
 				// handle initial session
 			} else if (event === "SIGNED_IN") {
-				setLoading(false);
-				setAuthenticated(session.user.aud);
 				dispatch(getUserQuery(session.user.id));
+				setAuthenticated(session.user.aud);
+				setLoading(false);
 				// handle sign in event
 			} else if (event === "SIGNED_OUT") {
 				setLoading(false);
@@ -64,15 +68,20 @@ function App() {
 
 	if (loading && !authenticated) {
 		return <SplashScreen />;
-	} else {
-		if (user.is_public) {
-			return <PublicUserNavTabs />;
-		} else if (user.is_staff) {
-			return <StaffUserNavTabs />;
-		} else if (user.is_admin) {
-			return <AdminUserNavTabs />;
+	}
+	else {
+		if (user.username === 'finish_set_up' && authenticated) {
+			return <CreateProfileScreen />;
 		} else {
-			return <AuthNavTabs />;
+			if (user.is_public && authenticated) {
+				return <PublicUserNavTabs />;
+			} else if (user.is_employee && authenticated) {
+				return <StaffUserNavTabs />;
+			} else if (user.is_admin && authenticated) {
+				return <AdminUserNavTabs />;
+			} else {
+				return <AuthNavTabs />;
+			}
 		}
 	}
 }

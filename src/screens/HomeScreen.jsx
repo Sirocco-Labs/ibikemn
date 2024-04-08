@@ -1,5 +1,5 @@
 import { SafeAreaView, StyleSheet, View, Modal } from "react-native";
-import { Text, SpeedDial } from "@rneui/themed";
+import { Text, SpeedDial, Button } from "@rneui/themed";
 import { useEffect, useState, useRef } from "react";
 import MCIcons from "../components/MCIcons/MCIcons";
 import ModalWrapper from "../components/ModalWrapper/ModalWrapper";
@@ -9,12 +9,15 @@ import IncentiveScreen from "./IncentiveScreen";
 import CalendarScreen from "./CalendarScreen";
 import SurveyScreen from "./SurveyScreen";
 import { useDispatch, useSelector } from "react-redux";
+import { staffGetBikes, getMyBike } from "../redux/thunks/private/staffBikeThunk";
+import { clearOrgBikes } from "../redux/slices/private/orgBikeSlice";
+import { clearMyBike } from "../redux/slices/private/staffBikeSlice";
+
 
 
 export default function HomeScreen() {
 	const dispatch = useDispatch();
 	const user = useSelector((store) => store.user);
-
 
 	const [openSD, setOpenSD] = useState(false);
 
@@ -49,6 +52,39 @@ export default function HomeScreen() {
 			<SafeAreaView>
 				<View style={styles.container}>
 					<Text>Welcome {user.username}</Text>
+					<Button
+					onPress={()=>{
+						dispatch(staffGetBikes(user.org_id))
+					}}
+					>
+						get org bikes
+
+					</Button>
+					<Button
+					onPress={()=>{
+						dispatch(getMyBike(user.user_id))
+					}}
+					>
+						get my bike
+
+					</Button>
+					<Button
+					onPress={()=>{
+						dispatch(clearMyBike())
+					}}
+					>
+						clear my bike
+
+					</Button>
+					<Button
+					onPress={()=>{
+						dispatch(clearOrgBikes())
+					}}
+					>
+						clear orgBikes
+
+					</Button>
+
 					<SpeedDial
 						isOpen={openSD}
 						icon={{ name: "menu", color: "#1269A9" }}

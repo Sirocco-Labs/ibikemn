@@ -39,6 +39,7 @@ export const addUser = (userData) => async (dispatch) => {
 export const finishProfile = (userData) => async (dispatch) => {
 	console.log("IN USER THUNK ----> finishProfile(userData) :", userData);
 	let public_identity = true;
+	let userUpdateData;
 	const {
 		userInfo,
 		homeAddress,
@@ -77,17 +78,6 @@ export const finishProfile = (userData) => async (dispatch) => {
 		public_identity = false;
 	}
 
-	const userUpdateData = {
-		username: username,
-		first_name: first_name,
-		last_name: last_name,
-		is_admin: admin_identity,
-		is_employee: staff_identity,
-		is_public: public_identity,
-		is_consent_to_survey: follow_up,
-		is_incentive_participant: incentive,
-	};
-
 	const screeningData = {
 		user_id,
 		how_did_you_hear,
@@ -106,6 +96,33 @@ export const finishProfile = (userData) => async (dispatch) => {
 		user_id,
 		organization: org_identity,
 	};
+
+	if (public_identity) {
+		userUpdateData = {
+			username: username,
+			first_name: first_name,
+			last_name: last_name,
+			is_admin: admin_identity,
+			is_employee: staff_identity,
+			is_public: public_identity,
+			is_consent_to_survey: follow_up,
+			is_incentive_participant: incentive,
+		};
+	}
+	if (staff_identity) {
+		userUpdateData = {
+			username: username,
+			first_name: first_name,
+			last_name: last_name,
+			is_admin: admin_identity,
+			is_employee: staff_identity,
+			org_id: org_identity,
+			is_public: public_identity,
+			is_consent_to_survey: follow_up,
+			is_incentive_participant: incentive,
+		};
+	}
+
 
 	try {
 		// -------------------------- USER UPDATE

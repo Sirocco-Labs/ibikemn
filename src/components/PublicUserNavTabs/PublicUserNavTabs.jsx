@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../../screens/HomeScreen";
-import CommuteScreen from "../../screens/CommuteScreen";
+import RideScreen from "../../screens/RideScreen";
 import UserAccountScreen from "../../screens/UserAccountScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
 import SurveyScreen from "../../screens/SurveyScreen";
@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 
 export default function PublicUserNavTabs() {
 	const Tab = createBottomTabNavigator();
-	const user = useSelector((store) => store.user)
+	const user = useSelector((store) => store.user);
 
 	return (
 		<NavigationContainer>
@@ -35,7 +35,7 @@ export default function PublicUserNavTabs() {
 							iconName = focused
 								? "home-circle"
 								: "home-circle-outline";
-						} else if (route.name === "Commute") {
+						} else if (route.name === "Ride") {
 							iconName = focused ? "road-variant" : "road";
 						} else if (route.name === "Account") {
 							iconName = focused ? "account" : "account-outline";
@@ -52,12 +52,12 @@ export default function PublicUserNavTabs() {
 					tabBarInactiveTintColor: "gray",
 				})}
 			>
-				<Tab.Screen name="Commute" component={CommuteScreen} />
+				<Tab.Screen name="Ride" component={RideScreen} />
 				<Tab.Screen name="Home" component={HomeScreen} />
 				<Tab.Screen name="Account" component={UserAccountScreen} />
 			</Tab.Navigator>
 		</NavigationContainer>
-	)
+	);
 }
 
 const cruft = [

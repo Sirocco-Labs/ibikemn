@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { staffGetBikes, getMyBike } from "../redux/thunks/private/staffBikeThunk";
 import { clearOrgBikes } from "../redux/slices/private/orgBikeSlice";
 import { clearMyBike } from "../redux/slices/private/staffBikeSlice";
+import { clearDistance } from "../redux/slices/distanceSlice";
 
 
 
@@ -23,9 +24,9 @@ export default function HomeScreen() {
 
 
 	const dialogSwitch = {
-		incentive: false,
+		incentives: false,
 		events: false,
-		survey: false,
+		surveys: false,
 	};
 	const [toggle, setToggle] = useState(dialogSwitch);
 	const visible = {
@@ -34,19 +35,21 @@ export default function HomeScreen() {
 	};
 
 	const openIncentiveScreen = () => {
-		setToggle({ ...toggle, incentive: !toggle.incentive });
+		setToggle({ ...toggle, incentives: !toggle.incentives });
 		setOpenSD(!openSD);
 	};
 	const openCalendarScreen = () => {
-		setToggle({ ...toggle, events: !toggle.incentive });
+		setToggle({ ...toggle, events: !toggle.events });
 		setOpenSD(!openSD);
 	};
 	const openSurveyScreen = () => {
-		setToggle({ ...toggle, survey: !toggle.incentive });
+		setToggle({ ...toggle, surveys: !toggle.surveys });
 		setOpenSD(!openSD);
 	};
 
-	// if (!user.username === 'finish_set_up') {
+
+
+
 	if (user.username !== "finish_set_up") {
 		return (
 			<SafeAreaView>
@@ -82,6 +85,14 @@ export default function HomeScreen() {
 					}}
 					>
 						clear orgBikes
+
+					</Button>
+					<Button
+					onPress={()=>{
+						dispatch(clearDistance())
+					}}
+					>
+						clear distance
 
 					</Button>
 
@@ -141,9 +152,9 @@ export default function HomeScreen() {
 						/>
 					</SpeedDial>
 					<ModalWrapper
-						visible={toggle.incentive}
+						visible={toggle.incentives}
 						action={setToggle}
-						screen={"incentive"}
+						screen={"incentives"}
 						component={IncentiveScreen}
 					/>
 					<ModalWrapper
@@ -153,16 +164,16 @@ export default function HomeScreen() {
 						component={CalendarScreen}
 					/>
 					<ModalWrapper
-						visible={toggle.survey}
+						visible={toggle.surveys}
 						action={setToggle}
-						screen={"survey"}
+						screen={"surveys"}
 						component={SurveyScreen}
 					/>
 				</View>
 			</SafeAreaView>
 		);
 	} else {
-		return <></>;
+		return <View></View>;
 	}
 }
 

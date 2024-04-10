@@ -14,6 +14,7 @@ import { supabase } from "../services/supabase/supabase";
 import { getUserQuery } from "../redux/thunks/userThunk";
 import CreateProfileScreen from "../screens/CreateProfileScreen";
 import { clearUserData } from "../redux/slices/userSlice";
+import { backgroundLocationTask } from "../tasks/BackgroundLocationTaskManager";
 
 function App() {
 	const dispatch = useDispatch();
@@ -24,6 +25,7 @@ function App() {
 	const user = useSelector((store) => store.user);
 
 	useEffect(() => {
+		backgroundLocationTask(dispatch)
 		console.log("APP LOADED");
 		const { data } = supabase.auth.onAuthStateChange((event, session) => {
 			console.log(

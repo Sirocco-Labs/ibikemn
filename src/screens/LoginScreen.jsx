@@ -14,7 +14,6 @@ import { loginUser } from "../redux/thunks/authThunk";
 
 export default function LoginScreen() {
 	const dispatch = useDispatch();
-	const feedback = useSelector((store) => store.feedback.login);
 	const loginFormData = {
 		email: "",
 		password: "",
@@ -87,13 +86,13 @@ export default function LoginScreen() {
 							labelStyle={styles.labelStyle}
 						/>
 					</View>
-					{feedback.error &&
+					{/* {feedback.error &&
 						Alert.alert(
 							"Log in error",
 							`${feedback.message}`,
 							[{ text: "TRY AGAIN", onPress: close }],
 							{ cancelable: false }
-						)}
+						)} */}
 					<View style={[styles.verticallySpaced, styles.mt20]}>
 						<Button
 							title="Log In"

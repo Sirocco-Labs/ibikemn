@@ -35,6 +35,7 @@ export default function RideTrackingScreen() {
 	const commute = useSelector((store) => store.commute);
 	const user = useSelector((store) => store.user);
 
+
 	// const handleStartTracking = async () => {
 	// 	try {
 	// 		if (!distance.is_tracking) {
@@ -50,7 +51,7 @@ export default function RideTrackingScreen() {
 		try {
 			if (distance.is_tracking) {
 				console.log("TRACKING STOPPED!");
-				await dispatch(setRideEndTime());
+				//  dispatch(setRideEndTime(new Date().toISOString()));
 				await stopLocationTracking();
 				// dispatch(toggleTrackingStatus());
 			}
@@ -67,6 +68,7 @@ export default function RideTrackingScreen() {
 				dispatch(setTotalDistance(difference));
 			}
 		}
+        console.log('COMMUTE WHILE DISTANCE IS CHANGING',commute.ride_end_time);
 	}, [
 		distance.is_tracking,
 		distance.history.length,
@@ -84,7 +86,10 @@ export default function RideTrackingScreen() {
 		return () => clearInterval(interval);
 	}, []);
 
+
+
 	const handleSubmitDistance = () => {
+        console.log('HANDLE SUBMIT DISTANCE COMMUTE SLICE BEFORE EVERYTHING ELSE', commute);
 		const metersToMiles =
 			parseFloat(distance.total.toFixed(2)) * 0.000621371192;
 		const rideData = {
@@ -92,7 +97,7 @@ export default function RideTrackingScreen() {
 			is_work_commute: commute.is_work_commute,
 			distance_traveled: metersToMiles,
 			ride_start_time: commute.ride_start_time,
-			ride_end_time: commute.ride_end_time,
+			ride_end_time: new Date().toISOString(),
 		};
 		console.log("rideData on tracking screen", rideData);
 
@@ -107,6 +112,11 @@ export default function RideTrackingScreen() {
 		}
 
 	};
+
+    const handleEndTime = () =>{
+        dispatch(setRideEndTime(new Date().toISOString()));
+
+    }
 
 	return (
 		<View style={styles.popUp}>
@@ -123,6 +133,7 @@ export default function RideTrackingScreen() {
 
 				<Button
 					onPress={() => {
+                        handleEndTime();
 						handleStopTracking();
 						handleSubmitDistance();
 					}}

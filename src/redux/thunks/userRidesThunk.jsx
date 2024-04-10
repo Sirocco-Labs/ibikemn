@@ -1,4 +1,5 @@
 import { supabase } from "../../services/supabase/supabase";
+import { setUserTravelStats } from "../slices/travelStatsSlice";
 
 export const getAllUserRides = (user_id) => async (dispatch) => {
 	console.log("IN COMMUTE THUNK ----> getAllUserRides(user_id): ", user_id);
@@ -30,16 +31,12 @@ export const getAllUserRides = (user_id) => async (dispatch) => {
 
 export const getUserTravelStats = (user_id) => async (dispatch) => {
 	console.log("IN COMMUTE THUNK --> getUserTravelStats(user_id): ", user_id);
-
-	// SELECT * FROM travel_stats_junction.eq(user_id)
-	// setTravelStats(getCommuteData.data)
 	try {
 		const travelStats = await supabase
 			.from("travel_stats_junction")
 			.select("*")
 			.eq("user_id", user_id)
 			.single();
-            ;
 		if (travelStats.error) {
 			console.log(
 				"SUPABASE GET ALL USER TRAVEL STATS ERROR! : ",
@@ -50,7 +47,7 @@ export const getUserTravelStats = (user_id) => async (dispatch) => {
 				"SUPABASE GET ALL USER TRAVEL STATS SUCCESS! : ",
 				travelStats.data
 			);
-			// setUserTravelStats(travelStats.data)
+			dispatch(setUserTravelStats(travelStats.data))
 		}
 	} catch (error) {
 		console.log(
@@ -63,43 +60,32 @@ export const addToAllRides = (rideData) => async (dispatch) => {
 	console.log("IN COMMUTE THUNK ----> addToAllRides(rideData): ", rideData);
 	// const {user_id, distance_traveled, is_work_commute} = rideData
 
-    try {
-        // INSERT INTO all_rides(rideData)
-        const insertRide = await supabase.from('all_rides').insert(rideData)
-        if (insertRide.error) {
-            console.log(
-				"SUPABASE INSERT RIDE ERROR! : ",
-				insertRide.error
-			);
-
-        } else {
-            console.log("SUPABASE INSERT RIDE SUCCESS! : ", insertRide.status);
-
-            // dispatch(updateTravelStats(rideData))
-        }
-
-    } catch (error) {
-        console.log(
+	try {
+		const insertRide = await supabase.from("all_rides").insert(rideData);
+		if (insertRide.error) {
+			console.log("SUPABASE INSERT RIDE ERROR! : ", insertRide.error);
+		} else {
+			console.log("SUPABASE INSERT RIDE SUCCESS! : ", insertRide.status);
+			dispatch(updateTravelStats(rideData))
+		}
+	} catch (error) {
+		console.log(
 			"COMMUTE THUNK ERROR ----> addToAllRides(rideData): ",
 			error
 		);
-
-    }
+	}
 };
 
 export const updateTravelStats = (rideData) => async (dispatch) => {
 	console.log("IN COMMUTE THUNK --> updateTravelStats(rideData): ", rideData);
 
-	const {user_id, distance_traveled, is_work_commute} = rideData
+	const { user_id, distance_traveled, is_work_commute } = rideData;
 	try {
-		// SELECT * FROM travel_stats_junction
 		const travelStats = await supabase
 			.from("travel_stats_junction")
 			.select("*")
 			.eq("user_id", user_id)
-            .single()
-            ;
-
+			.single();
 		if (travelStats.error) {
 			if (is_work_commute) {
 				let workRideData = {
@@ -109,17 +95,48 @@ export const updateTravelStats = (rideData) => async (dispatch) => {
 					commute_miles_total: distance_traveled,
 					commute_rides_total: 1,
 				};
-				("INSERT INTO travel_stats_junction(workRideData)");
-
+				try {
+					const firstWorkRide = await supabase
+						.from("travel_stats_junction")
+						.insert(workRideData);
+					if (firstWorkRide.error) {
+						console.log(
+							"SUPABASE TRAVEL STATS INSERT ERROR! :",
+							firstWorkRide.error
+						);
+					} else {
+						console.log(
+							"SUPABASE TRAVEL STATS INSERT SUCCESS! :",
+							firstWorkRide.status
+						);
+					}
+				} catch (error) {
+					console.log("THUNK INSERT TRAVEL STATS ERROR", error);
+				}
 			} else {
-
 				let firstInsert = {
 					user_id,
 					miles_total: distance_traveled,
 					rides_total: 1,
 				};
-
-				("INSERT INTO travel_stats_junction(firstInsert)");
+				try {
+					const firstFunRide = await supabase
+						.from("travel_stats_junction")
+						.insert(firstInsert);
+					if (firstFunRide.error) {
+						console.log(
+							"SUPABASE TRAVEL STATS INSERT ERROR! :",
+							firstFunRide.error
+						);
+					} else {
+						console.log(
+							"SUPABASE TRAVEL STATS INSERT SUCCESS! :",
+							firstFunRide.status
+						);
+					}
+				} catch (error) {
+					console.log("THUNK INSERT TRAVEL STATS ERROR", error);
+				}
 			}
 		} else {
 			if (is_work_commute) {
@@ -131,30 +148,64 @@ export const updateTravelStats = (rideData) => async (dispatch) => {
 				let commute_rides_total = (updater.commute_rides_total += 1);
 
 				let workRideData = {
-					user_id,
+					rides_total,
 					miles_total,
 					commute_miles_total,
 					commute_rides_total,
 				};
-
-				("UPDATE travel_stats_junction(workRideData).match(user_id)");
-
+				try {
+					const updateWorkTravelStats = await supabase
+						.from("travel_stats_junction")
+						.update(workRideData)
+						.eq("id", updater.id);
+					if (updateWorkTravelStats.error) {
+						console.log(
+							"SUPABASE UPDATE WORK TRAVEL STATS ERROR",
+							updateWorkTravelStats.error,
+							"updater",
+							updater
+						);
+					} else {
+						console.log(
+							"SUPABASE UPDATE WORK TRAVEL STATS SUCCESS",
+							updateWorkTravelStats.status
+						);
+					}
+				} catch (error) {
+					console.log("THUNK UPDATE TRAVEL STATS ERROR", error);
+				}
 			} else {
-				let updater = { ...select.data };
+				let updater = { ...travelStats.data };
 				let miles_total = (updater.miles_total += distance_traveled);
 				let rides_total = (updater.rides_total += 1);
 
-				(" UPDATE travel_stats_junction({miles_total, rides_total}).match(user_id)");
+				try {
+					const updateTravelStats = await supabase
+						.from("travel_stats_junction")
+						.update({ miles_total, rides_total })
+						.eq("id", updater.id);
+					if (updateTravelStats.error) {
+						console.log(
+							"SUPABASE UPDATE FUN TRAVEL STATS ERROR",
+							updateTravelStats.error, 'updater', updater
+						);
+					} else {
+						console.log(
+							"SUPABASE UPDATE FUN TRAVEL STATS SUCCESS",
+							updateTravelStats.status
+						);
+					}
+				} catch (error) {
+					console.log("THUNK UPDATE TRAVEL STATS ERROR", error);
+				}
 			}
 		}
 		dispatch(getUserTravelStats(user_id));
 	} catch (error) {
-        console.log(
-			"COMMUTE THUNK ERROR ----> updateTravelStats(user_id): ",
+		console.log(
+			"COMMUTE THUNK ERROR ----> updateTravelStats(rideData): ",
 			error
 		);
+	}
 
-    }
-
-	//
 };

@@ -16,11 +16,11 @@ const commuteSlice = createSlice({
 		chooseWorkCommute(state){
 			state.is_work_commute = true;
 		},
-		setRideStartTime(state) {
-			state.ride_start_time = new Date().toISOString();
+		setRideStartTime(state, action) {
+			state.ride_start_time = action.payload
 		},
-		setRideEndTime(state) {
-			state.ride_end_time = new Date().toISOString();
+		setRideEndTime(state, action) {
+			state.ride_end_time = action.payload
 		},
 		toggleRideStarted(state) {
 			state.is_ride_started = !state.is_ride_started;

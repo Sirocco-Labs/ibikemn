@@ -31,19 +31,23 @@ export default function RideScreen() {
 	const distance = useSelector((store) => store.distance);
 	const commute = useSelector((store) => store.commute);
 	const user = useSelector((store) => store.user);
+	const [startTime, setStartTime] = useState(null)
 
 	const handleStartTracking = async () => {
 		try {
 			if (!distance.is_tracking) {
 				console.log("TRACKING STARTED!");
 				dispatch(toggleTrackingStatus());
-				dispatch(setRideStartTime())
+				dispatch(setRideStartTime(new Date().toISOString()))
 				await startLocationTracking(dispatch);
 			}
 		} catch (error) {
 			console.log("TRACKING STARTED ERROR!", error);
 		}
 	};
+	const handleStartTime = () =>{
+		setStartTime(new Date().toISOString())
+	}
 
 	return (
 		<View style={styles.container}>
@@ -52,6 +56,7 @@ export default function RideScreen() {
 				<Button
 					buttonStyle={styles.button}
 					onPress={() => {
+						// handleStartTime()
 						dispatch(chooseWorkCommute());
 						handleStartTracking();
 					}}
@@ -61,6 +66,7 @@ export default function RideScreen() {
 				<Button
 					buttonStyle={styles.button}
 					onPress={() => {
+						// handleStartTime();
 						handleStartTracking();
 					}}
 				>

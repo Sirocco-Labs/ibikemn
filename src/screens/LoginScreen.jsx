@@ -96,7 +96,7 @@ export default function LoginScreen() {
 					<View style={[styles.verticallySpaced, styles.mt20]}>
 						<Button
 							title="Log In"
-							disabled={feedback.error}
+							// disabled={feedback.error}
 							onPress={() =>
 								dispatch(loginUser(loginData))
 							}

@@ -1,14 +1,24 @@
 import { supabase } from "../../services/supabase/supabase";
 
-import {setRideSurveyHistory} from '../slices/rideSurveySlice'
+import { setRideSurveyHistory } from "../slices/rideSurveySlice";
 
 export const getAllRideSurveys = () => async (dispatch) => {
 	console.log("IN RIDE SURVEY THUNK ---> getAllRideSurveys(): ");
 	try {
-		if (condition) {
-			console.log(" :");
+		const getAllRideSurveys = await supabase
+			.from("ride_survey_junction")
+			.select("*");
+		if (getAllRideSurveys.error) {
+			console.log(
+				"SUPABASE GET ALL USER RIDES SURVEY ERROR!!:",
+				getAllRideSurveys.error
+			);
 		} else {
-			console.log(" :");
+			console.log(
+				"SUPABASE GET ALL USER RIDES SURVEY SUCCESS!!:",
+				getAllRideSurveys.data
+			);
+			// dispatch(setAllRideSurveys(getAllRideSurveys.data))
 		}
 	} catch (error) {
 		console.log(
@@ -23,7 +33,11 @@ export const getMyRideSurveys = (user_id) => async (dispatch) => {
 		user_id
 	);
 	try {
-        const getUserSurveys = await supabase.from('').select('*').eq('user_id', user_id).order('id', {descending: true})
+		const getUserSurveys = await supabase
+			.from("ride_survey_junction")
+			.select("*")
+			.eq("user_id", user_id)
+			.order("id", { descending: true });
 		if (getUserSurveys.error) {
 			console.log(
 				"SUPABASE GET USER RIDE SURVEY ERROR!!:",
@@ -34,8 +48,8 @@ export const getMyRideSurveys = (user_id) => async (dispatch) => {
 				"SUPABASE GET USER RIDE SURVEY SUCCESS!!:",
 				getUserSurveys.status
 			);
-            const rideSurveys = getUserSurveys.data
-			dispatch(setRideSurveyHistory(rideSurveys))
+			const rideSurveys = getUserSurveys.data;
+			dispatch(setRideSurveyHistory(rideSurveys));
 		}
 	} catch (error) {
 		console.log(" RIDE SURVEY THUNK ERROR ---> (user_id):", error);
@@ -46,7 +60,7 @@ export const addRideSurvey = (surveyData) => async (dispatch) => {
 		"IN RIDE SURVEY THUNK ---> addRideSurvey(surveyData): ",
 		surveyData
 	);
-    const {user_id} = surveyData
+	const { user_id } = surveyData;
 
 	try {
 		const surveyInsert = await supabase
@@ -62,7 +76,7 @@ export const addRideSurvey = (surveyData) => async (dispatch) => {
 				"SUPABASE ADD RIDE SURVEY SUCCESS!! :",
 				surveyInsert.status
 			);
-			dispatch(getMyRideSurveys(user_id))
+			dispatch(getMyRideSurveys(user_id));
 		}
 	} catch (error) {
 		console.log(

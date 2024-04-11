@@ -25,28 +25,16 @@ import {
 
 import { addToAllRides } from "../redux/thunks/userRidesThunk";
 
-import {useNavigation} from '@react-navigation/native'
+import { useNavigation } from "@react-navigation/native";
 
 export default function RideTrackingScreen() {
 	const dispatch = useDispatch();
-    const navigation = useNavigation()
+	const navigation = useNavigation();
 
 	const distance = useSelector((store) => store.distance);
 	const commute = useSelector((store) => store.commute);
 	const user = useSelector((store) => store.user);
 
-
-	// const handleStartTracking = async () => {
-	// 	try {
-	// 		if (!distance.is_tracking) {
-	// 			console.log("TRACKING STARTED!");
-	// 			dispatch(toggleTrackingStatus());
-	// 			await startLocationTracking(dispatch);
-	// 		}
-	// 	} catch (error) {
-	// 		console.log("TRACKING STARTED ERROR!", error);
-	// 	}
-	// };
 	const handleStopTracking = async () => {
 		try {
 			if (distance.is_tracking) {
@@ -68,7 +56,10 @@ export default function RideTrackingScreen() {
 				dispatch(setTotalDistance(difference));
 			}
 		}
-        console.log('COMMUTE WHILE DISTANCE IS CHANGING',commute.ride_end_time);
+		console.log(
+			"COMMUTE WHILE DISTANCE IS CHANGING",
+			commute.ride_end_time
+		);
 	}, [
 		distance.is_tracking,
 		distance.history.length,
@@ -86,10 +77,11 @@ export default function RideTrackingScreen() {
 		return () => clearInterval(interval);
 	}, []);
 
-
-
 	const handleSubmitDistance = () => {
-        console.log('HANDLE SUBMIT DISTANCE COMMUTE SLICE BEFORE EVERYTHING ELSE', commute);
+		console.log(
+			"HANDLE SUBMIT DISTANCE COMMUTE SLICE BEFORE EVERYTHING ELSE",
+			commute
+		);
 		const metersToMiles =
 			parseFloat(distance.total.toFixed(2)) * 0.000621371192;
 		const rideData = {
@@ -102,28 +94,34 @@ export default function RideTrackingScreen() {
 		console.log("rideData on tracking screen", rideData);
 
 		dispatch(addToAllRides(rideData));
-        dispatch(clearDistance());
+		dispatch(clearDistance());
 
 		if (commute.is_work_commute) {
 			dispatch(clearCommuteSlice());
-            navigation.jumpTo("Home")
+			navigation.jumpTo("Home");
 		} else {
 			dispatch(toggleSurveyOpen());
 		}
-
 	};
 
-    const handleEndTime = () =>{
-        dispatch(setRideEndTime(new Date().toISOString()));
-
-    }
+	const handleEndTime = () => {
+		dispatch(setRideEndTime(new Date().toISOString()));
+	};
 
 	return (
 		<View style={styles.popUp}>
 			<View style={styles.sectionView}>
-				<Text style={styles.distanceText}>
-					{parseFloat(distance.total.toFixed(2))}
-				</Text>
+				<View
+                style={{alignItems:'center'}}
+                >
+					<Text style={styles.distanceText}>Distance Traveled:</Text>
+					<Text style={styles.distanceText}>
+						{parseFloat(
+							(distance.total * 0.000621371192).toFixed(2)
+						)}{" "}
+						Miles
+					</Text>
+				</View>
 				<Text style={styles.timeText}>
 					{time.toLocaleTimeString("en-US", {
 						hour: "2-digit",
@@ -132,8 +130,9 @@ export default function RideTrackingScreen() {
 				</Text>
 
 				<Button
+                raised
 					onPress={() => {
-                        handleEndTime();
+						handleEndTime();
 						handleStopTracking();
 						handleSubmitDistance();
 					}}
@@ -224,6 +223,13 @@ const styles = StyleSheet.create({
 		padding: 10,
 		width: "100%",
 	},
-	distanceText: {},
-	timeText: {},
+	textHeader: {
+		fontSize: 35,
+	},
+	distanceText: {
+		fontSize: 35,
+	},
+	timeText: {
+		fontSize: 85,
+	},
 });

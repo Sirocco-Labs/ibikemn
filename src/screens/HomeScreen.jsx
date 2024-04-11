@@ -61,22 +61,31 @@ export default function HomeScreen() {
 				<View style={styles.container}>
 					<View style={styles.sectionView}>
 						<View
-						style={{alignItems:'flex-start', width:'100%'}}
+							style={{ alignItems: "flex-start", width: "100%" }}
 						>
-						<Text>Total Rides: {travelStats.rides_total}</Text>
-						<Text>Total Miles: {parseFloat(travelStats.miles_total.toFixed(2))} mi</Text>
-						<Text>Work Rides: {travelStats.commute_rides_total}</Text>
-						<Text>Miles from work rides: {parseFloat(travelStats.commute_miles_total.toFixed(2))} mi</Text>
-
+							<Text>Total Rides: {travelStats.rides_total}</Text>
+							<Text>
+								Total Miles:{" "}
+								{parseFloat(travelStats.miles_total.toFixed(2))}{" "}
+								mi
+							</Text>
+							<Text>
+								Work Rides: {travelStats.commute_rides_total}
+							</Text>
+							<Text>
+								Miles from work rides:{" "}
+								{parseFloat(
+									travelStats.commute_miles_total.toFixed(2)
+								)}{" "}
+								mi
+							</Text>
 						</View>
 						<View>
-
-						<Text>Welcome {user.username}</Text>
+							<Text>Welcome {user.username}</Text>
 						</View>
-						<View>
-
-						</View>
-						<Button
+						<View></View>
+						{/* <Button
+							raised
 							onPress={() => {
 								dispatch(staffGetBikes(user.org_id));
 							}}
@@ -84,6 +93,7 @@ export default function HomeScreen() {
 							get org bikes
 						</Button>
 						<Button
+							raised
 							onPress={() => {
 								dispatch(getMyBike(user.user_id));
 							}}
@@ -91,6 +101,7 @@ export default function HomeScreen() {
 							get my bike
 						</Button>
 						<Button
+							raised
 							onPress={() => {
 								dispatch(clearMyBike());
 							}}
@@ -98,6 +109,7 @@ export default function HomeScreen() {
 							clear my bike
 						</Button>
 						<Button
+							raised
 							onPress={() => {
 								dispatch(clearOrgBikes());
 							}}
@@ -105,12 +117,13 @@ export default function HomeScreen() {
 							clear orgBikes
 						</Button>
 						<Button
+							raised
 							onPress={() => {
 								dispatch(clearDistance());
 							}}
 						>
 							clear distance
-						</Button>
+						</Button> */}
 
 						<ModalWrapper
 							visible={toggle.incentives}

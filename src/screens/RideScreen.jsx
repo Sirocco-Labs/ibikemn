@@ -31,30 +31,29 @@ export default function RideScreen() {
 	const distance = useSelector((store) => store.distance);
 	const commute = useSelector((store) => store.commute);
 	const user = useSelector((store) => store.user);
-	const [startTime, setStartTime] = useState(null)
 
 	const handleStartTracking = async () => {
 		try {
 			if (!distance.is_tracking) {
 				console.log("TRACKING STARTED!");
 				dispatch(toggleTrackingStatus());
-				dispatch(setRideStartTime(new Date().toISOString()))
+				dispatch(setRideStartTime(new Date().toISOString()));
 				await startLocationTracking(dispatch);
 			}
 		} catch (error) {
 			console.log("TRACKING STARTED ERROR!", error);
 		}
 	};
-	const handleStartTime = () =>{
-		setStartTime(new Date().toISOString())
-	}
+
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.sectionView}>
-				<Text style={styles.medText}>Are you riding to work?</Text>
+			<Text style={styles.medText}>Are you riding to work?</Text>
+			<View style={styles.buttonWrapper}>
 				<Button
-					buttonStyle={styles.button}
+					buttonStyle={{ width: 300, padding: 15 }}
+					raised
+					fullWidth
 					onPress={() => {
 						// handleStartTime()
 						dispatch(chooseWorkCommute());
@@ -63,8 +62,11 @@ export default function RideScreen() {
 				>
 					YES
 				</Button>
+			</View>
+			<View style={styles.buttonWrapper}>
 				<Button
-					buttonStyle={styles.button}
+					raised
+					buttonStyle={{ width: 300, padding: 15 }}
 					onPress={() => {
 						// handleStartTime();
 						handleStartTracking();
@@ -72,10 +74,11 @@ export default function RideScreen() {
 				>
 					NO
 				</Button>
-				<View style={styles.grid}>
-					<View style={styles.gridItem}></View>
-					<View style={styles.gridItem}></View>
-				</View>
+			</View>
+
+			<View style={styles.grid}>
+				<View style={styles.gridItem}></View>
+				<View style={styles.gridItem}></View>
 			</View>
 
 			<ModalWrapper
@@ -120,7 +123,7 @@ const styles = StyleSheet.create({
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "center",
-		justifyContent: "center",
+		justifyContent: "space-evenly",
 		width: "100%",
 		padding: 15,
 		backgroundColor: "#fff",
@@ -153,10 +156,12 @@ const styles = StyleSheet.create({
 	bigText: { fontSize: 50 },
 	medText: { fontSize: 30, marginVertical: 30 },
 	regText: { fontSize: 14 },
-	button: {
-		justifyContent: "center",
-		borderRadius: 8,
-		width: 300,
+	buttonWrapper: {
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		justifyContent: "space-around",
+		width: "100%",
 		marginVertical: 30,
 		padding: 15,
 	},

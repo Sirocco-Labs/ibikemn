@@ -105,7 +105,7 @@ export default function RideTrackingScreen() {
 	};
 
 	const handleEndTime = () => {
-		dispatch(setRideEndTime(new Date().toISOString()));
+		dispatch(setRideEndTime(new Date().toISOString()))
 	};
 
 	return (

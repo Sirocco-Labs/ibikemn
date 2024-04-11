@@ -1,26 +1,35 @@
 import { SafeAreaView, Modal, TouchableOpacity, View } from "react-native";
 import { Text, SpeedDial, Dialog, Button, FAB } from "@rneui/themed";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleRideStarted } from "../../redux/slices/commuteSlice";
 
 export default function ModalWrapper({
 	visible,
 	action,
+	startTracking,
+	stopTracking,
+	header,
 	screen,
 	component: Component,
 }) {
+	const dispatch = useDispatch();
+	let title = "";
+	const handleClose = () => {
+		screen ? close() : dispatch(toggleRideStarted());
+	};
 	const close = () => {
 		action((prevState) => ({
 			...prevState,
 			[screen]: false,
 		}));
 	};
-	const first = screen.at(0).toUpperCase();
-	const remainder = screen.slice(1, screen.length);
-	const title =
-		remainder.at(remainder.length - 1) === "s"
-			? first.concat(remainder)
-			: first.concat(remainder, "s");
+	if (screen) {
+		const first = screen.at(0).toUpperCase();
+		const remainder = screen.slice(1, screen.length);
+		title = first.concat(remainder);
+	}
+
 	return (
 		<Modal
 			transitionDuration={1000}
@@ -30,7 +39,7 @@ export default function ModalWrapper({
 			visible={visible}
 			fullScreen={false}
 			statusBarTranslucent={true}
-			onRequestClose={close}
+			onRequestClose={handleClose}
 		>
 			<View
 				style={{
@@ -47,9 +56,9 @@ export default function ModalWrapper({
 					style={{
 						alignSelf: "flex-start",
 						marginLeft: 15,
-						flex:1,
-						alignItems:'center',
-						justifyContent:'center',
+						flex: 1,
+						alignItems: "center",
+						justifyContent: "center",
 					}}
 				>
 					<Text
@@ -58,18 +67,20 @@ export default function ModalWrapper({
 							fontSize: 20,
 						}}
 					>
-						{title}
+						{screen ? `${title}` : `${header}`}
 					</Text>
 				</View>
 				<Component />
-				<FAB
-					style={{ marginBottom: 30, marginRight: 20 }}
-					icon={{ name: "close", color: "#F7B247" }}
-					placement="center"
-					size="large"
-					onPress={close}
-					color="#1269A9"
-				/>
+				{screen && (
+					<FAB
+						style={{ marginBottom: 30, marginRight: 20 }}
+						icon={{ name: "close", color: "#F7B247" }}
+						placement="center"
+						size="large"
+						onPress={close}
+						color="#1269A9"
+					/>
+				)}
 			</View>
 		</Modal>
 	);

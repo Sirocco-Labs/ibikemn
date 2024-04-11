@@ -3,12 +3,12 @@ import MCIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../../screens/HomeScreen";
-import CommuteScreen from "../../screens/CommuteScreen";
+import RideScreen from "../../screens/RideScreen";
 import UserAccountScreen from "../../screens/UserAccountScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
 import SurveyScreen from "../../screens/SurveyScreen";
 import IncentiveScreen from "../../screens/IncentiveScreen";
-import BikeListScreen from "../../screens/private/BikeListScreen"
+import BikeListScreen from "../../screens/private/BikeListScreen";
 
 export default function StaffUserNavTabs() {
 	const Tab = createBottomTabNavigator();
@@ -35,7 +35,7 @@ export default function StaffUserNavTabs() {
 								: "home-circle-outline";
 						} else if (route.name === "Bikes") {
 							iconName = focused ? "bike-fast" : "bike";
-						} else if (route.name === "Commute") {
+						} else if (route.name === "Ride") {
 							iconName = focused ? "road-variant" : "road";
 						} else if (route.name === "Account") {
 							iconName = focused ? "account" : "account-outline";
@@ -53,7 +53,7 @@ export default function StaffUserNavTabs() {
 				})}
 			>
 				<Tab.Screen name="Bikes" component={BikeListScreen} />
-				<Tab.Screen name="Commute" component={CommuteScreen} />
+				<Tab.Screen name="Ride" component={RideScreen} />
 				<Tab.Screen name="Home" component={HomeScreen} />
 				<Tab.Screen name="Account" component={UserAccountScreen} />
 			</Tab.Navigator>

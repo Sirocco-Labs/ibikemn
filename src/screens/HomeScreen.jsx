@@ -12,20 +12,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { staffGetBikes, getMyBike } from "../redux/thunks/private/staffBikeThunk";
 import { clearOrgBikes } from "../redux/slices/private/orgBikeSlice";
 import { clearMyBike } from "../redux/slices/private/staffBikeSlice";
+import { clearDistance } from "../redux/slices/distanceSlice";
+import { getUserTravelStats } from "../redux/thunks/userRidesThunk";
 
 
 
 export default function HomeScreen() {
 	const dispatch = useDispatch();
 	const user = useSelector((store) => store.user);
+	const travelStats = useSelector((store) => store.travelStats);
 
 	const [openSD, setOpenSD] = useState(false);
+	useEffect(()=>{
+		dispatch(getUserTravelStats(user.user_id))
+	},[])
 
 
 	const dialogSwitch = {
-		incentive: false,
+		incentives: false,
 		events: false,
-		survey: false,
+		surveys: false,
 	};
 	const [toggle, setToggle] = useState(dialogSwitch);
 	const visible = {
@@ -34,57 +40,110 @@ export default function HomeScreen() {
 	};
 
 	const openIncentiveScreen = () => {
-		setToggle({ ...toggle, incentive: !toggle.incentive });
+		setToggle({ ...toggle, incentives: !toggle.incentives });
 		setOpenSD(!openSD);
 	};
 	const openCalendarScreen = () => {
-		setToggle({ ...toggle, events: !toggle.incentive });
+		setToggle({ ...toggle, events: !toggle.events });
 		setOpenSD(!openSD);
 	};
 	const openSurveyScreen = () => {
-		setToggle({ ...toggle, survey: !toggle.incentive });
+		setToggle({ ...toggle, surveys: !toggle.surveys });
 		setOpenSD(!openSD);
 	};
 
-	// if (!user.username === 'finish_set_up') {
+
+
+
 	if (user.username !== "finish_set_up") {
 		return (
 			<SafeAreaView>
 				<View style={styles.container}>
-					<Text>Welcome {user.username}</Text>
-					<Button
-					onPress={()=>{
-						dispatch(staffGetBikes(user.org_id))
-					}}
-					>
-						get org bikes
+					<View style={styles.sectionView}>
+						<View
+							style={{ alignItems: "flex-start", width: "100%" }}
+						>
+							<Text>Total Rides: {travelStats.rides_total}</Text>
+							<Text>
+								Total Miles:{" "}
+								{parseFloat(travelStats.miles_total.toFixed(2))}{" "}
+								mi
+							</Text>
+							<Text>
+								Work Rides: {travelStats.commute_rides_total}
+							</Text>
+							<Text>
+								Miles from work rides:{" "}
+								{parseFloat(
+									travelStats.commute_miles_total.toFixed(2)
+								)}{" "}
+								mi
+							</Text>
+						</View>
+						<View>
+							<Text>Welcome {user.username}</Text>
+						</View>
+						<View></View>
+						{/* <Button
+							raised
+							onPress={() => {
+								dispatch(staffGetBikes(user.org_id));
+							}}
+						>
+							get org bikes
+						</Button>
+						<Button
+							raised
+							onPress={() => {
+								dispatch(getMyBike(user.user_id));
+							}}
+						>
+							get my bike
+						</Button>
+						<Button
+							raised
+							onPress={() => {
+								dispatch(clearMyBike());
+							}}
+						>
+							clear my bike
+						</Button>
+						<Button
+							raised
+							onPress={() => {
+								dispatch(clearOrgBikes());
+							}}
+						>
+							clear orgBikes
+						</Button>
+						<Button
+							raised
+							onPress={() => {
+								dispatch(clearDistance());
+							}}
+						>
+							clear distance
+						</Button> */}
 
-					</Button>
-					<Button
-					onPress={()=>{
-						dispatch(getMyBike(user.user_id))
-					}}
-					>
-						get my bike
-
-					</Button>
-					<Button
-					onPress={()=>{
-						dispatch(clearMyBike())
-					}}
-					>
-						clear my bike
-
-					</Button>
-					<Button
-					onPress={()=>{
-						dispatch(clearOrgBikes())
-					}}
-					>
-						clear orgBikes
-
-					</Button>
-
+						<ModalWrapper
+							visible={toggle.incentives}
+							action={setToggle}
+							screen={"incentives"}
+							component={IncentiveScreen}
+						/>
+						<ModalWrapper
+							visible={toggle.events}
+							action={setToggle}
+							screen={"events"}
+							component={CalendarScreen}
+						/>
+						<ModalWrapper
+							visible={toggle.surveys}
+							action={setToggle}
+							screen={"surveys"}
+							component={SurveyScreen}
+						/>
+					</View>
 					<SpeedDial
 						isOpen={openSD}
 						icon={{ name: "menu", color: "#1269A9" }}
@@ -140,29 +199,11 @@ export default function HomeScreen() {
 							// color="#F7B247"
 						/>
 					</SpeedDial>
-					<ModalWrapper
-						visible={toggle.incentive}
-						action={setToggle}
-						screen={"incentive"}
-						component={IncentiveScreen}
-					/>
-					<ModalWrapper
-						visible={toggle.events}
-						action={setToggle}
-						screen={"events"}
-						component={CalendarScreen}
-					/>
-					<ModalWrapper
-						visible={toggle.survey}
-						action={setToggle}
-						screen={"survey"}
-						component={SurveyScreen}
-					/>
 				</View>
 			</SafeAreaView>
 		);
 	} else {
-		return <></>;
+		return <View></View>;
 	}
 }
 
@@ -176,6 +217,15 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		padding: 20,
+	},
+	sectionView: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "space-between",
+		width: "100%",
+		padding: 15,
+		backgroundColor: "#fff",
+		marginVertical: 10,
 	},
 	mainView: {
 		display: "flex",

@@ -3,7 +3,7 @@ import MCIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../../screens/HomeScreen";
-import CommuteScreen from "../../screens/CommuteScreen";
+import RideScreen from "../../screens/RideScreen";
 import UserAccountScreen from "../../screens/UserAccountScreen";
 import BikeListScreen from "../../screens/private/BikeListScreen";
 import ManageCalendarScreen from "../../screens/private/admin/ManageCalendarScreen";
@@ -40,7 +40,7 @@ export default function AdminUserNavTabs() {
 							iconName = focused
 								? "account-group"
 								: "account-group-outline";
-						} else if (route.name === "Commute") {
+						} else if (route.name === "Ride") {
 							iconName = focused ? "road-variant" : "road";
 						} else if (route.name === "Calendar") {
 							iconName = focused
@@ -74,7 +74,7 @@ export default function AdminUserNavTabs() {
 					name="Organizations"
 					component={ManageOrganizationScreen}
 				/>
-				<Tab.Screen name="Commute" component={CommuteScreen} />
+				<Tab.Screen name="Ride" component={RideScreen} />
 				<Tab.Screen name="Home" component={HomeScreen} />
 				<Tab.Screen name="Calendar" component={ManageCalendarScreen} />
 				<Tab.Screen name="Data" component={ManageDataScreen} />

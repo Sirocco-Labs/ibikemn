@@ -16,7 +16,7 @@ export default function IntakeFormDemographics({ navigation, route }) {
 		age: "",
 		gender_identity: "",
 		race: [],
-		income: "",
+		income_level: "",
 		zip_code: "",
 	};
 
@@ -60,7 +60,7 @@ export default function IntakeFormDemographics({ navigation, route }) {
 	const [loading, setLoading] = useState(false);
 	useEffect(() => {
 		console.log("race", demographics.race);
-		console.log("income", demographics.income);
+		console.log("income", demographics.income_level);
 	}, [demographics]);
 
 	useEffect(() => {
@@ -77,7 +77,7 @@ export default function IntakeFormDemographics({ navigation, route }) {
 	}, [intake]);
 
 	const validateSave = () => {
-		if (demographics.age && demographics.gender_identity && demographics.race.length > 0 && demographics.income ) {
+		if (demographics.age && demographics.gender_identity && demographics.race.length > 0 && demographics.income_level ) {
 			return false;
 		}
 		return true;
@@ -94,7 +94,9 @@ export default function IntakeFormDemographics({ navigation, route }) {
 			if (!demographics.race.includes(value)) {
 				holder.push(value);
 			} else {
+				console.log('Value was in holder', holder);
 				holder = holder.filter((key) => key !== value);
+				console.log('filter holder', holder);
 			}
 			setDemographics({ ...demographics, race: holder });
 		} else {
@@ -251,7 +253,7 @@ export default function IntakeFormDemographics({ navigation, route }) {
 												)
 											);
 
-											updatePayload("income", box.value);
+											updatePayload("income_level", box.value);
 
 											validateSave();
 										}}
@@ -311,8 +313,8 @@ export default function IntakeFormDemographics({ navigation, route }) {
 								!intake.demographics.age &&
 								!intake.demographics.gender_identity &&
 								!intake.demographics.race.length > 0 &&
-								!intake.demographics.income &&
-								!validateSave()
+								!intake.demographics.income_level ||
+								validateSave()
 							}
 							onPress={() => {
 								navigation.jumpTo("Consents");

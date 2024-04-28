@@ -10,6 +10,8 @@ import orgBikes from './slices/private/orgBikeSlice'
 import commute from './slices/commuteSlice'
 import travelStats from './slices/travelStatsSlice'
 import rideSurveys from './slices/rideSurveySlice'
+import incentives from './slices/incentiveSlice'
+import allUserRides from './slices/allUserRidesSlice'
 
 
 const rootReducer = combineReducers({
@@ -22,8 +24,9 @@ const rootReducer = combineReducers({
     orgBikes,
     commute,
     travelStats,
-    rideSurveys
-
+    rideSurveys,
+    incentives,
+    allUserRides
 
 });
 

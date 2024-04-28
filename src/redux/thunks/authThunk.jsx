@@ -1,6 +1,8 @@
 import { supabase } from "../../services/supabase/supabase";
 import { getUserQuery, addUser } from "./userThunk";
 import { clearUserData } from "../slices/userSlice";
+import { setIntakeSecret } from "../slices/intakeFormSlice";
+
 
 export const emailSignUp = (regData) => async (dispatch) => {
 	console.log("IN AUTH THUNK ----> emailSignUp(regData): ", regData);
@@ -13,7 +15,7 @@ export const emailSignUp = (regData) => async (dispatch) => {
 		} else {
 			console.log("SUPABASE REGISTER SUCCESS!: ", response.data);
 			const user_id = response.data.user.id;
-			const user_info = { user_id};
+			const user_info = { user_id: response.data.user.id, email:response.data.user.email};
 			await dispatch(addUser(user_info));
 			await dispatch(loginUser(credentials));
 		}
@@ -54,3 +56,16 @@ export const logoutUser = () => async (dispatch) => {
 	}
 };
 
+export const confirmSecret = (secretCode) => async (dispatch) => {
+	try {
+		const secret = await supabase.from("secret_code").select('*').single();
+		if (secret.error) {
+			console.log("SUPABASE SECRET CODE ERROR", secret.error);
+		} else {
+			console.log("SUPABASE SECRET CODE SUCCESS", secret.data);
+			if(secretCode === secret.data.code){
+				dispatch(setIntakeSecret(true))
+			}
+		}
+	} catch (error) {}
+};

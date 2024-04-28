@@ -1,65 +1,126 @@
-import { SafeAreaView, View, StyleSheet } from "react-native";
-import { Text } from "@rneui/themed";
+import {
+	SafeAreaView,
+	View,
+	StyleSheet,
+	ActivityIndicator,
+} from "react-native";
+import { Text, SpeedDial, Dialog, Button, FAB } from "@rneui/themed";
+import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
+import {WebView} from 'react-native-webview'
+import { useEffect, useState } from "react";
 
-export default function CalendarScreen() {
+export default function CalendarScreen({ close, webRef, handleNavigation}) {
+	console.log(handleNavigation);
+	const [loading, setLoading] = useState({})
+
+	useEffect(() => {
+		setLoading()
+	}, [webRef.current]);
+
 	return (
-		<View style={styles.container}>
-			<Text>EVENTS</Text>
+		<>
+
+		{loading ? <View
+		style={styles.sectionView}
+		>
+
+			<ActivityIndicator animating={true} size={'large'} hidesWhenStopped />
 		</View>
+		:
+
+			<WebView
+				source={{
+					uri: "https://www.bikemn.org/all-events/rides-events/",
+				}}
+				style={{ flex: 1 }}
+				ref={webRef}
+				onNavigationStateChange={handleNavigation}
+			/>}
+		</>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		height: "90%",
-		width: "100%",
-		display: "flex",
-		flexDirection: "column",
-		backgroundColor: "#fff",
-		alignItems: "center",
+	safe: {
+		flex: 1,
+	},
+	scroll: {
+		flexGrow: 1,
+	},
+	innerScroll: {
+		flex: 1,
 		justifyContent: "center",
+		alignItems: "center",
 		padding: 20,
+		backgroundColor: "#F7B247",
 	},
-	mainView: {
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		width: "100%",
-		padding: "15px",
-	},
-	flexCol: {
-		flexDirection: "column",
+	sectionView: {
+		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
-		marginTop: 15,
-	},
-	flexRow: {
-		flex: 0,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-around",
-		marginTop: 15,
-	},
-	bigText: { fontSize: 50 },
-	medText: { fontSize: 30 },
-	regText: { fontSize: 14 },
-	button: {
-		display: "flex",
-		alignItems: "center",
-		border: "1px solid transparent",
-		borderRadius: "8px",
-		fontSize: 15,
-		width: "75%",
-		marginTop: "20px",
-		marginBottom: "10px",
-		padding: "10px",
-	},
-
-	input: {
-		height: 40,
-		margin: 12,
-		borderWidth: 1,
-		padding: 10,
 		width: "100%",
+		backgroundColor:'#000'
+	},
+	leftColAr: {
+		justifyContent: "space-around",
+		alignItems: "flex-start",
+		width: "100%",
+	},
+	rightColAr: {
+		justifyContent: "space-around",
+		alignItems: "flex-end",
+		width: "100%",
+	},
+	cenColAr: {
+		justifyContent: "space-around",
+		alignItems: "center",
+		width: "100%",
+	},
+	leftColBe: {
+		justifyContent: "space-between",
+		alignItems: "flex-start",
+		width: "100%",
+	},
+	rightColBe: {
+		justifyContent: "space-between",
+		alignItems: "flex-end",
+		width: "100%",
+	},
+	cenColBe: {
+		justifyContent: "space-between",
+		alignItems: "center",
+		width: "100%",
+	},
+	leftRow: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		alignItems: "center",
+		width: "100%",
+	},
+	rightRow: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		alignItems: "center",
+		width: "100%",
+	},
+	cenRow: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		width: "100%",
+	},
+	mv10: {
+		marginVertical: 10,
+	},
+	mt10: {
+		marginTop: 10,
+	},
+	mr10: {
+		marginRight: 10,
+	},
+	titleText: {
+		fontWeight: "bold",
+		fontSize: 20,
 	},
 });
+

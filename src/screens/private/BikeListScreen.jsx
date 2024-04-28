@@ -18,6 +18,8 @@ import {
 import { HumanDateTime } from "../../util/HumanDateTime/HumanDateTime";
 import { clearMyBike } from "../../redux/slices/private/staffBikeSlice";
 
+import ScreenWrapper from "../../components/ScreenWrapper/ScreenWrapper";
+
 export default function BikeListScreen() {
 	const dispatch = useDispatch();
 	const myBike = useSelector((store) => store.myBike);
@@ -47,7 +49,7 @@ export default function BikeListScreen() {
 		// console.log(orgBikes);
 		dispatch(staffGetBikes(user.org_id));
 		dispatch(getMyBike(user.user_id));
-	}, []);
+	}, [dispatch]);
 
 	useEffect(() => {
 		const now = HumanDateTime();
@@ -118,10 +120,12 @@ export default function BikeListScreen() {
 		id,
 		bike_id,
 		return_by,
+		nickname,
 		checked_out_by,
 		org_id,
 		in_use,
-		check_out_date,
+		user_first,
+		user_last,
 	}) => {
 		const is_my_bike = checked_out_by === user.user_id;
 
@@ -152,7 +156,7 @@ export default function BikeListScreen() {
 						}}
 						containerStyle={styles.bikeCard}
 					>
-						<Card.Title> {`Bike # ${bike_id}`}</Card.Title>
+						<Card.Title> {nickname}</Card.Title>
 						<Text>Available On: {formatForHumans(return_by)}</Text>
 						<Text></Text>
 						<Card.Divider />
@@ -162,8 +166,8 @@ export default function BikeListScreen() {
 								title={
 									in_use
 										? "Not Available"
-										: `Use Bike #${bike_id}`
-								}
+										: `Use ${nickname}`
+									}
 								onPress={() => {
 									giveBack(bike_id);
 								}}
@@ -178,12 +182,12 @@ export default function BikeListScreen() {
 					wrapperStyle={styles.bikeWrapper}
 					containerStyle={styles.bikeCard}
 				>
-					<Card.Title>{`Bike #${bike_id}`}</Card.Title>
+					<Card.Title>{nickname}</Card.Title>
 					<Text> Available </Text>
 					<Card.Divider />
 					<View>
 						<Button
-							title={`Use Bike #${bike_id}`}
+							title={`Use ${nickname}`}
 							onPress={takeBike}
 						/>
 					</View>
@@ -193,91 +197,95 @@ export default function BikeListScreen() {
 	};
 
 	return (
-		<View style={styles.container}>
-			<View style={styles.sectionView}>
-                {myBike.bike_id ===0 &&
-				<View>
-					<Text>Check out a bike </Text>
-					<View style={styles.flatList}>
-						<FlatList
-							data={orgBikes}
-							renderItem={({ item }) => (
-								<Item
-									id={item.id}
-									bike_id={item.bike_id}
-									return_by={item.return_by}
-									checked_out_by={item.checked_out_by}
-									org_id={item.org_id}
-									in_use={item.in_use}
-									check_out_date={item.check_out_date}
+		<ScreenWrapper background={{backgroundColor:'#fff'}}>
+			<View style={styles.container}>
+				<View style={styles.sectionView}>
+					{myBike.bike_id === 0 && (
+						<View>
+							<Text>Check out a bike </Text>
+							<View style={styles.flatList}>
+								<FlatList
+									data={orgBikes}
+									renderItem={({ item }) => (
+										<Item
+											id={item.id}
+											bike_id={item.bike.id}
+											nickname={item.bike.nickname}
+											return_by={item.return_by}
+											user_first={item.user?.first_name}
+											user_last={item.user?.last_name}
+											org_id={item.org_id}
+											in_use={item.in_use}
+											check_out_date={item.check_out_date}
+										/>
+									)}
+									keyExtractor={(item) => item.id}
 								/>
-							)}
-							keyExtractor={(item) => item.id}
-						/>
-					</View>
-				</View>}
-				{myBike.bike_id !== 0 && (
-					<View style={styles.sectionView}>
-						<Card
-							wrapperStyle={styles.bikeWrapper}
-							containerStyle={styles.bikeCard}
-                            >
-                                <Text
-                                style={{
-                                    fontSize:16,
-                                    fontWeight:'bold',
-                                    marginVertical:10
-                                }}
-                                >
-                                    Return Your Bike by{" "}
-                                    {formatForHumans(myBike.return_by)}
-                                </Text>
-							<Button
-                            onPress={giveBack}
-
-                            >{`Return Bike #${myBike?.bike_id} `}</Button>
-						</Card>
-					</View>
-				)}
-			</View>
-			<Dialog isVisible={open} onBackdropPress={resetCheckout}>
-				<Dialog.Title
-					title={`Checking out Bike #${checkout.bike_id}`}
-				/>
-				<View style={{ alignItems: "center", marginVertical: 5 }}>
-					<Text style={{ fontSize: 16, marginBottom: 10 }}>
-						How long do you need it?
-					</Text>
-
-					<View style={styles.grid}>
-						<Button
-							title="-"
-							disabled={howLong <= 1}
-							onPress={() => {
-								handleWeekChange("LESS");
-							}}
-						/>
-						<Text>
-							{howLong} {howLong === 1 ? "Week" : "Weeks"}
-						</Text>
-						<Button
-							variant="contained"
-							title="+"
-							disabled={howLong >= 4}
-							onPress={() => {
-								handleWeekChange("MORE");
-							}}
-						/>
-					</View>
+							</View>
+						</View>
+					)}
+					{myBike.bike_id !== 0 && (
+						<View style={styles.sectionView}>
+							<Card
+								wrapperStyle={styles.bikeWrapper}
+								containerStyle={styles.bikeCard}
+							>
+								<Text
+									style={{
+										fontSize: 16,
+										fontWeight: "bold",
+										marginVertical: 10,
+									}}
+								>
+									Return Your Bike by{" "}
+									{formatForHumans(myBike.return_by)}
+								</Text>
+								<Button
+									onPress={giveBack}
+								>{`Return Bike #${myBike?.bike_id} `}</Button>
+							</Card>
+						</View>
+					)}
 				</View>
-				<Button
-					buttonStyle={{ marginVertical: 5 }}
-					onPress={handleCheckout}
-				>
-					Reserve Bike
-				</Button>
-			</Dialog>
-		</View>
+				<Dialog isVisible={open} onBackdropPress={resetCheckout}>
+					<Dialog.Title
+						title={`Checking out Bike #${checkout.bike_id}`}
+					/>
+					<View style={{ alignItems: "center", marginVertical: 5 }}>
+						<Text style={{ fontSize: 16, marginBottom: 10 }}>
+							How long do you need it?
+						</Text>
+
+						<View style={styles.grid}>
+							<Button
+								title="-"
+								disabled={howLong <= 1}
+								onPress={() => {
+									handleWeekChange("LESS");
+								}}
+							/>
+							<Text>
+								{howLong} {howLong === 1 ? "Week" : "Weeks"}
+							</Text>
+							<Button
+								variant="contained"
+								title="+"
+								disabled={howLong >= 4}
+								onPress={() => {
+									handleWeekChange("MORE");
+								}}
+							/>
+						</View>
+					</View>
+					<Button
+						buttonStyle={{ marginVertical: 5 }}
+						onPress={handleCheckout}
+					>
+						Reserve Bike
+					</Button>
+				</Dialog>
+			</View>
+		</ScreenWrapper>
 	);
 }
 
@@ -333,6 +341,55 @@ const styles = StyleSheet.create({
 	lastGridItem: {
 		width: "100%",
 		padding: 1,
+	},
+	safe: {
+		flex: 1,
+	},
+	keeb: {
+		flex: 1,
+	},
+	scroll: {
+		flexGrow: 1,
+	},
+	innerScroll: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		padding: 20,
+		backgroundColor: "#fff",
+	},
+	leftColAr: {
+		justifyContent: "space-around",
+		alignItems: "flex-start",
+		width: "100%",
+	},
+	rightColAr: {
+		justifyContent: "space-around",
+		alignItems: "flex-end",
+		width: "100%",
+	},
+	cenColAr: {
+		justifyContent: "space-around",
+		alignItems: "center",
+		width: "100%",
+	},
+	leftColBe: {
+		justifyContent: "space-between",
+		alignItems: "flex-start",
+		width: "100%",
+	},
+	rightColBe: {
+		justifyContent: "space-between",
+		alignItems: "flex-end",
+		width: "100%",
+	},
+	cenColBe: {
+		justifyContent: "space-between",
+		alignItems: "center",
+		width: "100%",
+	},
+	mv10: {
+		marginVertical: 10,
 	},
 });
 

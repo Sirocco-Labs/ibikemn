@@ -52,7 +52,20 @@ export const staffGetBikes = (org_id) => async (dispatch) => {
 	try {
 		const staffGetFreeBikes = await supabase
 			.from("bike_registration_junction")
-			.select("*")
+			.select(`
+			id,
+			bike:bike_id(
+				id,
+				nickname
+			),
+			in_use,
+			check_out_date,
+			return_by,
+			user:checked_out_by(
+				first_name,
+				last_name
+			)
+			`)
 			.eq("org_id", org_id)
 			.order("in_use", { descending: true })
 			.order("id", { ascending: true });

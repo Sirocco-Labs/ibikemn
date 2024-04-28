@@ -1,26 +1,22 @@
 import { SafeAreaView, View, StyleSheet } from "react-native";
-import { Text, Button } from "@rneui/themed";
-import { logoutUser } from "../redux/thunks/authThunk";
-import { useDispatch } from "react-redux";
-import { clearUserData } from "../redux/slices/userSlice";
+import { Text } from "@rneui/themed";
+
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
 
-export default function UserAccountScreen() {
-	const dispatch = useDispatch();
-	const clearUserThenLogout = () => {
-		dispatch(clearUserData());
-		dispatch(logoutUser());
-	};
+export default function ResourcesScreen() {
 	return (
 		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
 			<View style={styles.sectionView}>
+				<View style={styles.leftColAr}>
+					<Text>Become a Pedal Pal</Text>
+				</View>
 			</View>
 			<View style={styles.sectionView}>
-				<Button onPress={() => dispatch(clearUserData())}>
-					Clear User
-				</Button>
-				<Button onPress={clearUserThenLogout}>Logout</Button>
+				<View style={styles.leftColAr}>
+					<Text>Bike vids</Text>
+				</View>
 			</View>
+			<View style={styles.sectionView}></View>
 		</ScreenWrapper>
 	);
 }
@@ -48,8 +44,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		width: "100%",
 		padding: 15,
-		borderRadius: 16,
-		marginVertical: 10,
+		marginTop: 10,
+		backgroundColor: "#fff",
 	},
 	leftColAr: {
 		justifyContent: "space-around",
@@ -85,3 +81,4 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 	},
 });
+

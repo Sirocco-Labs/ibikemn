@@ -13,8 +13,10 @@ import { useNavigation } from "@react-navigation/native";
 
 import { addRideSurvey } from "../redux/thunks/rideSurveyThunk";
 import KeyboardAvoidingScrollView from "../components/KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
+import { checkChallengeCompletion } from "../redux/thunks/incentiveThunk";
 
 export default function RideSurveyScreen() {
+
 	const inputStyling = useRef(null);
 	const inputRef = useRef(null);
 	const dispatch = useDispatch();
@@ -78,18 +80,20 @@ export default function RideSurveyScreen() {
 		route: routeData,
 	};
 	const user = useSelector((store) => store.user);
+	const commute = useSelector((store)=>store.commute);
 
 	const [survey, setSurvey] = useState(surveyData);
 
 	const handleSubmit = () => {
 		let destination = survey.destination.find((obj) => obj.choice === true);
 		let route = survey.route.find((value) => value.choice === true);
-        let hackination = destination.title
+		let hackination = destination.title;
 
-        if(destination.title === "Other"){
-            hackination = destination.flavor
-        }
+		if (destination.title === "Other") {
+			hackination = destination.flavor;
+		}
 		const payload = {
+			ride_id: commute.ride_id,
 			user_id: user.user_id,
 			is_replace_transit: survey.is_replace_transit,
 			is_solo: survey.is_solo,
@@ -97,10 +101,18 @@ export default function RideSurveyScreen() {
 			route_type: route.title,
 		};
 
+		const userInfo = {
+			user_id: user.user_id,
+			publicUser: user.is_public,
+		};
+
 		console.log("PAYLOAD", payload);
 		dispatch(addRideSurvey(payload));
-		dispatch(clearCommuteSlice());
+		// (FIND ME)
+		dispatch(checkChallengeCompletion(userInfo))
+		// dispatch(updateUserIncentiveProgress(userInfo))
 		navigation.jumpTo("Home");
+		dispatch(clearCommuteSlice());
 	};
 
 	const validateSurvey = () => {

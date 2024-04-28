@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import {finishProfile} from '../../redux/thunks/userThunk'
 
+import { clearIntakeSlice } from "../../redux/slices/intakeFormSlice";
+
 export default function IntakeFormSubmit({ navigation, route }) {
 	const dispatch = useDispatch();
 

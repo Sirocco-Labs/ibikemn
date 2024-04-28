@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setIntakeScreening } from "../../redux/slices/intakeFormSlice";
 import KeyboardAvoidingScrollView from "../KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
+import { confirmSecret } from "../../redux/thunks/authThunk";
 
 export default function IntakeFormScreening({ navigation, route }) {
 	const dispatch = useDispatch();
@@ -332,6 +333,13 @@ export default function IntakeFormScreening({ navigation, route }) {
 		return array.length % 2 && index === array.length - 1;
 	};
 
+	const [secret, setSecret] = useState('')
+
+	const checkSecret = () =>{
+		handleSave()
+		dispatch(confirmSecret(secret))
+	}
+
 	return (
 		<KeyboardAvoidingScrollView>
 			<View style={styles.flexOne}>
@@ -449,8 +457,6 @@ export default function IntakeFormScreening({ navigation, route }) {
 								</View>
 							))}
 						</View>
-
-
 					</View>
 
 					<View style={styles.section}>
@@ -527,74 +533,102 @@ export default function IntakeFormScreening({ navigation, route }) {
 						</View>
 						{advance && (
 							<View style={styles.section}>
-								<Text
-									style={[
-										styles.fieldTitle,
-										{ marginLeft: 5 },
-									]}
-								>
-									Who's your employer?
-								</Text>
-								<View style={styles.gridCB}>
-									{employmentData.map((box, i) => (
-										<View
-											style={
-												checkForLast(employmentData, i)
-													? styles.lastGridItemCB
-													: styles.gridItemCB
-											}
-											key={i}
+								{!intake.secret ? (
+									<>
+										<Input
+											value={secret}
+											onChangeText={(text) => {
+												setSecret(text);
+											}}
+										/>
+										<Button
+										onPress={checkSecret}
+										>Verify</Button>
+									</>
+								) : (
+									<>
+										<Text
+											style={[
+												styles.fieldTitle,
+												{ marginLeft: 5 },
+											]}
 										>
-											<CheckBox
-												iconRight={false}
-												title={box.title}
-												checked={employment[i].choice}
-												onPress={() => {
-													// loop through previous state
-													// if the index of the previous state is the same as the index passed in
-													// then return that object with the change in choice value
-													setEmployment((last) =>
-														last.map(
-															(object, index) =>
-																index === i && {
-																	...object,
-																	choice: !object.choice,
-																}
+											Who's your employer?
+										</Text>
+										<View style={styles.gridCB}>
+											{employmentData.map((box, i) => (
+												<View
+													style={
+														checkForLast(
+															employmentData,
+															i
 														)
-													);
-													if (box.level === "admin") {
-														updatePayload(
-															"admin_identity",
-															true
-														);
-													} else {
-														updatePayload(
-															"org_identity",
-															box.value
-														);
+															? styles.lastGridItemCB
+															: styles.gridItemCB
 													}
-													validateSave();
-												}}
-												textStyle={{
-													fontSize: 12,
-													fontWeight: "bold",
-												}}
-												containerStyle={{
-													height: "auto",
-													paddingVertical: 0,
-													paddingLeft: 0,
-													margin: 0,
-													// borderColor: "magenta",
-													// borderWidth: 1,
-												}}
-											/>
+													key={i}
+												>
+													<CheckBox
+														iconRight={false}
+														title={box.title}
+														checked={
+															employment[i].choice
+														}
+														onPress={() => {
+															// loop through previous state
+															// if the index of the previous state is the same as the index passed in
+															// then return that object with the change in choice value
+															setEmployment(
+																(last) =>
+																	last.map(
+																		(
+																			object,
+																			index
+																		) =>
+																			index ===
+																				i && {
+																				...object,
+																				choice: !object.choice,
+																			}
+																	)
+															);
+															if (
+																box.level ===
+																"admin"
+															) {
+																updatePayload(
+																	"admin_identity",
+																	true
+																);
+															} else {
+																updatePayload(
+																	"org_identity",
+																	box.value
+																);
+															}
+															validateSave();
+														}}
+														textStyle={{
+															fontSize: 12,
+															fontWeight: "bold",
+														}}
+														containerStyle={{
+															height: "auto",
+															paddingVertical: 0,
+															paddingLeft: 0,
+															margin: 0,
+															// borderColor: "magenta",
+															// borderWidth: 1,
+														}}
+													/>
+												</View>
+											))}
 										</View>
-									))}
-								</View>
+									</>
+								)}
 							</View>
 						)}
 					</View>
-
 
 					<View style={styles.section}>
 						<View style={styles.grid}>
@@ -632,8 +666,8 @@ export default function IntakeFormScreening({ navigation, route }) {
 								disabled={
 									!intake.screening.how_did_you_hear &&
 									!intake.screening.commute_frequency &&
-									!intake.screening.bike_confidence &&
-									!validateSave()
+									!intake.screening.bike_confidence ||
+									validateSave()
 								}
 								onPress={() => {
 									navigation.jumpTo("Demographics");

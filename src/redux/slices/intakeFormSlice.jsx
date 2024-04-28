@@ -16,7 +16,7 @@ const initialState = {
 		age:'',
 		gender_identity:'',
 		race:[],
-		income:'',
+		income_level:'',
 		zip_code:'',
 	},
 	consents: {
@@ -27,6 +27,7 @@ const initialState = {
 		biometrics:null,
 		notifications:null,
 	},
+	secret:false
 };
 
 const intakeFormSlice = createSlice({
@@ -51,6 +52,9 @@ const intakeFormSlice = createSlice({
 		setIntakeConsents(state, action) {
 			return { ...state, ['consents']: action.payload };
 		},
+		setIntakeSecret(state, action) {
+			return { ...state, ['secret']: action.payload };
+		},
 		clearIntakeSlice(state) {
 			return { ...state, ...initialState };
 		},
@@ -65,6 +69,7 @@ export const {
 	setIntakeDemographics,
 	setIntakeConsents,
 	clearIntakeSlice,
+	setIntakeSecret,
 } = intakeFormSlice.actions;
 
 export default intakeFormSlice.reducer;

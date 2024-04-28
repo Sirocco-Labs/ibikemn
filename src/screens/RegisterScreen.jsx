@@ -17,7 +17,7 @@ import React, { useState } from "react";
 
 function RegisterScreen() {
 	const dispatch = useDispatch();
-	const feedback = useSelector((store) => store.feedback.registration);
+	// const feedback = useSelector((store) => store.feedback.registration);
 
 	const [loading, setLoading] = useState(false);
 	const verify = { main: false, check: false };
@@ -145,7 +145,7 @@ function RegisterScreen() {
 					{/* <View style={styles.mb20}> */}
 					<Button
 						title="Register"
-						disabled={feedback.error}
+						// disabled={feedback.error}
 						onPress={() => {
 							dispatch(emailSignUp(regData)),
 								setRegData(formData);

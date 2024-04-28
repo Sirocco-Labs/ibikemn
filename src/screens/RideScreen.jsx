@@ -22,8 +22,12 @@ import {
 	toggleSurveyOpen,
 } from "../redux/slices/commuteSlice";
 
+import { setIsProgressUpdated } from "../redux/slices/incentiveSlice";
+
 import RideSurveyScreen from "./RideSurveyScreen";
 import RideTrackingScreen from "./RideTrackingScreen";
+
+import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
 
 export default function RideScreen() {
 	const dispatch = useDispatch();
@@ -37,6 +41,8 @@ export default function RideScreen() {
 			if (!distance.is_tracking) {
 				console.log("TRACKING STARTED!");
 				dispatch(toggleTrackingStatus());
+				// (FIND ME)
+				dispatch(setIsProgressUpdated(false))
 				dispatch(setRideStartTime(new Date().toISOString()));
 				await startLocationTracking(dispatch);
 			}
@@ -45,40 +51,36 @@ export default function RideScreen() {
 		}
 	};
 
-
 	return (
-		<View style={styles.container}>
-			<Text style={styles.medText}>Are you riding to work?</Text>
-			<View style={styles.buttonWrapper}>
-				<Button
-					buttonStyle={{ width: 300, padding: 15 }}
-					raised
-					fullWidth
-					onPress={() => {
-						// handleStartTime()
-						dispatch(chooseWorkCommute());
-						handleStartTracking();
-					}}
-				>
-					YES
-				</Button>
-			</View>
-			<View style={styles.buttonWrapper}>
-				<Button
-					raised
-					buttonStyle={{ width: 300, padding: 15 }}
-					onPress={() => {
-						// handleStartTime();
-						handleStartTracking();
-					}}
-				>
-					NO
-				</Button>
-			</View>
-
-			<View style={styles.grid}>
-				<View style={styles.gridItem}></View>
-				<View style={styles.gridItem}></View>
+		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
+			<View style={styles.sectionView}>
+				<View style={styles.cenColBe}>
+					<Text style={styles.medText}>Are you riding to work?</Text>
+					<View style={styles.buttonWrapper}>
+						<Button
+							buttonStyle={{ width: 300, padding: 15 }}
+							raised
+							fullWidth
+							onPress={() => {
+								dispatch(chooseWorkCommute());
+								handleStartTracking();
+							}}
+						>
+							YES
+						</Button>
+					</View>
+					<View style={styles.buttonWrapper}>
+						<Button
+							raised
+							buttonStyle={{ width: 300, padding: 15 }}
+							onPress={() => {
+								handleStartTracking();
+							}}
+						>
+							NO
+						</Button>
+					</View>
+				</View>
 			</View>
 
 			<ModalWrapper
@@ -91,7 +93,7 @@ export default function RideScreen() {
 				header={"Tell us about your ride"}
 				component={RideSurveyScreen}
 			/>
-		</View>
+		</ScreenWrapper>
 	);
 }
 
@@ -118,17 +120,31 @@ const styles = StyleSheet.create({
 		// borderColor:'green',
 		// borderWidth:10
 	},
-
 	sectionView: {
-		display: "flex",
-		flexDirection: "column",
+		flex: 1,
 		alignItems: "center",
-		justifyContent: "space-evenly",
+		justifyContent: "center",
 		width: "100%",
 		padding: 15,
-		backgroundColor: "#fff",
+		borderRadius: 16,
 		marginVertical: 10,
 	},
+	cenColBe: {
+		justifyContent: "space-between",
+		alignItems: "center",
+		width: "100%",
+	},
+
+	// sectionView: {
+	// 	display: "flex",
+	// 	flexDirection: "column",
+	// 	alignItems: "center",
+	// 	justifyContent: "space-evenly",
+	// 	width: "100%",
+	// 	padding: 15,
+	// 	backgroundColor: "#fff",
+	// 	marginVertical: 10,
+	// },
 	grid: {
 		flexDirection: "row",
 		flexWrap: "wrap",
@@ -157,12 +173,11 @@ const styles = StyleSheet.create({
 	medText: { fontSize: 30, marginVertical: 30 },
 	regText: { fontSize: 14 },
 	buttonWrapper: {
-		display: "flex",
-		flexDirection: "column",
+		flex:1,
 		alignItems: "center",
 		justifyContent: "space-around",
 		width: "100%",
-		marginVertical: 30,
+		marginVertical: 25,
 		padding: 15,
 	},
 

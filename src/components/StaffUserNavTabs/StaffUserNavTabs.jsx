@@ -6,12 +6,16 @@ import HomeScreen from "../../screens/HomeScreen";
 import RideScreen from "../../screens/RideScreen";
 import UserAccountScreen from "../../screens/UserAccountScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
-import SurveyScreen from "../../screens/SurveyScreen";
+import SurveyScreen from "../../screens/ResourcesScreen";
 import IncentiveScreen from "../../screens/IncentiveScreen";
 import BikeListScreen from "../../screens/private/BikeListScreen";
 
 export default function StaffUserNavTabs() {
 	const Tab = createBottomTabNavigator();
+	const styleOptions = {
+		headerStyle: { backgroundColor: "#1269A9" },
+		headerTintColor: "#FFFAF2",
+	};
 	return (
 		<NavigationContainer>
 			<Tab.Navigator
@@ -20,7 +24,7 @@ export default function StaffUserNavTabs() {
 					tabBarStyle: {
 						height: 50,
 						padding: 2,
-						// backgroundColor: "#0000ff",
+						backgroundColor: "#1269A9",
 					},
 					tabBarItemStyle: {
 						margin: 2,
@@ -48,14 +52,30 @@ export default function StaffUserNavTabs() {
 							/>
 						);
 					},
-					tabBarActiveTintColor: "#1269A9",
-					tabBarInactiveTintColor: "gray",
+					tabBarActiveTintColor: "#F7B247",
+					tabBarInactiveTintColor: "#FFF",
 				})}
 			>
-				<Tab.Screen name="Bikes" component={BikeListScreen} />
-				<Tab.Screen name="Ride" component={RideScreen} />
-				<Tab.Screen name="Home" component={HomeScreen} />
-				<Tab.Screen name="Account" component={UserAccountScreen} />
+				<Tab.Screen
+					name="Bikes"
+					component={BikeListScreen}
+					options={styleOptions}
+				/>
+				<Tab.Screen
+					name="Ride"
+					component={RideScreen}
+					options={styleOptions}
+				/>
+				<Tab.Screen
+					name="Home"
+					component={HomeScreen}
+					options={styleOptions}
+				/>
+				<Tab.Screen
+					name="Account"
+					component={UserAccountScreen}
+					options={styleOptions}
+				/>
 			</Tab.Navigator>
 		</NavigationContainer>
 	);

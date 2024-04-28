@@ -1,5 +1,6 @@
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import { Text } from "@rneui/themed";
+import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
 
 export default function SplashScreen() {
 	return (

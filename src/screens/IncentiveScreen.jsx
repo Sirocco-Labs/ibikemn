@@ -5,7 +5,7 @@ import { Text } from "@rneui/themed";
 export default function IncentiveScreen() {
 	return(
 
-        <View style={styles.container}>
+        <View style={{flex:1, padding:15, width:'100%', backgroundColor:'#fff'}}>
             <Text>
                 INCENTIVES
             </Text>

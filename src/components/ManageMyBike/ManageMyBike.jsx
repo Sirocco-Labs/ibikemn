@@ -4,44 +4,96 @@ import {
 } from "react-native";
 import {
 	Text,
+	ListItem,
+	Avatar,
+	Divider,
 } from "@rneui/themed";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect} from "react";
+import { useDispatch} from "react-redux";
+import { useEffect, useState } from "react";
 import {
-	staffGetBikes,
-	getMyBike,
+    getMyBike,
+	returnBike,
 } from "../../redux/thunks/private/staffBikeThunk";
 
-import ScreenWrapper from "../../components/ScreenWrapper/ScreenWrapper";
-import ManageMyBike from "../../components/ManageMyBike/ManageMyBike";
-import AvailableBikeList from "../../components/AvailableBikeList/AvailableBikeList";
 
-export default function BikeListScreen() {
-	const dispatch = useDispatch();
-	const myBike = useSelector((store) => store.myBike);
-	const orgBikes = useSelector((store) => store.orgBikes);
-	const user = useSelector((store) => store.user);
+import ScaleButton from '../ScaleButton/ScaleButton';
+import BikeNotesDialog from "../BikeNotesDialog/BikeNotesDialog";
 
-	useEffect(() => {
-		dispatch(staffGetBikes(user.org_id));
-		dispatch(getMyBike(user.user_id));
-	}, [dispatch]);
+export default function ManageMyBike({myBike}) {
+
+    const dispatch = useDispatch()
+    const formatForHumans = (iso) => {
+		const date = new Date(iso);
+		const formattedTime = date.toLocaleString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		});
+		return formattedTime;
+	};
+    const giveBack = () => {
+		dispatch(returnBike(myBike));
+	};
+
+    useEffect(()=>{
+        dispatch(getMyBike(myBike.checked_out_by))
+    }, [dispatch])
 
 	return (
-		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
-			<Text style={{ fontSize: 25, alignSelf: "flex-start", fontWeight:'700', color:'#1269A9' }}>
-				{myBike.bike_id === 0 ? `Reserve a Bike` : `Your Bike`}
-			</Text>
-			{myBike.bike_id !== 0 && (
-				<ManageMyBike myBike={myBike} />
-			)}
-			<View style={styles.sectionView}>
-				{myBike.bike_id === 0 && (
-					<AvailableBikeList orgBikes={orgBikes} user={user} myBike={myBike}/>
-				)}
+		<>
+			<View style={styles.singleBike}>
+				<ListItem
+					containerStyle={{
+						width: "100%",
+						padding: 2,
+					}}
+				>
+					<Avatar
+						rounded
+						icon={{
+							type: "material-community",
+							name: "bike-fast",
+							size: 20,
+							color: "#1269A9",
+						}}
+						containerStyle={{
+							backgroundColor: "#F7B247",
+							borderColor: "#1269A9",
+							borderWidth: 1.5,
+						}}
+					/>
+					<ListItem.Content style={{ alignItems: "flex-start" }}>
+						<ListItem.Title>{`${myBike.bike_info.nickname}`}</ListItem.Title>
+						<ListItem.Subtitle>
+							{`Return by ${formatForHumans(myBike.return_by)}`}
+						</ListItem.Subtitle>
+					</ListItem.Content>
+
+					<ScaleButton
+						looks={[styles.solidButton, { width: 120 }]}
+						onPress={giveBack}
+					>
+						<Text
+							style={{
+								fontWeight: "700",
+								color: "#fff",
+							}}
+						>
+							{`Return`}
+						</Text>
+					</ScaleButton>
+				</ListItem>
+				<Divider
+					width={2}
+					color="#F7B247"
+					style={{ width: "100%", marginTop: 10 }}
+					insetType="middle"
+				/>
 			</View>
 
-		</ScreenWrapper>
+            <BikeNotesDialog myBike={myBike}/>
+
+		</>
 	);
 }
 
@@ -205,3 +257,4 @@ const styles = StyleSheet.create({
 		padding: 2,
 	},
 });
+

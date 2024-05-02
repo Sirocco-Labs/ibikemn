@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import ProgressBar from "react-native-progress/Bar";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const ProgressBike = ({ earned, loading, stats }) => {
+const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 	const [load, setLoad] = useState(false);
 	const [wide, setWide] = useState(0);
 	useEffect(() => {
@@ -19,19 +19,29 @@ const ProgressBike = ({ earned, loading, stats }) => {
 		console.log("earned", earned);
 	}, [loading, earned]);
 
-	return earned >= 2 ? (
+	return earned >= 1 ? (
 		<View>
-			<Text></Text>
+			<Text>Challenge Completed!</Text>
 		</View>
 	) : (
 		<View style={[styles.container]}>
+			<Text
+				style={{
+					fontSize: 13,
+					// fontWeight: "bold",
+					color: "#1269A9",
+					alignSelf: "center",
+				}}
+			>
+				{motivation}
+			</Text>
 			<View style={[styles.innerContainer]}>
 				<View style={styles.checking}>
 					{load ? (
 						<View style={styles.progressText}>
 							<Text
 								style={{
-									color: "#1269A9",
+									color: "#000",
 									fontSize: 14,
 									fontWeight: "bold",
 								}}
@@ -43,41 +53,88 @@ const ProgressBike = ({ earned, loading, stats }) => {
 						<View style={styles.progressText}>
 							<Text
 								style={{
-									color: "#1269A9",
+									color: "#000",
 									fontSize: 14,
-									fontWeight: "bold",
+									// fontWeight: "bold",
 								}}
 							>
-								{stats.earned_points_toward_goal? `${stats.earned_points_toward_goal}` : '0' }
-							</Text>
-							<Text
-								style={{
-									color: "#1269A9",
-									fontSize: 14,
-									fontWeight: "bold",
-								}}
-							>
-								{/* {` ${stats.active_challenge.challenge_info.point_value}`} */}
+								{earned ? `${Math.round(earned * 100)}%` : `Start riding to earn progress`}
 							</Text>
 						</View>
 					)}
 				</View>
+
 				<ProgressBar
 					progress={earned}
 					animated
 					indeterminate={load}
 					indeterminateAnimationDuration={500}
-					width={300}
-					height={30}
+					width={320}
+					height={25}
 					color="#F7B247"
-					// unfilledColor="#f0f0f0"
-					// unfilledColor="#1269A9"
+					// unfilledColor="#f9f9f9"
 					borderWidth={1}
-					borderRadius={5}
+					borderRadius={15}
+					style={{ borderColor: "#F7B247" }}
 				/>
 				{/* <View style={{ width: `${earned * 90}%` }}></View> */}
 			</View>
-			{/* {!load && (
+		</View>
+	);
+};
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: "flex-start",
+		justifyContent: "flex-end",
+		marginVertical: 5,
+	},
+	innerContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		// width: "100%",
+		marginVertical: 10,
+		// borderWidth: 1,
+	},
+	progressBar: {
+		borderColor: "#F7B247",
+	},
+	bikeRow: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		width: "100%",
+	},
+	progress: {
+		justifyContent: "center",
+		alignItems: "center",
+		height: 30,
+		marginTop: -30,
+		width: 30,
+	},
+	checking: {
+		position: "absolute",
+		left: 0,
+		top: 2.5,
+		zIndex: 2,
+		width: "70%",
+		paddingLeft: 15,
+	},
+	progressText: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+	},
+});
+
+export default ProgressBike;
+
+{
+	/*
+
+{!load && (
 				<View
 					style={[styles.bikeRow,]}
 				>
@@ -107,56 +164,6 @@ const ProgressBike = ({ earned, loading, stats }) => {
 						/>
 					</View>
 				</View>
-			)} */}
-		</View>
-	);
-};
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		flexDirection: "column",
-		alignItems: "flex-start",
-		justifyContent: "flex-end",
-		// width: "100%",
-		height: "100%",
-	},
-	innerContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "flex-start",
-		width: "100%",
-	},
-	progressBar: {
-		borderColor: "#F7B247",
-	},
-	bikeRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "flex-start",
-		width: "100%",
-	},
-	progress: {
-		justifyContent: "center",
-		alignItems: "center",
-		height: 30,
-		marginTop: -30,
-		width: 30,
-	},
-	checking: {
-		position: "absolute",
-		left: 0,
-		zIndex: 2,
-        width:'95%',
-        paddingHorizontal:10
-	},
-	progressText: {
-		flex: 1,
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-        width:'100%'
-	},
-});
-
-export default ProgressBike;
+			)}
+*/
+}

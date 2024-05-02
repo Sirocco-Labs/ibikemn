@@ -116,6 +116,7 @@ export const getActiveIncentives = (userInfo) => async (dispatch) => {
                 id,
                 start_date,
                 end_date,
+                created_at,
                 info: incentive_id(
                     id,
                     title,
@@ -130,7 +131,7 @@ export const getActiveIncentives = (userInfo) => async (dispatch) => {
 			)
 			.lte("start_date", new Date().toISOString())
 			.match(condition)
-			.order("created_at", { ascending: false });
+			.order("end_date", { ascending: true });
 
 		if (getChallenges.error) {
 			console.error(

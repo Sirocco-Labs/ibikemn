@@ -1,47 +1,47 @@
-import {
-	View,
-	StyleSheet,
-} from "react-native";
-import {
-	Text,
-} from "@rneui/themed";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect} from "react";
-import {
-	staffGetBikes,
-	getMyBike,
-} from "../../redux/thunks/private/staffBikeThunk";
+import { useState } from "react";
+import { View, StyleSheet, Dialog, FlatList } from "react-native";
+import { Text, Input } from "@rneui/themed";
+import ScaleButton from "../ScaleButton/ScaleButton";
+import { useDispatch } from "react-redux";
+import { addBikeNote } from "../../redux/thunks/private/staffBikeThunk";
 
-import ScreenWrapper from "../../components/ScreenWrapper/ScreenWrapper";
-import ManageMyBike from "../../components/ManageMyBike/ManageMyBike";
-import AvailableBikeList from "../../components/AvailableBikeList/AvailableBikeList";
 
-export default function BikeListScreen() {
-	const dispatch = useDispatch();
-	const myBike = useSelector((store) => store.myBike);
-	const orgBikes = useSelector((store) => store.orgBikes);
-	const user = useSelector((store) => store.user);
+export default function AddBikeNote({ notes, bike_id, user_id }) {
+    const dispatch = useDispatch()
+	const [bikeNotes, setBikeNotes] = useState("");
 
-	useEffect(() => {
-		dispatch(staffGetBikes(user.org_id));
-		dispatch(getMyBike(user.user_id));
-	}, [dispatch]);
+
+	const saveNotes = () => {
+		let noteArr = notes ? [...notes, bikeNotes] : [bikeNotes];
+		const payload = {
+			id: bike_id,
+			note: noteArr,
+            user_id:user_id
+		};
+		dispatch(addBikeNote(payload));
+        setBikeNotes('')
+	};
 
 	return (
-		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
-			<Text style={{ fontSize: 25, alignSelf: "flex-start", fontWeight:'700', color:'#1269A9' }}>
-				{myBike.bike_id === 0 ? `Reserve a Bike` : `Your Bike`}
-			</Text>
-			{myBike.bike_id !== 0 && (
-				<ManageMyBike myBike={myBike} />
-			)}
-			<View style={styles.sectionView}>
-				{myBike.bike_id === 0 && (
-					<AvailableBikeList orgBikes={orgBikes} user={user} myBike={myBike}/>
-				)}
-			</View>
-
-		</ScreenWrapper>
+		<View style={{ width: "100%", marginVertical:10, justifyContent:'center', alignItems:'center'}}>
+			<Input
+				placeholder="New note"
+                value={bikeNotes}
+				onChangeText={(text) => {
+					setBikeNotes(text);
+				}}
+			/>
+			<ScaleButton
+				onPress={saveNotes}
+				looks={[styles.solidButton, { width: 200 }]}
+                offLooks={[styles.solidButtonOff, {width:200}]}
+                disabled={bikeNotes===''}
+			>
+				<Text
+                style={{fontWeight:'700', color:'#fff'}}
+                >Add Note</Text>
+			</ScaleButton>
+		</View>
 	);
 }
 
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
 		padding: 2,
 	},
 	outlineButton: {
-		borderWidth: 2,
+		borderWidth: 1.5,
 		borderColor: "#1269A9",
 		borderRadius: 12,
 		height: 45,

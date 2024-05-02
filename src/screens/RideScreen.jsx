@@ -28,6 +28,7 @@ import RideSurveyScreen from "./RideSurveyScreen";
 import RideTrackingScreen from "./RideTrackingScreen";
 
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
+import ScaleButton from "../components/ScaleButton/ScaleButton";
 
 export default function RideScreen() {
 	const dispatch = useDispatch();
@@ -42,7 +43,7 @@ export default function RideScreen() {
 				console.log("TRACKING STARTED!");
 				dispatch(toggleTrackingStatus());
 				// (FIND ME)
-				dispatch(setIsProgressUpdated(false))
+				dispatch(setIsProgressUpdated(false));
 				dispatch(setRideStartTime(new Date().toISOString()));
 				await startLocationTracking(dispatch);
 			}
@@ -54,9 +55,42 @@ export default function RideScreen() {
 	return (
 		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
 			<View style={styles.sectionView}>
-				<View style={styles.cenColBe}>
+				<View style={styles.cenColAr}>
 					<Text style={styles.medText}>Are you riding to work?</Text>
-					<View style={styles.buttonWrapper}>
+					<ScaleButton
+						looks={[styles.solidButton, { width: 300 }]}
+						onPress={() => {
+							dispatch(chooseWorkCommute());
+							handleStartTracking();
+						}}
+					>
+						<Text
+							style={{
+								fontWeight: "700",
+								color: "#fff",
+								fontSize: 22,
+							}}
+						>
+							Yes
+						</Text>
+					</ScaleButton>
+					<ScaleButton
+						looks={[styles.outlineButton, { width: 300 }]}
+						onPress={() => {
+							handleStartTracking();
+						}}
+					>
+						<Text
+							style={{
+								fontWeight: "700",
+								color: "#1269A9",
+								fontSize: 22,
+							}}
+						>
+							No
+						</Text>
+					</ScaleButton>
+					{/* <View style={styles.buttonWrapper}>
 						<Button
 							buttonStyle={{ width: 300, padding: 15 }}
 							raised
@@ -79,7 +113,7 @@ export default function RideScreen() {
 						>
 							NO
 						</Button>
-					</View>
+					</View> */}
 				</View>
 			</View>
 
@@ -133,18 +167,14 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 		width: "100%",
+		height:'60%'
 	},
-
-	// sectionView: {
-	// 	display: "flex",
-	// 	flexDirection: "column",
-	// 	alignItems: "center",
-	// 	justifyContent: "space-evenly",
-	// 	width: "100%",
-	// 	padding: 15,
-	// 	backgroundColor: "#fff",
-	// 	marginVertical: 10,
-	// },
+	cenColAr: {
+		justifyContent: "space-around",
+		alignItems: "center",
+		width: "100%",
+		height:'75%'
+	},
 	grid: {
 		flexDirection: "row",
 		flexWrap: "wrap",
@@ -173,7 +203,7 @@ const styles = StyleSheet.create({
 	medText: { fontSize: 30, marginVertical: 30 },
 	regText: { fontSize: 14 },
 	buttonWrapper: {
-		flex:1,
+		flex: 1,
 		alignItems: "center",
 		justifyContent: "space-around",
 		width: "100%",
@@ -187,5 +217,32 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 10,
 		width: "100%",
+	},
+	solidButton: {
+		backgroundColor: "#1269A9",
+		borderRadius: 12,
+		height: 55,
+		padding: 2,
+	},
+	solidButtonOff: {
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
+	},
+	outlineButton: {
+		borderWidth: 2,
+		borderColor: "#1269A9",
+		borderRadius: 12,
+		height: 55,
+		padding: 2,
+	},
+	outlineButtonOff: {
+		borderWidth: 1.5,
+		borderColor: "#C0C0C0",
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
 	},
 });

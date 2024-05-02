@@ -1,15 +1,21 @@
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import { Text } from "@rneui/themed";
+import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
 
 
 export default function IncentiveScreen() {
 	return(
+<ScreenWrapper
+background={{backgroundColor:'$fff'}}
+>
+
 
         <View style={{flex:1, padding:15, width:'100%', backgroundColor:'#fff'}}>
             <Text>
-                INCENTIVES
+                Previous Challenge Stats
             </Text>
         </View>
+</ScreenWrapper>
     );
 }
 

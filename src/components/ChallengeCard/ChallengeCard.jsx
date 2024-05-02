@@ -10,79 +10,133 @@ import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ProgressBike from "../ProgressBike/ProgressBike";
 
+import ShadowEffect from "../ShadowEffect/ShadowEffect";
+import { Shadow } from "react-native-shadow-2";
+
 export default function ChallengeCard({ item, prog }) {
-    const [loading, setLoading] = useState(true);
-    const [earned, setEarned] = useState({});
-    const is_updated = useSelector(
-		(store) => store.incentives.updated
-	);
-    useEffect(()=>{
-        progressValue(item, prog)
+	const [loading, setLoading] = useState(true);
+	const [earned, setEarned] = useState({});
+	const is_updated = useSelector((store) => store.incentives.updated);
 
-    },[prog])
+	useEffect(() => {
+		progressValue(item, prog);
+	}, [prog]);
 
-    const progressValue = (item, prog) => {
-        let check = prog.find((prog) => prog.active_incentive_id === item.id);
-        if(check){
-            setEarned(check);
-        }
-        console.log('CHECK OBJECT',check);
+	const progressValue = (item, prog) => {
+		let check = prog.find((prog) => prog.active_incentive_id === item.id);
+		if (check) {
+			setEarned(check);
+		}
+	};
+	const toGo = (item, earned) => {
 
+		let goal = item.info.point_value;
+		let soFar = earned.earned_points_toward_goal
+			? earned.earned_points_toward_goal
+			: 0;
+		let remaining = goal - soFar;
+
+		remaining = Math.round(remaining * 100) / 100;
+
+		return(item.info.category.unit_of_measure === "rides"
+				? `Finish ${
+						item.info.point_value === 1
+							? `${remaining
+							  } more ${item.info.category.unit_of_measure.slice(
+									0,
+									-1
+							  )}`
+							: `${remaining} more ${
+									item.info.category.unit_of_measure
+							  }`
+				  } before the challenge ends!`
+				: `Ride ${
+						item.info.point_value === 1
+							? `${remaining} more ${item.info.category.unit_of_measure.slice(
+									0,
+									-1
+							  )}`
+							: `${remaining} more ${
+									item.info.category.unit_of_measure
+							  }`
+				  } before the challenge ends!`
+		)
 	};
 
+	//    console.log('GOAL PROG', prog);
 
-//    console.log('GOAL PROG', prog);
-
-
-	return (
-		earned ? <Card raised containerStyle={{flex:1, width:'100%', flexDirection:'row',justifyContent:'flex-start'}}>
+	return earned ? (
+		<View style={styles.card}>
+			<View style={styles.leftColAr}>
+				<Text style={styles.cardTitle}>{item.info.title}</Text>
+				<Text style={styles.cardDescription}>
+					{item.info.description}
+				</Text>
+			</View>
 			<View style={styles.cenColBe}>
-				{/* -----------ROW-------------- */}
-				<View style={styles.splitCol}>
-					{/* ------ left side column---- */}
-
-					<View style={styles.splitLeftColCen}>
-						<Text>
-							{new Date(item.start_date).toLocaleDateString(
-								"en-US",
-								{
-									timeZone: "UTC",
-								}
-							)}
-						</Text>
-					</View>
-					{/* ------ right side column---- */}
-					<View style={styles.splitLeftColCen}>
-						<Text>
-							{new Date(item.end_date).toLocaleDateString(
-								"en-US",
-								{
-									timeZone: "UTC",
-								}
-							)}
-						</Text>
-					</View>
-				</View>
-				{/* ------------ROW END--------- */}
-				<View style={styles.leftColAr}>
-					<Text style={{ fontSize: 20 }}>{item.info.title}</Text>
-					<Card.Divider />
-					<Text>{item.info.description}</Text>
-					<Text>{`${item.info.point_value} ${item.info.category.unit_of_measure}`}</Text>
-				</View>
-				<Card.Divider />
-				<Card.Divider />
 				<ProgressBike
 					earned={earned.completion_progress}
 					loading={!is_updated}
-                    stats={earned}
+					stats={earned}
+					unit={item.info.category.unit_of_measure}
+					motivation={toGo(item, earned)}
 				/>
-				<Card.Divider />
+				{/* <View style={styles.endDate}> */}
+				{/* <Text
+					style={{
+						fontSize: 14,
+						fontWeight: "bold",
+						// color: "#F7B247",
+						color: "#1269A9",
+						// color: "#681397",
+					}}
+				>
+					{item.info.category.unit_of_measure === "rides"
+						? `Finish ${
+								item.info.point_value === 1
+									? `${toGo(
+											item,
+											earned
+									  )} more ${item.info.category.unit_of_measure.slice(
+											0,
+											-1
+									  )}`
+									: `${toGo(item, earned)} more ${
+											item.info.category.unit_of_measure
+									  }`
+						  } before the challenge ends!`
+						: `Ride ${
+								item.info.point_value === 1
+									? `${toGo(
+											item,
+											earned
+									  )} more ${item.info.category.unit_of_measure.slice(
+											0,
+											-1
+									  )}`
+									: `${toGo(item, earned)} more ${
+											item.info.category.unit_of_measure
+									  }`
+						  } before the challenge ends!`}
+				</Text> */}
+				<Text
+					style={{
+						fontSize: 14,
+						// fontWeight: "bold",
+						color: "#000",
+						marginVertical: 5,
+					}}
+				>
+					{`Challenge ends at 11:59pm on ${new Date(
+						item.end_date
+					).toLocaleDateString("en-US", {
+						timeZone: "UTC",
+					})}`}
+				</Text>
 			</View>
-
-		</Card>
-        : <>
-        </>
+		</View>
+	) : (
+		<></>
 	);
 }
 
@@ -112,11 +166,10 @@ const styles = StyleSheet.create({
 		borderRadius: 16,
 		marginVertical: 10,
 	},
-	splitCol: {
+	endDate: {
 		flexDirection: "row",
-		paddingHorizontal: 5,
-		alignItems: "flex-start",
-		justifyContent: "space-between",
+		alignItems: "center",
+		justifyContent: "center",
 		width: "100%",
 	},
 	leftColAr: {
@@ -128,13 +181,16 @@ const styles = StyleSheet.create({
 		justifyContent: "space-around",
 		alignItems: "flex-start",
 		width: "40%",
-        marginVertical:10
 	},
 	splitLeftColCen: {
 		justifyContent: "center",
 		alignItems: "center",
 		width: "40%",
-        marginVertical:10
+	},
+	splitRightColCen: {
+		justifyContent: "center",
+		alignItems: "flex-end",
+		width: "40%",
 	},
 	rightColAr: {
 		justifyContent: "space-around",
@@ -150,6 +206,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "flex-start",
 		width: "100%",
+		// marginVertical: 10,
 	},
 	rightColBe: {
 		justifyContent: "space-between",
@@ -170,9 +227,30 @@ const styles = StyleSheet.create({
 	mv10: {
 		marginVertical: 10,
 	},
+	cardTitle: {
+		fontSize: 20,
+		color: "#1269A9",
+		fontWeight: "bold",
+		marginBottom: 10,
+	},
+	cardDescription: {
+		fontSize: 13,
+		color: "#000",
+		marginBottom: 10,
+	},
+	card: {
+		justifyContent: "space-between",
+		alignItems: "flex-start",
+		width: "100%",
+		backgroundColor: "#fff",
+		padding: 15,
+		borderRadius: 5,
+		borderWidth:1.5,
+		borderColor: "#1269A9",
+		marginVertical: 8,
+		// borderRadius: 15,
+	},
 });
-
-
 
 {
 	/* <View style={[styles.leftColAr]}>

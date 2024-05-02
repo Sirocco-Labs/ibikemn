@@ -14,11 +14,32 @@ export default function UserAccountScreen() {
 	return (
 		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
 			<View style={styles.sectionView}>
+				<View style={styles.leftColBe}>
+					<Text>Preferences</Text>
+
+					<View style={styles.sectionView}>
+						<View style={styles.leftColBe}>
+							<Text>Settings</Text>
+							<Text>Location Services</Text>
+							<Text>Notifications</Text>
+						</View>
+					</View>
+
+					<View style={styles.sectionView}>
+						<View style={styles.leftColBe}>
+							<Text>Contact BikeMN</Text>
+							<Text>email</Text>
+						</View>
+					</View>
+
+					<View style={styles.sectionView}>
+						<View style={styles.leftColBe}>
+							<Text>Report a bug</Text>
+						</View>
+					</View>
+				</View>
 			</View>
 			<View style={styles.sectionView}>
-				<Button onPress={() => dispatch(clearUserData())}>
-					Clear User
-				</Button>
 				<Button onPress={clearUserThenLogout}>Logout</Button>
 			</View>
 		</ScreenWrapper>

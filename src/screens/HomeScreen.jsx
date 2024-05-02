@@ -1,15 +1,8 @@
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
 import CustomSpeedDial from "../components/CustomSpeedDial/CustomSpeedDial";
-import {
-	SafeAreaView,
-	StyleSheet,
-	View,
-	Modal,
-	ScrollView,
-	RefreshControl,
-} from "react-native";
-import { Text, SpeedDial, Button, LinearProgress, Card } from "@rneui/themed";
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { StyleSheet, View } from "react-native";
+import { Text, Divider } from "@rneui/themed";
+import { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -28,8 +21,9 @@ import {
 
 import { setIsProgressUpdated } from "../redux/slices/incentiveSlice";
 
-import ChallengeCard from "../components/ChallengeCard/ChallengeCard";
-import { useFocusEffect } from "@react-navigation/native";
+import ExpandChallenges from "../components/ExpandChallenges/ExpandChallenges";
+import UserStatsSection from "../components/UserStatsSection/UserStatsSection";
+import { getMyRideSurveys } from "../redux/thunks/rideSurveyThunk";
 
 export default function HomeScreen() {
 	const dispatch = useDispatch();
@@ -44,104 +38,150 @@ export default function HomeScreen() {
 
 	const challengeProgress = useSelector((store) => store.incentives.progress);
 
+	const surveyHistory = useSelector((store) => store.rideSurveys);
 
-	  const [refreshing, setRefreshing] = useState(false);
-	useLayoutEffect(() => {
+	const [refreshing, setRefreshing] = useState(false);
+	const [mostCommon, setMostCommon] = useState({});
+	const [newChallenge, setNewChallenge] = useState({});
+
+	useEffect(() => {
 		dispatch(getUserTravelStats(user.user_id));
 		dispatch(getActiveIncentives(userInfo));
 		dispatch(getUserIncentiveProgress(user.user_id));
-	},[dispatch]);
+		dispatch(getMyRideSurveys(user.user_id));
+	}, [dispatch]);
 
 	const onRefresh = async () => {
-		setRefreshing(true)
+		setRefreshing(true);
 		dispatch(setIsProgressUpdated(false));
 		try {
 			dispatch(getUserTravelStats(user.user_id));
 			dispatch(getActiveIncentives(userInfo));
 			dispatch(getUserIncentiveProgress(user.user_id));
-
+			dispatch(getMyRideSurveys(user.user_id));
 		} catch (error) {
-
-		}finally{
-			setRefreshing(false)
+		} finally {
+			setRefreshing(false);
 		}
-	}
+	};
 
+	useEffect(() => {
+		function mostFrequent() {
+			const props = ["is_solo", "destination_type", "route_type"];
+
+			const counts = props.reduce((time, property) => {
+				time[property] = surveyHistory.reduce((propCounts, obj) => {
+					let value = obj[property];
+					if (property === "destination_type") {
+						if (
+							value ===
+							"Errands (grocery store, post office, etc)"
+						) {
+							value = "Errands";
+						} else if (
+							value ===
+							"A place for recreation (local park, landmark, or trail)"
+						) {
+							value = "Recreational";
+						} else if (
+							value ===
+							"A place for socializing (a restaurant, bar, library)"
+						) {
+							value = "Social";
+						} else if (value === "I rode for fitness") {
+							value = "Fitness";
+						}
+						propCounts[value] = (propCounts[value] || 0) + 1;
+					} else {
+						propCounts[value] = (propCounts[value] || 0) + 1;
+					}
+					return propCounts;
+				}, {});
+				return time;
+			}, {});
+			const mostCommonValues = {};
+			for (const property of props) {
+				let mostCommonValue = null;
+				let highestCount = 0;
+				for (const [value, count] of Object.entries(counts[property])) {
+					if (count > highestCount) {
+						mostCommonValue = value;
+						highestCount = count;
+					}
+				}
+				property === "is_solo"
+					? (mostCommonValues[`${property}`] = {
+							solo: counts[`${property}`][true] || 0,
+							group: counts[`${property}`][false] || 0,
+							value:
+								mostCommonValue === "true" ? "Solo" : "Group",
+							frequency: highestCount,
+					  })
+					: (mostCommonValues[`${property}`] = {
+							value: mostCommonValue,
+							frequency: highestCount,
+					  });
+			}
+
+			return mostCommonValues;
+		}
+		setMostCommon(mostFrequent());
+	}, [surveyHistory]);
+
+	useEffect(() => {
+		function findClosestTimestamp(array) {
+			return array.reduce((closest, current) => {
+				const currentTimestamp = new Date(current.created_at).getTime();
+				const closestTimestamp = closest
+					? new Date(closest.created_at).getTime()
+					: Infinity;
+				const currentTime = new Date().getTime();
+
+				if (
+					Math.abs(currentTimestamp - currentTime) <
+					Math.abs(closestTimestamp - currentTime)
+				) {
+					return current;
+				} else {
+					return closest;
+				}
+			}, null);
+		}
+		setNewChallenge(findClosestTimestamp(activeChallenges));
+	}, [activeChallenges]);
 
 	if (user.username !== "finish_set_up") {
 		return (
 			<ScreenWrapper
 				underScroll={<CustomSpeedDial />}
-				background={{ backgroundColor: "#FFFAF2" }}
+				background={{ backgroundColor: "#fff" }}
 				onRefresh={onRefresh}
 				refreshing={refreshing}
 			>
 				<View style={styles.sectionView}>
-					<View style={styles.cenColAr}>
-						<Text>Welcome {user.username}</Text>
-					</View>
-				</View>
+					<Text>
+						New Challenge!
+					</Text>
+					<Text>
+						{/* {newChallenge.info.title} */}
+					</Text>
 
-				<View style={styles.cardSection}>
-					<Text>Active Challenges</Text>
-
-					{challengeProgress &&
-						activeChallenges.map((chal) => (
-							<ChallengeCard
-								key={chal.id}
-								item={chal}
-								prog={challengeProgress}
-							/>
-						))}
-				</View>
-
-				{/*{
-					info:
-					category:
-						incentive_type:"Replace VMT - Any"
-						unit_of_measure: "rides"
-					description: "Replace 5 car rides with bike rides!"
-					id: 2
-					point_value: 5
-					title: "First Challenge"
-
-				*/}
-
-				<View style={styles.sectionView}>
 					<View style={styles.leftColAr}>
-						<Text style={styles.mv10}>
-							{`${user.username}'s Stats`}
+						<Text style={styles.sectionText}>
+							{user.username}'s Stats
 						</Text>
-						<Text style={styles.mv10}>
-							Total Rides: {travelStats.rides_total}
-						</Text>
-						<Text>
-							Total Miles:{" "}
-							{travelStats.miles_total
-								? parseFloat(
-										travelStats.miles_total?.toFixed(2)
-								  )
-								: 0}{" "}
-							mi
-						</Text>
-						<Text style={styles.mv10}>
-							Work Rides: {travelStats.commute_rides_total}
-						</Text>
-						<Text style={styles.mv10}>
-							Miles from work rides:{" "}
-							{travelStats.commute_miles_total
-								? parseFloat(
-										travelStats.commute_miles_total?.toFixed(
-											2
-										)
-								  )
-								: 0}{" "}
-							mi
-						</Text>
+						<UserStatsSection
+							travelStats={travelStats}
+							survey={mostCommon}
+						/>
+					</View>
+					<View style={styles.expandSectionView}>
+						<ExpandChallenges
+							progress={challengeProgress}
+							active={activeChallenges}
+						/>
 					</View>
 				</View>
-
-				<View style={styles.sectionView}></View>
 			</ScreenWrapper>
 		);
 	} else {
@@ -171,17 +211,34 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		width: "100%",
-		padding: 15,
+		padding: 2,
+		marginVertical: 10,
+	},
+	expandSectionView: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "space-between",
+		width: "100%",
+		// padding: 15,
+		marginTop: 25,
+		marginVertical: 15,
+	},
+	sectionViewCenter: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+		width: "100%",
+		// padding: 15,
 		borderRadius: 16,
 		marginVertical: 10,
 	},
 	cardSection: {
 		flex: 1,
 		alignItems: "center",
-		justifyContent: "center",
+		justifyContent: "space-around",
 		width: "100%",
-		padding: 5,
-		borderRadius: 16,
+		// padding: 5,
+		// borderRadius: 16,
 		marginVertical: 10,
 	},
 	leftColAr: {
@@ -222,6 +279,12 @@ const styles = StyleSheet.create({
 	},
 	mv10: {
 		marginVertical: 10,
+	},
+	sectionText: {
+		fontWeight: "700",
+		fontSize: 25,
+		color: "#1269A9",
+		marginBottom: 10,
 	},
 });
 

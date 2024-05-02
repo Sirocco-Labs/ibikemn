@@ -92,7 +92,23 @@ export const getMyBike = (user_id) => async (dispatch) => {
 	try {
 		const selectMyBike = await supabase
 			.from("bike_registration_junction")
-			.select("*")
+			.select(`
+			id,
+			bike_id,
+			bike_info:bike_id(
+				id,
+				nickname,
+				make,
+				color,
+				serial_number,
+				notes
+			),
+			org_id,
+			in_use,
+			check_out_date,
+			return_by,
+			checked_out_by
+			`)
 			.eq("checked_out_by", user_id)
 			.single();
 		if (selectMyBike.error) {
@@ -180,5 +196,23 @@ export const returnBike = (bikeData) => async (dispatch) => {
 		}
 	} catch (error) {
 		console.log("BIKE THUNK ERROR --> returnBike(bikeData): ", error);
+	}
+};
+export const addBikeNote = (formData) => async (dispatch) => {
+	console.log("IN STAFF BIKE THUNK ----> addBikeNote(formData): ", formData);
+	try {
+		const bikeNote = await supabase
+			.from("bikes")
+			.update({ notes: formData.note })
+			.eq("id", formData.id);
+
+		if (bikeNote.error) {
+			console.log("SUPABASE ADD BIKE NOTE ERROR!: ", bikeNote.error);
+		} else {
+			console.log("SUPABASE ADD BIKE NOTE SUCCESS!: ", bikeNote.data);
+			dispatch(getMyBike(formData.user_id));
+		}
+	} catch (error) {
+		console.log("BIKE THUNK ERROR --> addBikeNote(formData): ", error);
 	}
 };

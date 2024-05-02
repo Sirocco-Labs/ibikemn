@@ -14,6 +14,7 @@ import incentives from './slices/incentiveSlice'
 import allUserRides from './slices/allUserRidesSlice'
 
 
+
 const rootReducer = combineReducers({
     user,
     distance,

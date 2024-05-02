@@ -1,61 +1,141 @@
 import {
+	Text,
+	Card,
+	Input,
+	Dialog,
+	ListItem,
+	Avatar,
+	Divider,
+} from "@rneui/themed";
+import {
 	View,
 	StyleSheet,
+	FlatList,
+	KeyboardAvoidingView,
+	Platform,
 } from "react-native";
-import {
-	Text,
-} from "@rneui/themed";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect} from "react";
-import {
-	staffGetBikes,
-	getMyBike,
-} from "../../redux/thunks/private/staffBikeThunk";
+import ScaleButton from "../ScaleButton/ScaleButton";
 
-import ScreenWrapper from "../../components/ScreenWrapper/ScreenWrapper";
-import ManageMyBike from "../../components/ManageMyBike/ManageMyBike";
-import AvailableBikeList from "../../components/AvailableBikeList/AvailableBikeList";
+import AddBikeNote from "../AddBikeNote/AddBikeNote";
+import { useState } from "react";
 
-export default function BikeListScreen() {
-	const dispatch = useDispatch();
-	const myBike = useSelector((store) => store.myBike);
-	const orgBikes = useSelector((store) => store.orgBikes);
-	const user = useSelector((store) => store.user);
+export default function BikeNotesDialog({ myBike }) {
+	const [open, setOpen] = useState(false);
 
-	useEffect(() => {
-		dispatch(staffGetBikes(user.org_id));
-		dispatch(getMyBike(user.user_id));
-	}, [dispatch]);
-
+	const Item = ({ item }) => {
+		return (
+			<Text
+				style={{ fontSize: 14, marginBottom: 5 }}
+			>{`\u2022 ${item}`}</Text>
+		);
+	};
 	return (
-		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
-			<Text style={{ fontSize: 25, alignSelf: "flex-start", fontWeight:'700', color:'#1269A9' }}>
-				{myBike.bike_id === 0 ? `Reserve a Bike` : `Your Bike`}
-			</Text>
-			{myBike.bike_id !== 0 && (
-				<ManageMyBike myBike={myBike} />
-			)}
-			<View style={styles.sectionView}>
-				{myBike.bike_id === 0 && (
-					<AvailableBikeList orgBikes={orgBikes} user={user} myBike={myBike}/>
-				)}
+		<>
+			<View
+				style={{
+					flex: 1,
+					justifyContent: "flex-start",
+					alignItems: "center",
+					width: "100%",
+				}}
+			>
+				<ScaleButton
+                looks={[styles.outlineButton, {width:300}]}
+					onPress={() => {
+						setOpen(!open);
+					}}
+				>
+					<Text
+                    style={{fontWeight:'700', fontSize:18, color:'#1269A9'}}
+                    >Notes</Text>
+				</ScaleButton>
 			</View>
+			<Dialog
+				isVisible={open}
+				onBackdropPress={() => {
+					setOpen(false);
+				}}
+				overlayStyle={styles.container}
+			>
+				<KeyboardAvoidingView
+					behavior={Platform.OS === "ios" ? "padding" : null}
+					style={{
+						flexGrow: 2,
+						justifyContent: "space-around",
+						alignItems: "center",
+                        width:'100%'
+					}}
+				>
+					<View
+						style={{
+							width: "100%",
+							height: "50%",
+						}}
+					>
+						<Text
+							style={{
+								fontSize: 22,
+								fontWeight: "700",
+								marginBottom: 2,
+							}}
+						>
+							{`Notes for ${myBike.bike_info.nickname}`}
+						</Text>
+						{myBike.bike_info.notes ? (
+							<>
+								<FlatList
+									data={myBike.bike_info.notes}
+									renderItem={Item}
+									keyExtractor={(item, i) => i}
+									scrollIndicatorInsets={{ left: 5000 }}
+									style={{
+										width: "100%",
+										borderWidth: 2,
+										borderColor: "#1269A9",
+									}}
+									contentContainerStyle={{
+										width: "100%",
+										padding: 10,
+									}}
+								/>
+							</>
+						) : (
+							<View
+								style={{
+									width: "100%",
+									height: "40%",
+									borderWidth: 2,
+									borderColor: "#1269A9",
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+							>
+								<Text>No notes yet!</Text>
+							</View>
+						)}
+					</View>
 
-		</ScreenWrapper>
+					<AddBikeNote
+						notes={myBike.bike_info.notes}
+						bike_id={myBike.bike_id}
+						user_id={myBike.checked_out_by}
+					/>
+				</KeyboardAvoidingView>
+			</Dialog>
+		</>
 	);
 }
-
 const styles = StyleSheet.create({
 	container: {
-		// flex: 1,
-		display: "flex",
+		flex: 0,
 		flexDirection: "column",
 		backgroundColor: "#fff",
 		alignItems: "flex-start",
-		justifyContent: "space-around",
-		padding: 5,
-		width: "100%",
-		height: "40%",
+		justifyContent: "center",
+		padding: 15,
+		width: "95%",
+        height:'60%',
+        marginBottom:20,
 	},
 	dialogWrapper: {
 		alignItems: "center",

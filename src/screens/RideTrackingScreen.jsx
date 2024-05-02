@@ -1,4 +1,4 @@
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, View, StyleSheet, Alert } from "react-native";
 import { Text, Dialog, Button } from "@rneui/themed";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,6 +26,8 @@ import {
 import { addToAllRides } from "../redux/thunks/userRidesThunk";
 
 import { useNavigation } from "@react-navigation/native";
+import { updateUserIncentiveProgress } from "../redux/thunks/incentiveThunk";
+import { checkChallengeCompletion } from "../redux/thunks/incentiveThunk";
 
 export default function RideTrackingScreen() {
 	const dispatch = useDispatch();
@@ -77,6 +79,7 @@ export default function RideTrackingScreen() {
 		return () => clearInterval(interval);
 	}, []);
 
+
 	const handleSubmitDistance = () => {
 		console.log(
 			"HANDLE SUBMIT DISTANCE COMMUTE SLICE BEFORE EVERYTHING ELSE",
@@ -84,6 +87,7 @@ export default function RideTrackingScreen() {
 		);
 		const metersToMiles =
 			parseFloat(distance.total.toFixed(2)) * 0.000621371192;
+
 		const rideData = {
 			user_id: user.user_id,
 			is_work_commute: commute.is_work_commute,
@@ -91,29 +95,54 @@ export default function RideTrackingScreen() {
 			ride_start_time: commute.ride_start_time,
 			ride_end_time: new Date().toISOString(),
 		};
+
 		console.log("rideData on tracking screen", rideData);
 
-		dispatch(addToAllRides(rideData));
-		dispatch(clearDistance());
+		const userInfo = {
+			user_id: user.user_id,
+			publicUser: user.is_public,
+		};
 
-		if (commute.is_work_commute) {
-			dispatch(clearCommuteSlice());
-			navigation.jumpTo("Home");
-		} else {
-			dispatch(toggleSurveyOpen());
-		}
+		dispatch(addToAllRides(rideData)).then(()=>{
+			dispatch(clearDistance());
+			if (commute.is_work_commute) {
+				// (FIND ME)
+				dispatch(checkChallengeCompletion(userInfo));
+				dispatch(clearCommuteSlice());
+				navigation.jumpTo("Home");
+			} else {
+				navigation.jumpTo("Home");
+				return Alert.alert(
+					"Optional Survey ",
+					"Would you like to take a super quick survey to help BikeMN's grant reporting?",
+					[
+						{
+							text: "Sure!",
+							onPress: () => dispatch(toggleSurveyOpen()),
+						},
+						{
+							text: "No thanks",
+							style: "cancel",
+						},
+					],
+					{ cancelable: false }
+				);
+			}
+
+		}).catch(error =>{
+			console.log('ERROR I GUESS', error);
+		})
+
 	};
 
 	const handleEndTime = () => {
-		dispatch(setRideEndTime(new Date().toISOString()))
+		dispatch(setRideEndTime(new Date().toISOString()));
 	};
 
 	return (
 		<View style={styles.popUp}>
 			<View style={styles.sectionView}>
-				<View
-                style={{alignItems:'center'}}
-                >
+				<View style={{ alignItems: "center" }}>
 					<Text style={styles.distanceText}>Distance Traveled:</Text>
 					<Text style={styles.distanceText}>
 						{parseFloat(
@@ -130,7 +159,7 @@ export default function RideTrackingScreen() {
 				</Text>
 
 				<Button
-                raised
+					raised
 					onPress={() => {
 						handleEndTime();
 						handleStopTracking();

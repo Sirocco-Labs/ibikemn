@@ -1,5 +1,6 @@
 import { supabase } from "../../services/supabase/supabase";
 import { setUserTravelStats } from "../slices/travelStatsSlice";
+import { setRideId } from "../slices/commuteSlice";
 
 export const getAllUserRides = (user_id) => async (dispatch) => {
 	console.log("IN COMMUTE THUNK ----> getAllUserRides(user_id): ", user_id);
@@ -19,7 +20,7 @@ export const getAllUserRides = (user_id) => async (dispatch) => {
 				"SUPABASE GET ALL USER RIDES SUCCESS! : ",
 				allUserRides.data
 			);
-			// setAllRides(allUserRides.data)
+			dispatch(setAllUserRides(allUserRides.data))
 		}
 	} catch (error) {
 		console.log(
@@ -61,12 +62,19 @@ export const addToAllRides = (rideData) => async (dispatch) => {
 	// const {user_id, distance_traveled, is_work_commute} = rideData
 
 	try {
-		const insertRide = await supabase.from("all_rides").insert(rideData);
+		const insertRide = await supabase.from("all_rides").insert(rideData).select('*').single();
 		if (insertRide.error) {
 			console.log("SUPABASE INSERT RIDE ERROR! : ", insertRide.error);
 		} else {
-			console.log("SUPABASE INSERT RIDE SUCCESS! : ", insertRide.status);
-			dispatch(updateTravelStats(rideData))
+			console.log(
+				"SUPABASE INSERT RIDE SUCCESS! : ",
+				insertRide.status,
+				insertRide.data
+			);
+			dispatch(updateTravelStats(rideData));
+			dispatch(setRideId(insertRide.data.id))
+
+			return {data: insertRide.data}
 		}
 	} catch (error) {
 		console.log(

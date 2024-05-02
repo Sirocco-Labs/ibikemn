@@ -1,6 +1,8 @@
+import { asyncThunkCreator } from "@reduxjs/toolkit";
 import { supabase } from "../../services/supabase/supabase";
 // import { clearFeedback, setError, setSuccess } from "../slices/feedbackSlice";
 import { setUser, clearUserData } from "../slices/userSlice";
+
 
 export const getUserQuery = (id) => async (dispatch) => {
 	console.log("IN USER THUNK ----> getUserQuery(id): ", id);
@@ -65,7 +67,7 @@ export const finishProfile = (userData) => async (dispatch) => {
 		bike_confidence,
 	} = screening;
 
-	const { age, gender_identity, race, income } = demographics;
+	const { age, gender_identity, race, income_level } = demographics;
 
 	const raceString = race
 		.toString()
@@ -89,12 +91,12 @@ export const finishProfile = (userData) => async (dispatch) => {
 		age,
 		gender_identity,
 		race: raceString,
-		income,
+		income_level,
 		zip_code: home.zip,
 	};
 	const employeeData = {
 		user_id,
-		organization: org_identity,
+		org_id: org_identity,
 	};
 
 	if (public_identity) {
@@ -117,6 +119,18 @@ export const finishProfile = (userData) => async (dispatch) => {
 			is_admin: admin_identity,
 			is_employee: staff_identity,
 			org_id: org_identity,
+			is_public: public_identity,
+			is_consent_to_survey: follow_up,
+			is_incentive_participant: incentive,
+		};
+	}
+	if (admin_identity) {
+		userUpdateData = {
+			username: username,
+			first_name: first_name,
+			last_name: last_name,
+			is_admin: admin_identity,
+			is_employee: staff_identity,
 			is_public: public_identity,
 			is_consent_to_survey: follow_up,
 			is_incentive_participant: incentive,
@@ -211,3 +225,5 @@ export const finishProfile = (userData) => async (dispatch) => {
 		console.log("USER THUNK ERROR --> createProfile(): ", error);
 	}
 };
+
+

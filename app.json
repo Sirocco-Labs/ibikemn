@@ -1,8 +1,8 @@
 {
   "expo": {
-    "scheme": "org.ibikemn",
-    "name": "ibikemn",
-    "slug": "ibikemn",
+    "scheme": "ibikemn",
+    "name": "iBikeMN",
+    "slug": "ibikemn-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
@@ -10,21 +10,38 @@
     "splash": {
       "image": "./src/assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FFE7C1"
+    },
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "description": "Join the iBikeMN challenge and reduce your VMT every day",
+    "privacy": "public",
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD",
+      "enabled": true
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "org.ibikemn"
+      "bundleIdentifier": "com.bikemn.ibikemn",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FFE7C1"
       },
-      "package": "org.ibikemn"
+      "package": "com.bikemn.ibikemn",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
@@ -32,11 +49,19 @@
     "plugins": [
       "expo-router",
       [
-			"expo-location",
-			{
-				"locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-			}
-		]
-    ]
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9bd6697c-29e1-44b4-a3b5-735d9f7b2ff6"
+      }
+    }
   }
 }

@@ -6,7 +6,7 @@ import HomeScreen from "../../screens/HomeScreen";
 import RideScreen from "../../screens/RideScreen";
 import UserAccountScreen from "../../screens/UserAccountScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
-import SurveyScreen from "../../screens/SurveyScreen";
+import SurveyScreen from "../../screens/ResourcesScreen";
 import IncentiveScreen from "../../screens/IncentiveScreen";
 import { useSelector } from "react-redux";
 
@@ -52,9 +52,21 @@ export default function PublicUserNavTabs() {
 					tabBarInactiveTintColor: "gray",
 				})}
 			>
-				<Tab.Screen name="Ride" component={RideScreen} />
-				<Tab.Screen name="Home" component={HomeScreen} />
-				<Tab.Screen name="Account" component={UserAccountScreen} />
+				<Tab.Screen
+					name="Ride"
+					component={RideScreen}
+					options={{ headerStyle: { backgroundColor: "blue" } }}
+				/>
+				<Tab.Screen
+					name="Home"
+					component={HomeScreen}
+					options={{ headerStyle: { backgroundColor: "blue" } }}
+				/>
+				<Tab.Screen
+					name="Account"
+					component={UserAccountScreen}
+					options={{ headerStyle: { backgroundColor: "blue" } }}
+				/>
 			</Tab.Navigator>
 		</NavigationContainer>
 	);

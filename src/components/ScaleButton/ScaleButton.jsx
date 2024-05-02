@@ -8,12 +8,6 @@ export default function ScaleButton({onPress, looks, children, disabled, offLook
 				{ justifyContent: "center", alignItems: "center" },
 				offLooks,
 			]}
-			// onPress={onPress}
-			// pressInTension={1}
-			// pressOutTension={100}
-			// pressInFriction={100}
-			// pressOutFriction={10}
-			// activeScale={0.9}
 		>
 			{children}
 		</View>

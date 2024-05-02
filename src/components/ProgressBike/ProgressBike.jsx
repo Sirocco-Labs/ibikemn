@@ -20,8 +20,12 @@ const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 	}, [loading, earned]);
 
 	return earned >= 1 ? (
-		<View>
-			<Text>Challenge Completed!</Text>
+		<View
+		style={styles.completed}
+		>
+			<Text
+			style={{color:'#1269A9'}}
+			>Challenge Completed!</Text>
 		</View>
 	) : (
 		<View style={[styles.container]}>
@@ -55,7 +59,6 @@ const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 								style={{
 									color: "#000",
 									fontSize: 14,
-									// fontWeight: "bold",
 								}}
 							>
 								{earned ? `${Math.round(earned * 100)}%` : `Start riding to earn progress`}
@@ -77,7 +80,6 @@ const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 					borderRadius={15}
 					style={{ borderColor: "#F7B247" }}
 				/>
-				{/* <View style={{ width: `${earned * 90}%` }}></View> */}
 			</View>
 		</View>
 	);
@@ -126,6 +128,11 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
+	},
+	completed: {
+		justifyContent: "center",
+		alignItems: "center",
+		width:'100%'
 	},
 });
 

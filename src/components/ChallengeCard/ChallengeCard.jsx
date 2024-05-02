@@ -14,7 +14,6 @@ import ShadowEffect from "../ShadowEffect/ShadowEffect";
 import { Shadow } from "react-native-shadow-2";
 
 export default function ChallengeCard({ item, prog }) {
-	const [loading, setLoading] = useState(true);
 	const [earned, setEarned] = useState({});
 	const is_updated = useSelector((store) => store.incentives.updated);
 
@@ -81,44 +80,6 @@ export default function ChallengeCard({ item, prog }) {
 					unit={item.info.category.unit_of_measure}
 					motivation={toGo(item, earned)}
 				/>
-				{/* <View style={styles.endDate}> */}
-				{/* <Text
-					style={{
-						fontSize: 14,
-						fontWeight: "bold",
-						// color: "#F7B247",
-						color: "#1269A9",
-						// color: "#681397",
-					}}
-				>
-					{item.info.category.unit_of_measure === "rides"
-						? `Finish ${
-								item.info.point_value === 1
-									? `${toGo(
-											item,
-											earned
-									  )} more ${item.info.category.unit_of_measure.slice(
-											0,
-											-1
-									  )}`
-									: `${toGo(item, earned)} more ${
-											item.info.category.unit_of_measure
-									  }`
-						  } before the challenge ends!`
-						: `Ride ${
-								item.info.point_value === 1
-									? `${toGo(
-											item,
-											earned
-									  )} more ${item.info.category.unit_of_measure.slice(
-											0,
-											-1
-									  )}`
-									: `${toGo(item, earned)} more ${
-											item.info.category.unit_of_measure
-									  }`
-						  } before the challenge ends!`}
-				</Text> */}
 				<Text
 					style={{
 						fontSize: 14,

@@ -62,7 +62,7 @@ export default function ExpandChallenges({ progress, active }) {
 						Component={() => (
 							<ChallengeCard item={chal} prog={progress} />
 						)}
-					></ListItem>
+					/>
 				))}
 		</ListItem.Accordion>
 	);

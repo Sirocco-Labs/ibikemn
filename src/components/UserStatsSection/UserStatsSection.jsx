@@ -10,7 +10,7 @@ export default function UserStatsSection({ survey, travelStats }) {
 			<ListItem
 				containerStyle={{
 					width: "100%",
-					padding: 5,
+					padding: 0,
 				}}
 			>
 				<Avatar
@@ -60,14 +60,14 @@ export default function UserStatsSection({ survey, travelStats }) {
 			<Divider
 				width={2}
 				color="#F7B247"
-				style={{ width: "100%", marginVertical: 10 }}
+				style={{ width: "100%", marginVertical: 5 }}
 				insetType="middle"
 			/>
 
 			<ListItem
 				containerStyle={{
 					width: "100%",
-					padding: 3,
+					padding: 0,
 				}}
 			>
 				<Avatar
@@ -119,14 +119,14 @@ export default function UserStatsSection({ survey, travelStats }) {
 			<Divider
 				width={2}
 				color="#F7B247"
-				style={{ width: "100%", marginVertical: 10 }}
+				style={{ width: "100%", marginVertical: 5 }}
 				insetType="middle"
 			/>
 
 			<ListItem
 				containerStyle={{
 					width: "100%",
-					padding: 3,
+					padding: 0,
 				}}
 			>
 				<Avatar
@@ -173,14 +173,14 @@ export default function UserStatsSection({ survey, travelStats }) {
 			<Divider
 				width={2}
 				color="#F7B247"
-				style={{ width: "100%", marginVertical: 10 }}
+				style={{ width: "100%", marginVertical: 5 }}
 				insetType="middle"
 			/>
 
 			<ListItem
 				containerStyle={{
 					width: "100%",
-					padding: 3,
+					padding: 0,
 				}}
 			>
 				<Avatar

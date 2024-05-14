@@ -1,77 +1,118 @@
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, View, StyleSheet, FlatList } from "react-native";
 import { Text } from "@rneui/themed";
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
+import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 
+import {
+	getUserIncentiveHistory,
+	getAllPreviousChallenges,
+} from "../redux/thunks/incentiveThunk";
+
+import UserChallengeHistoryItem from "../components/UserChallengeHistoryItem/UserChallengeHistoryItem";
+import AllChallengeHistoryItem from "../components/AllChallengeHistoryItem/AllChallengeHistoryItem";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function IncentiveScreen() {
-	return(
-<ScreenWrapper
-background={{backgroundColor:'$fff'}}
->
+	const dispatch = useDispatch();
+	const user = useSelector((store) => store.user);
+	const progressHistory = useSelector((store) => store.incentives.history);
+	const allPreviousChallenges = useSelector(
+		(store) => store.incentives.allPrevious
+	);
+	useFocusEffect(
+		React.useCallback(() => {
+			dispatch(getUserIncentiveHistory(user.user_id));
+			dispatch(getAllPreviousChallenges(user.is_public));
+		}, [dispatch])
+	);
+	return (
+		<SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+			<View style={styles.wrapper}>
+				<View style={styles.sectionView}>
+					<Text style={styles.sectionHeader}>
+						All Previous Challenges
+					</Text>
+					<FlatList
+						data={allPreviousChallenges}
+						keyExtractor={(item) => item.id}
+						renderItem={({ item }) => (
+							<AllChallengeHistoryItem item={item} />
+						)}
+					/>
+				</View>
+				<View style={styles.sectionView}>
+					<Text style={styles.sectionHeader}>
+						Previous Challenge Progress
+					</Text>
 
-
-        <View style={{flex:1, padding:15, width:'100%', backgroundColor:'#fff'}}>
-            <Text>
-                Previous Challenge Stats
-            </Text>
-        </View>
-</ScreenWrapper>
-    );
+					<FlatList
+						data={progressHistory}
+						keyExtractor={(item) => item.id}
+						renderItem={({ item }) => (
+							<UserChallengeHistoryItem item={item} />
+						)}
+					/>
+				</View>
+			</View>
+		</SafeAreaView>
+	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		height: "90%",
+	wrapper: {
+		flexGrow: 1,
+	},
+	sectionView: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "space-between",
 		width: "100%",
-		display: "flex",
-		flexDirection: "column",
+		padding: 5,
+		marginTop: 10,
 		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-		padding: 20,
-        // borderColor:'green',
-        // borderWidth:10
 	},
-	mainView: {
-		display: "flex",
-		flexDirection: "column",
+	leftColAr: {
+		justifyContent: "space-around",
+		alignItems: "flex-start",
+		width: "100%",
+	},
+	rightColAr: {
+		justifyContent: "space-around",
+		alignItems: "flex-end",
+		width: "100%",
+	},
+	cenColAr: {
+		justifyContent: "space-around",
 		alignItems: "center",
 		width: "100%",
-		padding: "15px",
 	},
-	flexCol: {
-		flexDirection: "column",
-		alignItems: "center",
-		justifyContent: "center",
-		marginTop: 15,
+	leftColBe: {
+		justifyContent: "space-between",
+		alignItems: "flex-start",
+		width: "100%",
 	},
-	flexRow: {
-		flex: 0,
-		flexDirection: "row",
+	rightColBe: {
+		justifyContent: "space-between",
+		alignItems: "flex-end",
+		width: "100%",
+	},
+	cenColBe: {
+		justifyContent: "space-between",
 		alignItems: "center",
-		justifyContent: "space-around",
-		marginTop: 15,
+		width: "100%",
+	},
+	mv10: {
+		marginVertical: 10,
 	},
 	bigText: { fontSize: 50 },
 	medText: { fontSize: 30 },
 	regText: { fontSize: 14 },
-	button: {
-		display: "flex",
-		alignItems: "center",
-		border: "1px solid transparent",
-		borderRadius: "8px",
-		fontSize: 15,
-		width: "75%",
-		marginTop: "20px",
-		marginBottom: "10px",
-		padding: "10px",
-	},
-
-	input: {
-		height: 40,
-		margin: 12,
-		borderWidth: 1,
-		padding: 10,
-		width: "100%",
+	sectionHeader: {
+		fontSize: 22,
+		fontWeight: "700",
+		marginBottom: 5,
+		color: "#1269A9",
+		alignSelf: "flex-start",
 	},
 });

@@ -20,25 +20,11 @@ const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 	}, [loading, earned]);
 
 	return earned >= 1 ? (
-		<View
-		style={styles.completed}
-		>
-			<Text
-			style={{color:'#1269A9'}}
-			>Challenge Completed!</Text>
+		<View style={styles.completed}>
+			<Text style={{ color: "#1269A9" }}>Challenge Completed!</Text>
 		</View>
 	) : (
 		<View style={[styles.container]}>
-			<Text
-				style={{
-					fontSize: 13,
-					// fontWeight: "bold",
-					color: "#1269A9",
-					alignSelf: "center",
-				}}
-			>
-				{motivation}
-			</Text>
 			<View style={[styles.innerContainer]}>
 				<View style={styles.checking}>
 					{load ? (
@@ -47,7 +33,6 @@ const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 								style={{
 									color: "#000",
 									fontSize: 14,
-									fontWeight: "bold",
 								}}
 							>
 								Checking for updates...
@@ -58,10 +43,12 @@ const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 							<Text
 								style={{
 									color: "#000",
-									fontSize: 14,
+									fontSize: 13,
 								}}
 							>
-								{earned ? `${Math.round(earned * 100)}%` : `Start riding to earn progress`}
+								{earned
+									? `${Math.round(earned * 100)}%`
+									: `Hit the road to track rides for this challenge!`}
 							</Text>
 						</View>
 					)}
@@ -72,8 +59,8 @@ const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 					animated
 					indeterminate={load}
 					indeterminateAnimationDuration={500}
-					width={320}
-					height={25}
+					width={310}
+					height={20}
 					color="#F7B247"
 					// unfilledColor="#f9f9f9"
 					borderWidth={1}
@@ -87,13 +74,13 @@ const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		// flex: 1,
 		alignItems: "flex-start",
-		justifyContent: "flex-end",
+		justifyContent: "space-between",
 		marginVertical: 5,
 	},
 	innerContainer: {
-		flexDirection: "row",
+		// flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "flex-start",
 		// width: "100%",
@@ -119,14 +106,14 @@ const styles = StyleSheet.create({
 	checking: {
 		position: "absolute",
 		left: 0,
-		top: 2.5,
+		top: 1,
 		zIndex: 2,
-		width: "70%",
+		width: "100%",
 		paddingLeft: 15,
 	},
 	progressText: {
 		flexDirection: "row",
-		justifyContent: "space-between",
+		justifyContent: "flex-start",
 		alignItems: "center",
 	},
 	completed: {

@@ -87,7 +87,6 @@ export default function BikeNotesDialog({ myBike }) {
 									data={myBike.bike_info.notes}
 									renderItem={Item}
 									keyExtractor={(item, i) => i}
-									scrollIndicatorInsets={{ left: 5000 }}
 									style={{
 										width: "100%",
 										borderWidth: 2,

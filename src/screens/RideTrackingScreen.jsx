@@ -101,6 +101,7 @@ export default function RideTrackingScreen() {
 		const userInfo = {
 			user_id: user.user_id,
 			publicUser: user.is_public,
+			users_table_id: user.id,
 		};
 
 		dispatch(addToAllRides(rideData)).then(()=>{

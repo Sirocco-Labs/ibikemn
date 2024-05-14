@@ -1,12 +1,7 @@
-import {
-	View,
-	StyleSheet,
-} from "react-native";
-import {
-	Text,
-} from "@rneui/themed";
+import { View, StyleSheet } from "react-native";
+import { Text } from "@rneui/themed";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect} from "react";
+import React, { useEffect } from "react";
 import {
 	staffGetBikes,
 	getMyBike,
@@ -15,32 +10,42 @@ import {
 import ScreenWrapper from "../../components/ScreenWrapper/ScreenWrapper";
 import ManageMyBike from "../../components/ManageMyBike/ManageMyBike";
 import AvailableBikeList from "../../components/AvailableBikeList/AvailableBikeList";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function BikeListScreen() {
 	const dispatch = useDispatch();
 	const myBike = useSelector((store) => store.myBike);
 	const orgBikes = useSelector((store) => store.orgBikes);
 	const user = useSelector((store) => store.user);
-
-	useEffect(() => {
-		dispatch(staffGetBikes(user.org_id));
-		dispatch(getMyBike(user.user_id));
-	}, [dispatch]);
+	useFocusEffect(
+		React.useCallback(() => {
+			dispatch(staffGetBikes(user.org_id));
+			dispatch(getMyBike(user.user_id));
+		}, [dispatch])
+	);
 
 	return (
 		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
-			<Text style={{ fontSize: 25, alignSelf: "flex-start", fontWeight:'700', color:'#1269A9' }}>
+			<Text
+				style={{
+					fontSize: 25,
+					alignSelf: "flex-start",
+					fontWeight: "700",
+					color: "#1269A9",
+				}}
+			>
 				{myBike.bike_id === 0 ? `Reserve a Bike` : `Your Bike`}
 			</Text>
-			{myBike.bike_id !== 0 && (
-				<ManageMyBike myBike={myBike} />
-			)}
+			{myBike.bike_id !== 0 && <ManageMyBike myBike={myBike} />}
 			<View style={styles.sectionView}>
 				{myBike.bike_id === 0 && (
-					<AvailableBikeList orgBikes={orgBikes} user={user} myBike={myBike}/>
+					<AvailableBikeList
+						orgBikes={orgBikes}
+						user={user}
+						myBike={myBike}
+					/>
 				)}
 			</View>
-
 		</ScreenWrapper>
 	);
 }

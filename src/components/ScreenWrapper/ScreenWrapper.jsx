@@ -14,6 +14,7 @@ export default function ScreenWrapper({
 	background,
 	onRefresh,
 	refreshing,
+	noScroll,
 }) {
 	const handleRefresh = async () => {
 		try {
@@ -24,16 +25,21 @@ export default function ScreenWrapper({
 			console.error("SOMETHING WENT WRONG WHILE REFRESHING", error);
 		}
 	};
-	return (
+	return noScroll ? (
+		<SafeAreaView style={[styles.safe, background]}>
+			<View style={[styles.noScroll, background]}>{children}</View>
+			{underScroll}
+		</SafeAreaView>
+	) : (
 		<SafeAreaView style={styles.safe}>
 			<ScrollView
 				contentContainerStyle={styles.scroll}
 				refreshControl={
 					onRefresh && (
-					<RefreshControl
-						refreshing={refreshing}
-						onRefresh={handleRefresh}
-					/>
+						<RefreshControl
+							refreshing={refreshing}
+							onRefresh={handleRefresh}
+						/>
 					)
 				}
 			>
@@ -48,6 +54,10 @@ const styles = StyleSheet.create({
 	safe: {
 		flex: 1,
 	},
+	noScroll: {
+		flexGrow: 1,
+		padding: 15,
+	},
 	scroll: {
 		flexGrow: 1,
 	},
@@ -55,7 +65,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		padding: 20,
+		padding: 10,
 	},
 	leftColAr: {
 		flex: 1,

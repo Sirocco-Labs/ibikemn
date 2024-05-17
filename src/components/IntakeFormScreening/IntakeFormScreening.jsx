@@ -197,7 +197,6 @@ export default function IntakeFormScreening({ navigation, route }) {
 		useCallback(() => {
 			console.log("$# UCB SCREENING", screening);
 			console.log("$# UCB INTAKE", intake.screening);
-			// setValue(intake.screening.bike_confidence ? intake.screening.bike_confidence : 1 )
 			validateSave();
 			return () => {
 				console.log("$# UCB RETURN");

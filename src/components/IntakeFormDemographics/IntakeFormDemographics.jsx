@@ -48,33 +48,53 @@ export default function IntakeFormDemographics({ navigation, route }) {
 	];
 
 	const [selected, setSelected] = useState("");
-	const [demographics, setDemographics] = useState(inputData);
 
 	const [race, setRace] = useState(raceData);
 	const [income, setIncome] = useState(incomeData);
 
 	const intake = useSelector((store) => store.intake);
+	const [demographics, setDemographics] = useState(intake.demographics);
 
 	const { index, routeNames } = navigation.getState();
 	const tabFocused = route.name === routeNames[index] ? true : false;
 
 	const [loading, setLoading] = useState(false);
+	const [stopper, setStopper] = useState(demographics.race.includes('Prefer not to answer') || demographics.race.includes('My identities are not included') ? true :false);
 
 	useFocusEffect(
 		useCallback(() => {
 			console.log("$# UCB DEMO", intake.demographics);
-			setDemographics(intake.demographics);
+			// setDemographics(intake.demographics);
 			validateSave();
+			return () => {
+				setDemographics(intake.demographics);
+				setStopper(
+					demographics.race.includes("Prefer not to answer") ||
+						demographics.race.includes(
+							"My identities are not included"
+						)
+						? true
+						: false
+				);
+			};
 		}, [intake])
 	);
 
 	useEffect(() => {
+		validateSave();
+
 		console.log("$# race", demographics.race);
 		console.log("$# income", demographics.income_level);
 	}, [demographics]);
 
 	useEffect(() => {
-		// setDemographics(intake.demographics);
+		setDemographics(intake.demographics);
+		setStopper(
+			demographics.race.includes("Prefer not to answer") ||
+				demographics.race.includes("My identities are not included")
+				? true
+				: false
+		);
 		if (
 			tabFocused &&
 			loading &&
@@ -106,22 +126,36 @@ export default function IntakeFormDemographics({ navigation, route }) {
 	const updatePayload = (target, value) => {
 		let holder = [...demographics.race];
 		if (target === "race") {
-			if (!demographics.race.includes(value)) {
-				holder.push(value);
+			if (
+				value === "My identities are not included" ||
+				value === "Prefer not to answer"
+			) {
+				if (demographics.race.includes(value)) {
+					setStopper(false);
+					holder = [];
+				} else {
+					setStopper(true);
+					holder = [value];
+				}
+				setDemographics({ ...demographics, race: holder });
 			} else {
-				console.log("Value was in holder", holder);
-				holder = holder.filter((key) => key !== value);
-				console.log("filter holder", holder);
+				if (!demographics.race.includes(value)) {
+					holder.push(value);
+				} else {
+					console.log("Value was in holder", holder);
+					holder = holder.filter((key) => key !== value);
+					console.log("filter holder", holder);
+				}
+				setDemographics({ ...demographics, race: holder });
 			}
-			setDemographics({ ...demographics, race: holder });
 		} else {
-			if (demographics[`${target}`] !== value) {
-				setDemographics({ ...demographics, [`${target}`]: value });
-			} else {
+			if (demographics[`${target}`] === value) {
 				setDemographics({
 					...demographics,
-					[`${target}`]: inputData[`${target}`],
+					[`${target}`]: "",
 				});
+			} else {
+				setDemographics({ ...demographics, [`${target}`]: value });
 			}
 		}
 	};
@@ -203,12 +237,15 @@ export default function IntakeFormDemographics({ navigation, route }) {
 								<CheckBox
 									iconRight={false}
 									title={box.title}
-									// checked={race[i].choice shouldBeChecked(race[1], demographics)}
-									checked={
-										intake.demographics.race.includes(
-											race[i].title
-										) || race[i].choice
+									disabled={
+										!demographics.race.includes(
+											box.title
+										) && stopper
 									}
+									// checked={race[i].choice shouldBeChecked(race[1], demographics)}
+									checked={demographics.race.includes(
+										box.title
+									)}
 									onPress={() => {
 										// loop through previous state
 										// if the index of the previous state is the same as the index passed in
@@ -266,8 +303,7 @@ export default function IntakeFormDemographics({ navigation, route }) {
 									iconRight={false}
 									title={box.title}
 									checked={
-										intake.demographics.income_level === box.value
-										|| income[i].choice
+										demographics.income_level === box.value
 									}
 									// checked={income[i].choice}
 									onPress={() => {

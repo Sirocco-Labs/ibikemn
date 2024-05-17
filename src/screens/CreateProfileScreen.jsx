@@ -16,6 +16,10 @@ import IntakeFormSubmit from "../components/IntakeFormSubmit/IntakeFormSubmit";
 
 export default function CreateProfileScreen() {
 	const Tab = createBottomTabNavigator();
+	const styleOptions = {
+		headerStyle: { backgroundColor: "#1269A9" },
+		headerTintColor: "#FFFAF2",
+	};
 
 	return (
 		<NavigationContainer>
@@ -25,7 +29,7 @@ export default function CreateProfileScreen() {
 					tabBarStyle: {
 						height: 50,
 						padding: 2,
-						// backgroundColor: "#0000ff",
+						backgroundColor: "#1269A9",
 					},
 					tabBarItemStyle: {
 						margin: 2,
@@ -63,12 +67,13 @@ export default function CreateProfileScreen() {
 							/>
 						);
 					},
-					tabBarActiveTintColor: "#1269A9",
-					tabBarInactiveTintColor: "gray",
+					tabBarActiveTintColor: "#F7B247",
+					tabBarInactiveTintColor: "#FFF",
 				})}
 			>
 				<Tab.Screen
 					name="User"
+					options={styleOptions}
 					component={IntakeFormUserInfo}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {
@@ -78,8 +83,14 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Address"
+					options={styleOptions}
 					component={IntakeFormAddress}
 					listeners={({ navigation }) => ({
+						focus: (nav) =>{
+							console.log('nav', nav);
+
+						},
+
 						tabPress: (e) => {
 							e.preventDefault();
 						},
@@ -87,6 +98,7 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Screening"
+					options={styleOptions}
 					component={IntakeFormScreening}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {
@@ -96,6 +108,7 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Demographics"
+					options={styleOptions}
 					component={IntakeFormDemographics}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {
@@ -105,6 +118,7 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Consents"
+					options={styleOptions}
 					component={IntakeFormConsents}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {
@@ -114,6 +128,7 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Submit"
+					options={styleOptions}
 					component={IntakeFormSubmit}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {

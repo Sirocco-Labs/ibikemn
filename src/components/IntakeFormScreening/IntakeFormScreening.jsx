@@ -4,16 +4,20 @@ import {
 	View,
 	Alert,
 	TouchableWithoutFeedback,
+	KeyboardAvoidingView,
+	Platform,
 } from "react-native";
 import { Input, Button, Text, Slider, Icon, CheckBox } from "@rneui/themed";
 import { SelectList } from "react-native-dropdown-select-list";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setIntakeScreening } from "../../redux/slices/intakeFormSlice";
 import KeyboardAvoidingScrollView from "../KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
 import { confirmSecret } from "../../redux/thunks/authThunk";
+import ScreenWrapper from "../ScreenWrapper/ScreenWrapper";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function IntakeFormScreening({ navigation, route }) {
 	const dispatch = useDispatch();
@@ -30,13 +34,13 @@ export default function IntakeFormScreening({ navigation, route }) {
 		admin_identity: null,
 	};
 
-	const [screening, setScreening] = useState(inputData);
-
 	const [loading, setLoading] = useState(false);
 	const [selected, setSelected] = useState("");
 	const [value, setValue] = useState(1);
 
 	const intake = useSelector((store) => store.intake);
+	const [screening, setScreening] = useState(intake.screening);
+
 	// const discovery = [
 	// 	{
 	// 		key: "1",
@@ -138,6 +142,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 			level: "admin",
 			choice: false,
 			title: "BikeMN",
+			value: 0,
 		},
 		{
 			level: "staff",
@@ -183,9 +188,43 @@ export default function IntakeFormScreening({ navigation, route }) {
 			title: "Freewheel Bike",
 		},
 	];
+	const [discovery, setDiscovery] = useState(discoveryData);
+	const [frequency, setFrequency] = useState(frequencyData);
+	const [employment, setEmployment] = useState(employmentData);
+	const [advance, setAdvance] = useState(false);
+
+	useFocusEffect(
+		useCallback(() => {
+			console.log("$# UCB SCREENING", screening);
+			console.log("$# UCB INTAKE", intake.screening);
+			// setValue(intake.screening.bike_confidence ? intake.screening.bike_confidence : 1 )
+			validateSave();
+			return () => {
+				console.log("$# UCB RETURN");
+				setScreening(intake.screening);
+				setValue(
+					intake.screening.bike_confidence !== 0
+						? intake.screening.bike_confidence
+						: 1
+				);
+			};
+		}, [intake])
+	);
+	useEffect(() => {
+		validateSave()
+		console.log("$# UE SCREENING", screening);
+		console.log("$# UE1 INTAKE", intake.screening);
+	}, [screening]);
 
 	useEffect(() => {
+		console.log("$# UE2 INTAKE", intake.screening);
+
 		setScreening(intake.screening);
+		setValue(
+			intake.screening.bike_confidence !== 0
+				? intake.screening.bike_confidence
+				: 1
+		);
 		if (
 			tabFocused &&
 			loading &&
@@ -198,32 +237,36 @@ export default function IntakeFormScreening({ navigation, route }) {
 		}
 	}, [intake]);
 
+	// useEffect(() => {
+	// 	setValue(screening.bike_confidence)
+	// 	validateSave();
+	// }, [screening.bike_confidence]);
 	useEffect(() => {
 		setScreening({ ...screening, bike_confidence: value });
 		validateSave();
 	}, [value]);
 
-	useEffect(() => {
-		console.log(screening);
-		if (screening.staff_identity === false) {
-			setScreening({ ...screening, org_identity: 0 });
-		}
-		validateSave();
-	}, [screening.staff_identity]);
+	// useEffect(() => {
+	// 	// console.log(screening);
+	// 	if (screening.staff_identity === false) {
+	// 		setScreening({ ...screening, org_identity: 0 });
+	// 	}
+	// 	validateSave();
+	// }, [screening.staff_identity]);
 
-	useEffect(() => {
-		console.log(screening);
-		if (screening.admin_identity === true) {
-			setScreening({ ...screening, staff_identity: null });
-			setScreening({ ...screening, org_identity: 0 });
-		}
-		validateSave();
-	}, [screening.admin_identity]);
+	// useEffect(() => {
+	// 	// console.log(screening);
+	// 	if (screening.admin_identity === true) {
+	// 		setScreening({ ...screening, staff_identity: null });
+	// 		setScreening({ ...screening, org_identity: 0 });
+	// 	}
+	// 	validateSave();
+	// }, [screening.admin_identity]);
 
-	useEffect(() => {
-		console.log(screening);
-		validateSave();
-	}, [screening.org_identity]);
+	// useEffect(() => {
+	// 	// console.log(screening);
+	// 	validateSave();
+	// }, [screening.org_identity]);
 
 	const handleSave = () => {
 		dispatch(setIntakeScreening(screening));
@@ -250,11 +293,10 @@ export default function IntakeFormScreening({ navigation, route }) {
 			if (screening.admin_identity === true) {
 				return false;
 			} else if (
-				(screening.admin_identity === false &&
-					screening.staff_identity === false) ||
-				"N/A"
+				screening.admin_identity === false &&
+				screening.staff_identity === false
 			) {
-				return false;
+				return true;
 			} else if (
 				screening.admin_identity === false &&
 				screening.staff_identity === true &&
@@ -274,35 +316,80 @@ export default function IntakeFormScreening({ navigation, route }) {
 	// 		// setScreening({ ...screening, staff_identity: false });
 	// 	}
 	// };
-	const [checked, setChecked] = useState(discoveryData);
-	const [discovery, setDiscovery] = useState(discoveryData);
-	const [frequency, setFrequency] = useState(frequencyData);
-	const [employment, setEmployment] = useState(employmentData);
-	const [advance, setAdvance] = useState(false);
+	// const [checked, setChecked] = useState(discoveryData);
+	// const [discovery, setDiscovery] = useState(discoveryData);
+	// const [frequency, setFrequency] = useState(frequencyData);
+	// const [employment, setEmployment] = useState(employmentData);
+	// const [advance, setAdvance] = useState(false);
 
 	const updatePayload = (target, value) => {
 		if (target === "admin_identity") {
-			setScreening({
-				...screening,
-				admin_identity: value,
-				staff_identity: !value,
-				org_identity: 0,
-			});
-		} else if (target === "org_identity") {
-			setScreening({
-				...screening,
-				admin_identity: false,
-				staff_identity: true,
-				org_identity: value,
-			});
-		} else {
-			if (screening[`${target}`] !== value) {
-				setScreening({ ...screening, [`${target}`]: value });
+			console.log(
+				"$# UPDATE PAYLOAD ADMIN: screening, target, value",
+				screening,
+				target,
+				value
+			);
+			if (screening.org_identity === 0) {
+				setScreening({
+					...screening,
+					org_identity: 'N/A',
+					admin_identity: false,
+					staff_identity: false,
+				});
 			} else {
 				setScreening({
 					...screening,
-					[`${target}`]: inputData[`${target}`],
+					admin_identity: value,
+					staff_identity: !value,
+					org_identity: 0,
 				});
+			}
+		} else if (target === "org_identity") {
+			console.log(
+				"$# UPDATE PAYLOAD ORG: screening, target, value",
+				screening,
+				target,
+				value
+			);
+			if (screening[`${target}`] === value) {
+				setScreening({
+					...screening,
+					[`${target}`]: 'N/A',
+					admin_identity: false,
+					staff_identity: false,
+				});
+			} else {
+				setScreening({
+					...screening,
+					admin_identity: false,
+					staff_identity: true,
+					org_identity: value,
+				});
+			}
+		} else {
+			console.log(
+				"$# UPDATE PAYLOAD: screening, target, value",
+				screening,
+				target,
+				value
+			);
+			if (screening[`${target}`] === value) {
+				setScreening({
+					...screening,
+					[`${target}`]: 0,
+				});
+			} else {
+				setScreening({ ...screening, [`${target}`]: value });
+
+				// if (screening[`${target}`] !== value) {
+				// 	setScreening({ ...screening, [`${target}`]: value });
+				// } else {
+				// 	setScreening({
+				// 		...screening,
+				// 		[`${target}`]: inputData[`${target}`],
+				// 	});
+				// }
 			}
 		}
 	};
@@ -333,15 +420,34 @@ export default function IntakeFormScreening({ navigation, route }) {
 		return array.length % 2 && index === array.length - 1;
 	};
 
-	const [secret, setSecret] = useState('')
+	const [secret, setSecret] = useState("");
 
-	const checkSecret = () =>{
-		handleSave()
-		dispatch(confirmSecret(secret))
-	}
+	const checkSecret = () => {
+		handleSave();
+		dispatch(confirmSecret(secret));
+	};
+
+	const shouldBeCheckedDisco = (data, screening) => {
+		console.log("$# SCREENING Disco", screening);
+		console.log("$#  INTAKE Disco", intake.screening);
+		console.log("$# data Disco", data);
+		let checked = screening.how_did_you_hear === data.value;
+		return checked;
+	};
+	const shouldBeCheckedFreq = (data, screening) => {
+		console.log("$# SCREENING Freq", screening);
+		console.log("$# INTAKE Freq", intake.screening);
+		console.log("$# data Freq", data);
+		let checked = screening.commute_frequency === data.value;
+
+		return checked;
+	};
+
+	const handleSlider = (slideVal) => {};
 
 	return (
-		<KeyboardAvoidingScrollView>
+		// <KeyboardAvoidingScrollView>
+		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
 			<View style={styles.flexOne}>
 				<View style={styles.section}>
 					<View>
@@ -365,7 +471,15 @@ export default function IntakeFormScreening({ navigation, route }) {
 									<CheckBox
 										iconRight={false}
 										title={box.title}
-										checked={discovery[i].choice}
+										checked={
+											screening.how_did_you_hear ===
+											box.value
+										}
+										// checked={
+										// 	screening.how_did_you_hear ===
+										// 		box.value || discovery[i].choice
+										// }
+										// checked={discovery[i].choice}
 										onPress={() => {
 											// loop through previous state
 											// if the index of the previous state is the same as the index passed in
@@ -420,7 +534,10 @@ export default function IntakeFormScreening({ navigation, route }) {
 									<CheckBox
 										iconRight={false}
 										title={box.title}
-										checked={frequency[i].choice}
+										checked={
+											screening.commute_frequency ===
+											box.value
+										}
 										onPress={() => {
 											// loop through previous state
 											// if the index of the previous state is the same as the index passed in
@@ -497,7 +614,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 												color: "#fff",
 											}}
 										>
-											{screening.bike_confidence}
+											{value}
 										</Text>
 									</View>
 								),
@@ -512,7 +629,11 @@ export default function IntakeFormScreening({ navigation, route }) {
 								title={
 									"I am employed by BikeMN or one of its partner organizations"
 								}
-								checked={advance}
+								checked={
+									intake.screening.staff_identity ||
+									intake.screening.staff_identity ||
+									advance
+								}
 								onPress={() => {
 									setAdvance(!advance);
 									validateSave();
@@ -525,26 +646,67 @@ export default function IntakeFormScreening({ navigation, route }) {
 									height: "auto",
 									paddingVertical: 0,
 									paddingLeft: 0,
-									margin: 0,
+									marginBottom:
+										intake.screening.staff_identity ||
+										intake.screening.staff_identity ||
+										advance
+											? 0
+											: 80,
 									// borderColor: "magenta",
 									// borderWidth: 1,
 								}}
 							/>
 						</View>
-						{advance && (
-							<View style={styles.section}>
+						{(intake.screening.staff_identity ||
+							intake.screening.staff_identity ||
+							advance) && (
+							<View
+								style={[
+									styles.verifySection,
+									{ marginBottom: intake.secret ? 30 : 50 },
+								]}
+							>
 								{!intake.secret ? (
-									<>
-										<Input
-											value={secret}
-											onChangeText={(text) => {
-												setSecret(text);
+									<View
+										style={{
+											display: "flex",
+											flexDirection: "row",
+											justifyContent: "space-between",
+											alignItems: "flex-start",
+											// width: "100%",
+										}}
+									>
+										<KeyboardAvoidingView
+											behavior={
+												Platform.OS === "ios"
+													? "padding"
+													: null
+											}
+											style={{
+												flexGrow: 1,
+												justifyContent: "space-around",
+												alignItems: "center",
+
+												// width: "100%",
 											}}
-										/>
+										>
+											<Input
+												value={secret}
+												placeholder={
+													"Verification code"
+												}
+												onChangeText={(text) => {
+													setSecret(text);
+												}}
+											/>
+										</KeyboardAvoidingView>
 										<Button
-										onPress={checkSecret}
-										>Verify</Button>
-									</>
+											buttonStyle={styles.backBtn}
+											onPress={checkSecret}
+										>
+											Verify
+										</Button>
+									</View>
 								) : (
 									<>
 										<Text
@@ -572,7 +734,10 @@ export default function IntakeFormScreening({ navigation, route }) {
 														iconRight={false}
 														title={box.title}
 														checked={
-															employment[i].choice
+															screening
+																.org_identity !=='N/A' && screening
+																.org_identity ===
+															box.value
 														}
 														onPress={() => {
 															// loop through previous state
@@ -666,8 +831,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 								disabled={
 									!intake.screening.how_did_you_hear &&
 									!intake.screening.commute_frequency &&
-									!intake.screening.bike_confidence ||
-									validateSave()
+									!intake.screening.bike_confidence
 								}
 								onPress={() => {
 									navigation.jumpTo("Demographics");
@@ -681,7 +845,8 @@ export default function IntakeFormScreening({ navigation, route }) {
 					</View>
 				</View>
 			</View>
-		</KeyboardAvoidingScrollView>
+		</ScreenWrapper>
+		// {/* </KeyboardAvoidingScrollView> */}
 	);
 }
 
@@ -745,6 +910,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	backBtn: {
 		display: "flex",
@@ -752,6 +919,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	ml15: {
 		marginLeft: 15,
@@ -770,6 +939,10 @@ const styles = StyleSheet.create({
 		marginTop: 5,
 		marginBottom: 5,
 	},
+	verifySection: {
+		paddingHorizontal: 0,
+		marginTop: -2,
+	},
 	sectionTitle: {
 		fontSize: 20,
 		marginTop: 10,
@@ -778,7 +951,7 @@ const styles = StyleSheet.create({
 	fieldTitle: {
 		fontSize: 15,
 		fontWeight: "bold",
-		marginBottom: 15,
+		marginVertical: 5,
 	},
 	dropdownContainer: {
 		position: "relative",

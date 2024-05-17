@@ -439,7 +439,7 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
             `
 			)
 			.in("active_incentive_id", verifyingChallengeIds)
-			.match({ user_id: user_id });
+			.match({ user_id: user_id, "active_challenge.is_active":true });
 
 		if (alreadyTracking.error) {
 			console.error(
@@ -663,134 +663,140 @@ const insertTrackingProgress = async (
 					incentiveType
 				);
 				// Check if the recent ride counts toward the rides goal based on incentive_type
-				if (
-					incentiveType === "Commutes to work" &&
-					recentRide.is_work_commute
-				) {
-					try {
-						const createRecord = await supabase
-							.from("user_incentive_tracking_junction")
-							.insert({
-								active_incentive_id: activeChallenge.id,
-								user_id: user_id,
-								incentive_goal_value:
-									activeChallenge.incentives.point_value,
-								earned_points_toward_goal: insertValue,
-							})
-							.select()
-							.limit(1)
-							.single();
+				if(!recentRide.survey){
+					if (
+						incentiveType === "Replace VMT - Any" ||
+						(incentiveType === "Commutes to work" &&
+							recentRide.is_work_commute)
+					) {
+						try {
+							const createRecord = await supabase
+								.from("user_incentive_tracking_junction")
+								.insert({
+									active_incentive_id: activeChallenge.id,
+									user_id: user_id,
+									incentive_goal_value:
+										activeChallenge.incentives.point_value,
+									earned_points_toward_goal: insertValue,
+								})
+								.select()
+								.limit(1)
+								.single();
 
-						if (createRecord.error) {
+							if (createRecord.error) {
+								console.error(
+									"SUPABASE InsertingTrackingProgressRecords ERROR:",
+									createRecord.status,
+									createRecord.error.message
+								);
+
+								failLog.push({
+									data: createRecord.data
+										? createRecord.data
+										: "NONE",
+									error: true,
+									message: createRecord.error.message,
+								});
+							} else {
+								console.log(
+									"SUPABASE InsertingTrackingProgressRecords success!",
+									createRecord.status,
+									createRecord.data
+								);
+								successLog.push({
+									data: createRecord.data,
+									error: false,
+									message: createRecord.error
+										? createRecord.error.message
+										: "NONE",
+								});
+							}
+						} catch (error) {
 							console.error(
-								"SUPABASE InsertingTrackingProgressRecords ERROR:",
-								createRecord.status,
-								createRecord.error.message
+								"INSERT RECORD FOR RIDE CHALLENGE TYPE ERROR",
+								error
 							);
-
-							failLog.push({
-								data: createRecord.data
-									? createRecord.data
-									: "NONE",
-								error: true,
-								message: createRecord.error.message,
-							});
-						} else {
-							console.log(
-								"SUPABASE InsertingTrackingProgressRecords success!",
-								createRecord.status,
-								createRecord.data
-							);
-							successLog.push({
-								data: createRecord.data,
-								error: false,
-								message: createRecord.error
-									? createRecord.error.message
-									: "NONE",
-							});
 						}
-					} catch (error) {
-						console.error(
-							"INSERT RECORD FOR RIDE CHALLENGE TYPE ERROR",
-							error
-						);
-					}
-				} else if (
-					incentiveType === "Replace VMT - Any" ||
-					//
-					(incentiveType === "Ride in a group" &&
-						!recentRide.survey.is_solo) ||
-					//
-					(incentiveType === "Replace VMT for Errands" &&
-						recentRide.survey.destination_type ===
-							"Errands (grocery store, post office, etc)") ||
-					//
-					(incentiveType ===
-						"Replace VMT for Recreational Location" &&
-						recentRide.survey.destination_type ===
-							"A place for recreation (local park, landmark, or trail)") ||
-					//
-					(incentiveType === "Replace VMT for Social Location" &&
-						recentRide.survey.destination_type ===
-							"A place for socializing (a restaurant, bar, library)") ||
-					//
-					(incentiveType === "Take a Bike Trail" &&
-						recentRide.survey.route_type === "Bike trail") ||
-					//
-					(incentiveType === "Use a Bike Lane" &&
-						recentRide.survey.route_type ===
-							"On road infrastructure (a bike lane, cycle track)")
-				) {
-					// insert incentive progress for commutes to work
-					try {
-						const createRecord = await supabase
-							.from("user_incentive_tracking_junction")
-							.insert({
-								active_incentive_id: activeChallenge.id,
-								user_id: user_id,
-								incentive_goal_value:
-									activeChallenge.incentives.point_value,
-								earned_points_toward_goal: insertValue,
-							})
-							.select()
-							.limit(1)
-							.single();
+				}
+				}else{
+					if (
+						incentiveType === "Replace VMT - Any" ||
+						//
+						(incentiveType === "Ride in a group" &&
+							!recentRide.survey.is_solo) ||
+						//
+						(incentiveType === "Replace VMT for Errands" &&
+							recentRide.survey.destination_type ===
+								"Errands (grocery store, post office, etc)") ||
+						//
+						(incentiveType ===
+							"Replace VMT for Recreational Location" &&
+							recentRide.survey.destination_type ===
+								"A place for recreation (local park, landmark, or trail)") ||
+						//
+						(incentiveType === "Replace VMT for Social Location" &&
+							recentRide.survey.destination_type ===
+								"A place for socializing (a restaurant, bar, library)") ||
+						//
+						(incentiveType === "Take a Bike Trail" &&
+							recentRide.survey.route_type === "Bike trail") ||
+						//
+						(incentiveType === "Use a Bike Lane" &&
+							recentRide.survey.route_type ===
+								"On road infrastructure (a bike lane, cycle track)")
+					) {
+						// insert incentive progress for commutes to work
+						try {
+							const createRecord = await supabase
+								.from("user_incentive_tracking_junction")
+								.insert({
+									active_incentive_id: activeChallenge.id,
+									user_id: user_id,
+									incentive_goal_value:
+										activeChallenge.incentives.point_value,
+									earned_points_toward_goal: insertValue,
+								})
+								.select("*")
+								.limit(1)
+								.single();
 
-						if (createRecord.error) {
+							if (createRecord.error) {
+								console.error(
+									"SUPABASE InsertingTrackingProgressRecords ERROR:",
+									createRecord.status,
+									createRecord.error.message
+								);
+
+								failLog.push({
+									data: createRecord.data
+										? createRecord.data
+										: "NONE",
+									error: true,
+									message: createRecord.error.message,
+								});
+							} else {
+								console.log(
+									"SUPABASE InsertingTrackingProgressRecords success!",
+									createRecord.status,
+									createRecord.data
+								);
+								successLog.push({
+									data: createRecord.data,
+									error: false,
+									message: createRecord.error
+										? createRecord.error.message
+										: "NONE",
+								});
+							}
+						} catch (error) {
 							console.error(
-								"SUPABASE InsertingTrackingProgressRecords ERROR:",
-								createRecord.status,
-								createRecord.error.message
+								"INSERT RECORD FOR RIDE CHALLENGE TYPE ERROR",
+								error
 							);
-
-							failLog.push({
-								data: createRecord.data
-									? createRecord.data
-									: "NONE",
-								error: true,
-								message: createRecord.error.message,
-							});
-						} else {
-							console.log(
-								"SUPABASE InsertingTrackingProgressRecords success!",
-								createRecord.status,
-								createRecord.data
-							);
-							successLog.push({
-								data: createRecord.data,
-								error: false,
-								message: createRecord.error
-									? createRecord.error.message
-									: "NONE",
-							});
 						}
-					} catch (error) {
-						console.error(
-							"INSERT RECORD FOR RIDE CHALLENGE TYPE ERROR",
-							error
-						);
 					}
 				}
+
 			} else if (goalType === "miles") {
 				insertValue = recentRide.distance_traveled;
 				console.log(

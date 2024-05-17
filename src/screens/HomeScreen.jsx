@@ -189,7 +189,7 @@ export default function HomeScreen() {
 					<Text
 						style={[
 							styles.sectionText,
-							{ alignSelf: "flex-start", marginTop: 5 },
+							{ alignSelf: "flex-start", marginVertical: 10 },
 						]}
 					>
 						Active Challenges

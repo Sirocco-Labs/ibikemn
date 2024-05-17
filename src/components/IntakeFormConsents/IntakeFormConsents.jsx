@@ -453,6 +453,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	backBtn: {
 		display: "flex",
@@ -460,6 +462,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	ml10: {
 		marginLeft: 10,

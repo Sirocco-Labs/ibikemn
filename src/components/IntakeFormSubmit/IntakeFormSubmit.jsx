@@ -204,13 +204,7 @@ const inputData = {
 						onPress={() => {
 							navigation.jumpTo("Consents");
 						}}
-						buttonStyle={{
-							display: "flex",
-							flexDirection: "row",
-							justifyContent: "space-evenly",
-							alignItems: "center",
-							width: 110,
-						}}
+						buttonStyle={styles.backBtn}
 						titleStyle={{
 							marginRight: 15,
 						}}
@@ -223,13 +217,7 @@ const inputData = {
 							handleSubmit()
 							// navigation.jumpTo("User");
 						}}
-						buttonStyle={{
-							display: "flex",
-							flexDirection: "row-reverse",
-							justifyContent: "space-evenly",
-							alignItems: "center",
-							width: 110,
-						}}
+						buttonStyle={styles.nextBtn}
 						titleStyle={{
 							marginLeft: 15,
 							marginRight: 5,
@@ -294,14 +282,18 @@ const styles = StyleSheet.create({
 		flexDirection: "row-reverse",
 		justifyContent: "space-evenly",
 		alignItems: "center",
-		width: 100,
+		width: 110,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	backBtn: {
 		display: "flex",
 		flexDirection: "row",
 		justifyContent: "space-evenly",
 		alignItems: "center",
-		width: 100,
+		width: 110,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	ml10: {
 		marginLeft: 10,

@@ -20,7 +20,7 @@ import { setIntakeHomeAddress } from "../../redux/slices/intakeFormSlice";
 import { setIntakeWorkAddress } from "../../redux/slices/intakeFormSlice";
 
 import KeyboardAvoidingScrollView from "../KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
-
+import ScreenWrapper from "../ScreenWrapper/ScreenWrapper";
 export default function IntakeFormAddress({ navigation, route }) {
 	const inputData = {
 		city: "",
@@ -71,116 +71,140 @@ export default function IntakeFormAddress({ navigation, route }) {
 	};
 
 	return (
-		<KeyboardAvoidingScrollView>
-			<View style={styles.flexOne}>
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Home Address</Text>
-					<View>
-						<Input
-							label="City"
-							placeholder="What city do you live in?"
-							inputStyle={styles.input}
-							labelStyle={styles.label}
-							value={homeAddress.city}
-							onChangeText={(text) =>
-								setHomeAddress({
-									...homeAddress,
-									city: text,
-								})
-							}
-						/>
-					</View>
-					<View style={styles.grid}>
-						{/* state */}
-						<View style={styles.gridItem}>
+		// <KeyboardAvoidingScrollView>
+		<ScreenWrapper
+			background={{ backgroundColor: "#fff" }}
+			// noScroll={true}
+		>
+			{/* <View style={styles.flexOne}> */}
+				<KeyboardAvoidingView
+					behavior={Platform.OS === "ios" ? "padding" : null}
+					style={{
+						flexGrow: 2,
+						justifyContent: "space-around",
+						alignItems: "center",
+						width: "100%",
+					}}
+				>
+					<View style={styles.section}>
+						<Text style={styles.sectionTitle}>Home Address</Text>
+						<View>
 							<Input
-								label="State"
-								placeholder=" Which state do you live in?"
+								label="City"
+								placeholder="What city do you live in?"
 								inputStyle={styles.input}
 								labelStyle={styles.label}
-								value={homeAddress.state}
+								value={homeAddress.city}
 								onChangeText={(text) =>
 									setHomeAddress({
 										...homeAddress,
-										state: text,
+										city: text,
 									})
 								}
 							/>
 						</View>
-						{/* zip */}
-						<View style={styles.gridItem}>
-							<Input
-								keyboardType="numeric"
-								label="Zip Code"
-								placeholder="What's your Zip Code?"
-								inputStyle={styles.input}
-								labelStyle={styles.label}
-								value={homeAddress.zip}
-								onChangeText={(text) =>
-									setHomeAddress({
-										...homeAddress,
-										zip: text,
-									})
-								}
-							/>
+						<View style={styles.grid}>
+							{/* state */}
+							<View style={styles.gridItem}>
+								<Input
+									label="State"
+									placeholder=" State"
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={homeAddress.state}
+									onChangeText={(text) =>
+										setHomeAddress({
+											...homeAddress,
+											state: text,
+										})
+									}
+								/>
+							</View>
+							{/* zip */}
+							<View style={styles.gridItem}>
+								<Input
+									keyboardType="numeric"
+									label="Zip Code"
+									placeholder="Zip Code"
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={homeAddress.zip}
+									onChangeText={(text) =>
+										setHomeAddress({
+											...homeAddress,
+											zip: text,
+										})
+									}
+								/>
+							</View>
 						</View>
 					</View>
-				</View>
+				</KeyboardAvoidingView>
 
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Work Address</Text>
+				<KeyboardAvoidingView
+					behavior={Platform.OS === "ios" ? "padding" : null}
+					style={{
+						flexGrow: 2,
+						justifyContent: "space-around",
+						alignItems: "center",
+						width: "100%",
+					}}
+				>
+					<View style={styles.section}>
+						<Text style={styles.sectionTitle}>Work Address</Text>
 
-					<View>
-						<Input
-							label="City"
-							placeholder="What city do you work in?"
-							inputStyle={styles.input}
-							labelStyle={styles.label}
-							value={workAddress.city}
-							onChangeText={(text) =>
-								setWorkAddress({
-									...workAddress,
-									city: text,
-								})
-							}
-						/>
-					</View>
-					<View style={styles.grid}>
-						{/* state */}
-						<View style={styles.gridItem}>
+						<View>
 							<Input
-								label="State"
-								placeholder=" Which state do you work in?"
+								label="City"
+								placeholder="What city do you work in?"
 								inputStyle={styles.input}
 								labelStyle={styles.label}
-								value={workAddress.state}
+								value={workAddress.city}
 								onChangeText={(text) =>
 									setWorkAddress({
 										...workAddress,
-										state: text,
+										city: text,
 									})
 								}
 							/>
 						</View>
-						{/* zip */}
-						<View style={styles.gridItem}>
-							<Input
-								keyboardType="numeric"
-								label="Zip Code"
-								placeholder="What's your Zip Code where you work?"
-								inputStyle={styles.input}
-								labelStyle={styles.label}
-								value={workAddress.zip}
-								onChangeText={(text) =>
-									setWorkAddress({
-										...workAddress,
-										zip: text,
-									})
-								}
-							/>
+						<View style={styles.grid}>
+							{/* state */}
+							<View style={styles.gridItem}>
+								<Input
+									label="State"
+									placeholder="State"
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={workAddress.state}
+									onChangeText={(text) =>
+										setWorkAddress({
+											...workAddress,
+											state: text,
+										})
+									}
+								/>
+							</View>
+							{/* zip */}
+							<View style={styles.gridItem}>
+								<Input
+									keyboardType="numeric"
+									label="Zip Code"
+									placeholder="Zip Code"
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={workAddress.zip}
+									onChangeText={(text) =>
+										setWorkAddress({
+											...workAddress,
+											zip: text,
+										})
+									}
+								/>
+							</View>
 						</View>
 					</View>
-				</View>
+				</KeyboardAvoidingView>
 
 				<View style={styles.section}>
 					<View style={styles.grid}>
@@ -230,8 +254,9 @@ export default function IntakeFormAddress({ navigation, route }) {
 						/>
 					</View>
 				</View>
-			</View>
-		</KeyboardAvoidingScrollView>
+			{/* </View> */}
+		</ScreenWrapper>
+		// {/* </KeyboardAvoidingScrollView> */}
 	);
 }
 const styles = StyleSheet.create({
@@ -241,14 +266,14 @@ const styles = StyleSheet.create({
 		// width: "100%",
 		backgroundColor: "#fff",
 	},
-	input: {
-		fontSize: 12,
-		marginVertical: -2,
-	},
-	label: {
-		fontSize: 13,
-		marginBottom: -5,
-	},
+	// input: {
+	// 	fontSize: 12,
+	// 	marginVertical: -2,
+	// },
+	// label: {
+	// 	fontSize: 13,
+	// 	marginBottom: -5,
+	// },
 	grid: {
 		flexDirection: "row",
 		flexWrap: "wrap",
@@ -271,6 +296,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	backBtn: {
 		display: "flex",
@@ -278,6 +305,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	ml15: {
 		marginLeft: 15,

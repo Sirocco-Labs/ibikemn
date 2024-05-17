@@ -85,7 +85,13 @@ export default function ChallengeRewardDialog({ chal }) {
 						width: "100%",
 					}}
 				>
-					<Text style={{ fontSize: 20, fontWeight: "700" }}>
+					<Text
+						style={{
+							fontSize: 20,
+							fontWeight: "700",
+							marginBottom: 5,
+						}}
+					>
 						Get inspired
 					</Text>
 
@@ -166,7 +172,13 @@ export default function ChallengeRewardDialog({ chal }) {
 						width: "100%",
 					}}
 				>
-					<Text style={{ fontSize: 20, fontWeight: "700" }}>
+					<Text
+						style={{
+							fontSize: 20,
+							fontWeight: "700",
+							marginBottom: 5,
+						}}
+					>
 						Reward details
 					</Text>
 
@@ -215,6 +227,16 @@ export default function ChallengeRewardDialog({ chal }) {
 							}
 						/>
 					</View>
+						<Text
+							style={{
+								fontSize: 13,
+								fontWeight: "700",
+                                // alignSelf:'flex-start',
+
+							}}
+						>
+							{chal.reward_description}
+						</Text>
 				</View>
 			)}
 		</View>

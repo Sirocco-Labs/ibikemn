@@ -73,7 +73,6 @@ export default function ChallengeCard({ item, prog }) {
 	return earned ? (
 		<>
 			<View style={styles.card}>
-				<Text style={styles.cardTitle}>{item.id}</Text>
 				<View style={[styles.leftColAr]}>
 					<Text style={styles.cardTitle}>{item?.info.title}</Text>
 					<Text style={styles.cardDescription}>
@@ -284,7 +283,6 @@ const styles = StyleSheet.create({
 	cardDescription: {
 		fontSize: 13,
 		color: "#000",
-		marginBottom: 5,
 	},
 });
 

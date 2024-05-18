@@ -31,10 +31,10 @@ function RegisterScreen() {
 		password: "",
 		checkPassword: "",
 	};
-	const testData = {
-		email: process.env.EXPO_PUBLIC_TEST_EMAIL,
-		password: process.env.EXPO_PUBLIC_TEST_PASSWORD,
-	};
+	// const testData = {
+	// 	email: process.env.EXPO_PUBLIC_TEST_EMAIL,
+	// 	password: process.env.EXPO_PUBLIC_TEST_PASSWORD,
+	// };
 
 	const [show, setShow] = useState(verify);
 	const [error, setError] = useState(noError);
@@ -48,9 +48,9 @@ function RegisterScreen() {
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View style={styles.container}>
 					<Text
-						onPress={() => {
-							setRegData(testData);
-						}}
+						// onPress={() => {
+						// 	setRegData(testData);
+						// }}
 					>
 						Fill
 					</Text>

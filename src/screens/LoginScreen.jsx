@@ -18,10 +18,10 @@ export default function LoginScreen() {
 		email: "",
 		password: "",
 	};
-	const testData = {
-		email: process.env.EXPO_PUBLIC_TEST_EMAIL,
-		password: process.env.EXPO_PUBLIC_TEST_PASSWORD,
-	};
+	// const testData = {
+	// 	email: process.env.EXPO_PUBLIC_TEST_EMAIL,
+	// 	password: process.env.EXPO_PUBLIC_TEST_PASSWORD,
+	// };
 	const [loginData, setLoginData] = useState(loginFormData);
 
 	const close = () => {
@@ -47,9 +47,9 @@ export default function LoginScreen() {
 					{/* AUTOFILL TEXT AND CLEAR ASYNC BUTTON ARE FOR DEVELOPMENT ONLY */}
 					<Text
 						style={styles.boldText}
-						onPress={() => {
-							setLoginData(testData);
-						}}
+						// onPress={() => {
+						// 	setLoginData(testData);
+						// }}
 					>
 						AUTOFILL
 					</Text>

@@ -46,9 +46,11 @@ export const startLocationTracking = async (dispatch) => {
 	}
 	await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION, {
 		accuracy: Location.Accuracy.BestForNavigation,
+		activityType:3,
 		timeInterval: 5000,
 		distanceInterval: 1,
 		foregroundService: {
+			killServiceOnDestroy:true,
 			notificationTitle: "Location Tracking",
 			notificationBody: "Tracking your location",
 			notificationColor: "#FF0000",

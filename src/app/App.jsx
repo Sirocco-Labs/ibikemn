@@ -12,6 +12,7 @@ import { supabase } from "../services/supabase/supabase";
 import { getUserQuery } from "../redux/thunks/userThunk";
 import CreateProfileScreen from "../screens/CreateProfileScreen";
 import { backgroundLocationTask } from "../tasks/BackgroundLocationTaskManager";
+import { InitialLocationPermissionRequest } from "../tasks/RequestLocationPermission";
 
 function App() {
 	const dispatch = useDispatch();
@@ -20,7 +21,7 @@ function App() {
 	const [loading, setLoading] = useState(true);
 
 	const user = useSelector((store) => store.user);
-
+	InitialLocationPermissionRequest(dispatch);
 	useEffect(() => {
 		backgroundLocationTask(dispatch);
 		console.log("APP LOADED");
@@ -67,9 +68,8 @@ function App() {
 
 	if (loading && !authenticated) {
 		return <SplashScreen />;
-	}
-	else {
-		if (user.username === 'finish_set_up' && authenticated) {
+	} else {
+		if (user.username === "finish_set_up" && authenticated) {
 			return <CreateProfileScreen />;
 		} else {
 			if (user.is_public && authenticated) {

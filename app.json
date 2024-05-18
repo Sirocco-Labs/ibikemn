@@ -18,14 +18,21 @@
 		"updates": {
 			"fallbackToCacheTimeout": 0,
 			"checkAutomatically": "ON_LOAD",
-			"enabled": true
+			"enabled": true,
+			// "url": "" //URL from which expo-updates will fetch update manifests
 		},
 		"assetBundlePatterns": ["**/*"],
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "com.bikemn.ibikemn",
 			"buildNumber": "1.0.0",
-			"requireFullScreen": true
+			"requireFullScreen": true,
+			"infoPlist": {
+				"NSLocationAlwaysAndWhenInUseUsageDescription": "$(PRODUCT_NAME) needs access to location.",
+				"NSLocationWhenInUseUsageDescription": "$(PRODUCT_NAME) needs access to location.",
+				"NSLocationAlwaysUsageDescription": "$(PRODUCT_NAME) needs access to location even when the app is in the background.",
+				"UIBackgroundModes": ["location"]
+			}
 		},
 		"android": {
 			"adaptiveIcon": {
@@ -35,8 +42,9 @@
 			"package": "com.bikemn.ibikemn",
 			"versionCode": 1,
 			"permissions": [
-				"android.permission.ACCESS_COARSE_LOCATION",
-				"android.permission.ACCESS_FINE_LOCATION"
+				"android.permission.ACCESS_BACKGROUND_LOCATION",
+				"android.permission.ACCESS_FINE_LOCATION",
+				"android.permission.ACCESS_COARSE_LOCATION"
 			]
 		},
 		"web": {
@@ -53,7 +61,10 @@
 			[
 				"expo-location",
 				{
-					"locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+					"locationAlwaysPermission": "Allow $(PRODUCT_NAME) to use your location while the app is in the background.",
+					"locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location while you're using the app.",
+					"isAndroidBackgroundLocationEnabled": true,
+					"isIosBackgroundLocationEnabled": true
 				}
 			]
 		],

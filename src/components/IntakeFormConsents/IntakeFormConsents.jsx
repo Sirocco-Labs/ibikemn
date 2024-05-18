@@ -227,7 +227,7 @@ export default function IntakeFormConsents({ navigation, route }) {
 								});
 							}}
 							onValueChange={(value) => {
-								console.log("LOCO VALUYE CHANGE", value);
+								console.log("LOCO VALUE CHANGE", value);
 
 								if(!value){
 

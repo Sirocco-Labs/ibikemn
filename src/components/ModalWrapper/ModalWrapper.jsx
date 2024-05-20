@@ -65,10 +65,6 @@ export default function ModalWrapper({
 	}, [visible]);
 
 	useEffect(() => {
-		console.log("TRACKER CHANGED", tracker);
-	}, [tracker]);
-
-	useEffect(() => {
 		if (!webRef.current) {
 			setLoading(true);
 		}
@@ -80,7 +76,12 @@ export default function ModalWrapper({
 
 	const close = () => {
 		let target = screen.toLowerCase();
-
+		if (screen === "Previous Challenges") {
+			target = "challenges";
+		}
+		if (screen === "BikeMN Resources") {
+			target = "resources";
+		}
 		action((prevState) => ({
 			...prevState,
 			[target]: false,
@@ -128,11 +129,10 @@ export default function ModalWrapper({
 		setTracker(navState);
 	};
 
-	return screen === 'Events' ? (
+	return screen === "Events" ? (
 		<Modal
 			transitionDuration={1000}
 			animationType="slide"
-			// animationType="fade"
 			transparent={false}
 			visible={visible}
 			fullScreen={false}
@@ -173,15 +173,24 @@ export default function ModalWrapper({
 		>
 			<View
 				style={{
-					flex: 1,
-					paddingTop: 25,
+					flex: 0,
+					paddingTop: 10,
 					backgroundColor: "#1269A9",
 				}}
 			>
-				<Component
-					close={close}
-				/>
+				<Text
+					style={{
+						fontSize: 21,
+						color: "#fff",
+						fontWeight: "600",
+						marginLeft: 15,
+						marginBottom: 15,
+					}}
+				>
+					{screen}
+				</Text>
 			</View>
+				<Component close={close} />
 		</Modal>
 	);
 }

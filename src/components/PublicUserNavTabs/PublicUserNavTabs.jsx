@@ -13,6 +13,10 @@ import { useSelector } from "react-redux";
 export default function PublicUserNavTabs() {
 	const Tab = createBottomTabNavigator();
 	const user = useSelector((store) => store.user);
+	const styleOptions = {
+		headerStyle: { backgroundColor: "#1269A9" },
+		headerTintColor: "#FFFAF2",
+	};
 
 	return (
 		<NavigationContainer>
@@ -22,7 +26,7 @@ export default function PublicUserNavTabs() {
 					tabBarStyle: {
 						height: 50,
 						padding: 2,
-						// backgroundColor: "#0000ff",
+						backgroundColor: "#1269A9",
 					},
 					tabBarItemStyle: {
 						margin: 2,
@@ -55,17 +59,17 @@ export default function PublicUserNavTabs() {
 				<Tab.Screen
 					name="Ride"
 					component={RideScreen}
-					options={{ headerStyle: { backgroundColor: "blue" } }}
+					options={styleOptions}
 				/>
 				<Tab.Screen
 					name="Home"
 					component={HomeScreen}
-					options={{ headerStyle: { backgroundColor: "blue" } }}
+					options={styleOptions}
 				/>
 				<Tab.Screen
 					name="Account"
 					component={UserAccountScreen}
-					options={{ headerStyle: { backgroundColor: "blue" } }}
+					options={styleOptions}
 				/>
 			</Tab.Navigator>
 		</NavigationContainer>

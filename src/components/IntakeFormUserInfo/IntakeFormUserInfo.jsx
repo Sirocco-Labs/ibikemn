@@ -9,10 +9,9 @@ import {
 	StyleSheet,
 	Alert
 } from "react-native";
-import { Input, Button, Text, CheckBox } from "@rneui/themed";
+import { Input, Button, Text, CheckBox, Icon } from "@rneui/themed";
 import KeyboardAvoidingWrapper from "../KeyboardAvoidingWrapper/KeyboardAvoidingWrapper";
 
-import MCIcons from "../MCIcons/MCIcons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -20,6 +19,7 @@ import { addUser } from "../../redux/thunks/userThunk";
 import { setIntakeUserInfo } from "../../redux/slices/intakeFormSlice";
 
 import KeyboardAvoidingScrollView from "../KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
+
 
 export default function IntakeFormUserInfo({ navigation, route }) {
 	const dispatch = useDispatch();
@@ -82,7 +82,7 @@ export default function IntakeFormUserInfo({ navigation, route }) {
 						<View style={styles.gridItem}>
 							<Input
 								label="First Name"
-								placeholder="Enter your first name"
+								placeholder="First Name"
 								inputStyle={styles.input}
 								labelStyle={styles.label}
 								value={userInfo.first_name}
@@ -97,7 +97,7 @@ export default function IntakeFormUserInfo({ navigation, route }) {
 						<View style={styles.gridItem}>
 							<Input
 								label="Last Name"
-								placeholder="Enter your last name"
+								placeholder="Last Name"
 								inputStyle={styles.input}
 								labelStyle={styles.label}
 								value={userInfo.last_name}
@@ -188,12 +188,12 @@ const styles = StyleSheet.create({
 	},
 
 	input: {
-		fontSize: 12,
-		marginVertical: -2,
+		// fontSize: 12,
+		// marginVertical: -2,
 	},
 	label: {
-		fontSize: 13,
-		marginBottom: -5,
+		// fontSize: 13,
+		// marginBottom: -5,
 	},
 	grid: {
 		flexDirection: "row",
@@ -212,7 +212,9 @@ const styles = StyleSheet.create({
 		flexDirection: "row-reverse",
 		justifyContent: "space-evenly",
 		alignItems: "center",
-		width: 100,
+		width: 120,
+		borderRadius:12,
+		backgroundColor:'#1269A9'
 	},
 	backBtn: {
 		display: "flex",
@@ -226,5 +228,32 @@ const styles = StyleSheet.create({
 	},
 	mr15: {
 		marginRight: 15,
+	},
+	solidButton: {
+		backgroundColor: "#1269A9",
+		borderRadius: 12,
+		height: 40,
+		padding: 2,
+	},
+	solidButtonOff: {
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 40,
+		padding: 2,
+	},
+	outlineButton: {
+		borderWidth: 1.5,
+		borderColor: "#1269A9",
+		borderRadius: 12,
+		height: 40,
+		padding: 2,
+	},
+	outlineButtonOff: {
+		borderWidth: 1.5,
+		borderColor: "#C0C0C0",
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 40,
+		padding: 2,
 	},
 });

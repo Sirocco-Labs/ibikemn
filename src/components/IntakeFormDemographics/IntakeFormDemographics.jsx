@@ -1,14 +1,11 @@
 import { ScrollView, StyleSheet, View, Alert } from "react-native";
 import { Input, Button, Text, CheckBox } from "@rneui/themed";
-import {
-	SelectList,
-	MultipleSelectList,
-} from "react-native-dropdown-select-list";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setIntakeDemographics } from "../../redux/slices/intakeFormSlice";
 import KeyboardAvoidingScrollView from "../KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function IntakeFormDemographics({ navigation, route }) {
 	const dispatch = useDispatch();
@@ -47,24 +44,58 @@ export default function IntakeFormDemographics({ navigation, route }) {
 	];
 
 	const [selected, setSelected] = useState("");
-	const [demographics, setDemographics] = useState(inputData);
 
 	const [race, setRace] = useState(raceData);
 	const [income, setIncome] = useState(incomeData);
 
 	const intake = useSelector((store) => store.intake);
+	const [demographics, setDemographics] = useState(intake.demographics);
 
 	const { index, routeNames } = navigation.getState();
 	const tabFocused = route.name === routeNames[index] ? true : false;
 
 	const [loading, setLoading] = useState(false);
+	const [stopper, setStopper] = useState(
+		demographics.race.includes("Prefer not to answer") ||
+			demographics.race.includes("My identities are not included")
+			? true
+			: false
+	);
+
+	useFocusEffect(
+		useCallback(() => {
+			console.log("$# UCB DEMO", intake.demographics);
+			// setDemographics(intake.demographics);
+			validateSave();
+			return () => {
+				setDemographics(intake.demographics);
+				setStopper(
+					demographics.race.includes("Prefer not to answer") ||
+						demographics.race.includes(
+							"My identities are not included"
+						)
+						? true
+						: false
+				);
+			};
+		}, [intake])
+	);
+
 	useEffect(() => {
-		console.log("race", demographics.race);
-		console.log("income", demographics.income_level);
+		validateSave();
+
+		console.log("$# race", demographics.race);
+		console.log("$# income", demographics.income_level);
 	}, [demographics]);
 
 	useEffect(() => {
 		setDemographics(intake.demographics);
+		setStopper(
+			demographics.race.includes("Prefer not to answer") ||
+				demographics.race.includes("My identities are not included")
+				? true
+				: false
+		);
 		if (
 			tabFocused &&
 			loading &&
@@ -77,7 +108,12 @@ export default function IntakeFormDemographics({ navigation, route }) {
 	}, [intake]);
 
 	const validateSave = () => {
-		if (demographics.age && demographics.gender_identity && demographics.race.length > 0 && demographics.income_level ) {
+		if (
+			demographics.age &&
+			demographics.gender_identity &&
+			demographics.race.length > 0 &&
+			demographics.income_level
+		) {
 			return false;
 		}
 		return true;
@@ -91,28 +127,55 @@ export default function IntakeFormDemographics({ navigation, route }) {
 	const updatePayload = (target, value) => {
 		let holder = [...demographics.race];
 		if (target === "race") {
-			if (!demographics.race.includes(value)) {
-				holder.push(value);
+			if (
+				value === "My identities are not included" ||
+				value === "Prefer not to answer"
+			) {
+				if (demographics.race.includes(value)) {
+					setStopper(false);
+					holder = [];
+				} else {
+					setStopper(true);
+					holder = [value];
+				}
+				setDemographics({ ...demographics, race: holder });
 			} else {
-				console.log('Value was in holder', holder);
-				holder = holder.filter((key) => key !== value);
-				console.log('filter holder', holder);
+				if (!demographics.race.includes(value)) {
+					holder.push(value);
+				} else {
+					console.log("Value was in holder", holder);
+					holder = holder.filter((key) => key !== value);
+					console.log("filter holder", holder);
+				}
+				setDemographics({ ...demographics, race: holder });
 			}
-			setDemographics({ ...demographics, race: holder });
 		} else {
-			if (demographics[`${target}`] !== value) {
-				setDemographics({ ...demographics, [`${target}`]: value });
-			} else {
+			if (demographics[`${target}`] === value) {
 				setDemographics({
 					...demographics,
-					[`${target}`]: inputData[`${target}`],
+					[`${target}`]: "",
 				});
+			} else {
+				setDemographics({ ...demographics, [`${target}`]: value });
 			}
 		}
 	};
 
 	const checkForLast = (array, index) => {
 		return array.length % 2 && index === array.length - 1;
+	};
+
+	const shouldBeCheckedRace = (data, demo) => {
+		let checked = demo.race.includes(data.title);
+		console.log("$@ CHECKED", checked);
+
+		return checked;
+	};
+	const shouldBeCheckedIncome = (data, demo) => {
+		let checked = demo.income.includes(data.title);
+		console.log("$@ CHECKED", checked);
+
+		return checked;
 	};
 
 	return (
@@ -153,128 +216,135 @@ export default function IntakeFormDemographics({ navigation, route }) {
 						/>
 					</View>
 				</View>
-					<View style={styles.section}>
-						<View>
-							<Text
-								style={[styles.fieldTitle, { marginLeft: 5 }]}
-							>
-								What are your racial/ethnic identities?
-							</Text>
-							<Text
-								style={[ { marginLeft: 8, marginBottom:10}]}
-							>
+				<View style={styles.section}>
+					<View>
+						<Text style={[styles.fieldTitle, { marginLeft: 5 }]}>
+							What are your racial/ethnic identities?
+						</Text>
+						<Text style={[{ marginLeft: 8, marginBottom: 10 }]}>
 							(choose all that apply)
-							</Text>
-						</View>
-						<View style={styles.gridCB}>
-							{raceData.map((box, i) => (
-								<View
-									style={
-										checkForLast(raceData, i)
-											? styles.lastGridItemCB
-											: styles.gridItemCB
-									}
-									key={i}
-								>
-									<CheckBox
-										iconRight={false}
-										title={box.title}
-										checked={race[i].choice}
-										onPress={() => {
-											// loop through previous state
-											// if the index of the previous state is the same as the index passed in
-											// then return that object with the change in choice value
-											setRace((last) =>
-												last.map((object, index) =>
-													index === i
-														? {
-																...object,
-																choice: !object.choice,
-														  }
-														: object
-												)
-											);
-
-											updatePayload("race", box.title);
-
-											validateSave();
-										}}
-										textStyle={{
-											fontSize: 12,
-											fontWeight: "bold",
-										}}
-										containerStyle={{
-											height: "auto",
-											paddingVertical: 0,
-											paddingLeft: 0,
-											margin: 0,
-											// borderColor: "magenta",
-											// borderWidth: 1,
-										}}
-									/>
-								</View>
-							))}
-						</View>
+						</Text>
 					</View>
-					<View style={styles.section}>
-						<View>
-							<Text
-								style={[styles.fieldTitle, { marginLeft: 5 }]}
+					<View style={styles.gridCB}>
+						{raceData.map((box, i) => (
+							<View
+								style={
+									checkForLast(raceData, i)
+										? styles.lastGridItemCB
+										: styles.gridItemCB
+								}
+								key={i}
 							>
-								Which of the following best describes your
-								personal income last year?
-							</Text>
-						</View>
-						<View style={styles.gridCB}>
-							{incomeData.map((box, i) => (
-								<View
-									style={
-										checkForLast(incomeData, i)
-											? styles.lastGridItemCB
-											: styles.gridItemCB
+								<CheckBox
+									iconRight={false}
+									title={box.title}
+									disabled={
+										!demographics.race.includes(
+											box.title
+										) && stopper
 									}
-									key={i}
-								>
-									<CheckBox
-										iconRight={false}
-										title={box.title}
-										checked={income[i].choice}
-										onPress={() => {
-											// loop through previous state
-											// if the index of the previous state is the same as the index passed in
-											// then return that object with the change in choice value
-											setIncome((last) =>
-												last.map(
-													(object, index) =>
-														index === i && {
+									// checked={race[i].choice shouldBeChecked(race[1], demographics)}
+									checked={demographics.race.includes(
+										box.title
+									)}
+									onPress={() => {
+										// loop through previous state
+										// if the index of the previous state is the same as the index passed in
+										// then return that object with the change in choice value
+										setRace((last) =>
+											last.map((object, index) =>
+												index === i
+													? {
 															...object,
 															choice: !object.choice,
-														}
-												)
-											);
+													  }
+													: object
+											)
+										);
 
-											updatePayload("income_level", box.value);
+										updatePayload("race", box.title);
 
-											validateSave();
-										}}
-										textStyle={{
-											fontSize: 12,
-											fontWeight: "bold",
-										}}
-										containerStyle={{
-											height: "auto",
-											paddingVertical: 0,
-											paddingLeft: 0,
-											margin: 0,
-											// borderColor: "magenta",
-											// borderWidth: 1,
-										}}
-									/>
-								</View>
-							))}
-						</View>
+										validateSave();
+									}}
+									textStyle={{
+										fontSize: 12,
+										fontWeight: "bold",
+									}}
+									containerStyle={{
+										height: "auto",
+										paddingVertical: 0,
+										paddingLeft: 0,
+										margin: 0,
+										// borderColor: "magenta",
+										// borderWidth: 1,
+									}}
+								/>
+							</View>
+						))}
 					</View>
+				</View>
+				<View style={styles.section}>
+					<View>
+						<Text style={[styles.fieldTitle, { marginLeft: 5 }]}>
+							Which of the following best describes your personal
+							income last year?
+						</Text>
+					</View>
+					<View style={styles.gridCB}>
+						{incomeData.map((box, i) => (
+							<View
+								style={
+									checkForLast(incomeData, i)
+										? styles.lastGridItemCB
+										: styles.gridItemCB
+								}
+								key={i}
+							>
+								<CheckBox
+									iconRight={false}
+									title={box.title}
+									checked={
+										demographics.income_level === box.value
+									}
+									// checked={income[i].choice}
+									onPress={() => {
+										// loop through previous state
+										// if the index of the previous state is the same as the index passed in
+										// then return that object with the change in choice value
+										setIncome((last) =>
+											last.map(
+												(object, index) =>
+													index === i && {
+														...object,
+														choice: !object.choice,
+													}
+											)
+										);
 
+										updatePayload(
+											"income_level",
+											box.value
+										);
+
+										validateSave();
+									}}
+									textStyle={{
+										fontSize: 12,
+										fontWeight: "bold",
+									}}
+									containerStyle={{
+										height: "auto",
+										paddingVertical: 0,
+										paddingLeft: 0,
+										margin: 0,
+										// borderColor: "magenta",
+										// borderWidth: 1,
+									}}
+								/>
+							</View>
+						))}
+					</View>
+				</View>
 
 				<View style={styles.section}>
 					<View style={styles.grid}>
@@ -310,10 +380,10 @@ export default function IntakeFormDemographics({ navigation, route }) {
 							}}
 							iconRight={true}
 							disabled={
-								!intake.demographics.age &&
-								!intake.demographics.gender_identity &&
-								!intake.demographics.race.length > 0 &&
-								!intake.demographics.income_level ||
+								(!intake.demographics.age &&
+									!intake.demographics.gender_identity &&
+									!intake.demographics.race.length > 0 &&
+									!intake.demographics.income_level) ||
 								validateSave()
 							}
 							onPress={() => {
@@ -338,14 +408,14 @@ const styles = StyleSheet.create({
 		// width: "100%",
 		backgroundColor: "#fff",
 	},
-	input: {
-		fontSize: 12,
-		marginVertical: -2,
-	},
-	label: {
-		fontSize: 13,
-		marginBottom: -5,
-	},
+	// input: {
+	// 	fontSize: 12,
+	// 	marginVertical: -2,
+	// },
+	// label: {
+	// 	fontSize: 13,
+	// 	marginBottom: -5,
+	// },
 	gridCB: {
 		flexDirection: "row",
 		flexWrap: "wrap",
@@ -391,6 +461,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	backBtn: {
 		display: "flex",
@@ -398,6 +470,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	ml15: {
 		marginLeft: 15,
@@ -424,7 +498,7 @@ const styles = StyleSheet.create({
 	fieldTitle: {
 		fontSize: 15,
 		fontWeight: "bold",
-		marginBottom: 15,
+		marginBottom: 10,
 	},
 	dropdownContainer: {
 		position: "relative",

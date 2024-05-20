@@ -14,9 +14,9 @@ export default function CustomSpeedDial() {
 	const [openSD, setOpenSD] = useState(false);
 
 	const dialogSwitch = {
-		incentives: false,
+		challenges: false,
 		events: false,
-		surveys: false,
+		resources: false,
 	};
 	const [toggle, setToggle] = useState(dialogSwitch);
 	const visible = {
@@ -25,7 +25,7 @@ export default function CustomSpeedDial() {
 	};
 
 	const openIncentiveScreen = () => {
-		setToggle({ ...toggle, incentives: !toggle.incentives });
+		setToggle({ ...toggle, challenges: !toggle.challenges });
 		setOpenSD(!openSD);
 	};
 	const openCalendarScreen = () => {
@@ -33,15 +33,15 @@ export default function CustomSpeedDial() {
 		setOpenSD(!openSD);
 	};
 	const openResourcesScreen = () => {
-		setToggle({ ...toggle, surveys: !toggle.surveys });
+		setToggle({ ...toggle, resources: !toggle.resources });
 		setOpenSD(!openSD);
 	};
 	return (
 		<>
 			<ModalWrapper
-				visible={toggle.incentives}
+				visible={toggle.challenges}
 				action={setToggle}
-				screen={"Incentives"}
+				screen={"Previous Challenges"}
 				component={IncentiveScreen}
 			/>
 			<ModalWrapper
@@ -51,9 +51,9 @@ export default function CustomSpeedDial() {
 				component={CalendarScreen}
 			/>
 			<ModalWrapper
-				visible={toggle.surveys}
+				visible={toggle.resources}
 				action={setToggle}
-				screen={"Surveys"}
+				screen={"BikeMN Resources"}
 				component={ResourcesScreen}
 			/>
 

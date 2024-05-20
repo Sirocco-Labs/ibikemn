@@ -11,15 +11,23 @@ import {
 } from "react-native";
 import { Input, Button, Slider, Text } from "@rneui/themed";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setIntakeConsents } from "../../redux/slices/intakeFormSlice";
 import KeyboardAvoidingScrollView from "../KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
 
 import { InitialLocationPermissionRequest } from "../../tasks/RequestLocationPermission";
-import { clearAllPreferences, setAllPreferences } from "../../redux/slices/preferenceSlice";
+import {
+	clearAllPreferences,
+	setAllPreferences,
+} from "../../redux/slices/preferenceSlice";
+import ScreenWrapper from "../ScreenWrapper/ScreenWrapper";
+import { useFocusEffect } from "@react-navigation/native";
+
+
 
 export default function IntakeFormConsents({ navigation, route }) {
+	InitialLocationPermissionRequest(dispatch);
 	const dispatch = useDispatch();
 	const inputData = {
 		follow_up: false,
@@ -49,9 +57,35 @@ export default function IntakeFormConsents({ navigation, route }) {
 	const tabFocused = route.name === routeNames[index] ? true : false;
 
 	const [loading, setLoading] = useState(false);
+	const locationSettings = async () =>{
+		let checker;
+		try {
+			checker = await InitialLocationPermissionRequest(dispatch);
+			console.log('LOCO CHECKER Client', checker);
+
+
+		} catch (error) {
+			console.error('LOCO ERROR', error)
+
+		}
+		return checker
+
+	}
+	// useFocusEffect(
+	// 	useCallback(()=>{
+	// 	locationSettings();
+
+	// 	},[intake])
+	// )
 	useEffect(() => {
+		// locationSettings()
 		setConsents(preferences);
-		if (tabFocused && loading && intake.consents.location_tracking && preferences.location_tracking) {
+		if (
+			tabFocused &&
+			loading &&
+			intake.consents.location_tracking &&
+			preferences.location_tracking
+		) {
 			Alert.alert("Success", "Your preferences have been saved.");
 			setLoading(false);
 		}
@@ -65,288 +99,303 @@ export default function IntakeFormConsents({ navigation, route }) {
 	};
 	const handleSave = () => {
 		dispatch(setIntakeConsents(consents));
-		dispatch(setAllPreferences(consents))
+		dispatch(setAllPreferences(consents));
 
 		setLoading(!loading);
 	};
 
 	return (
-		<KeyboardAvoidingScrollView>
-			<View style={styles.flexOne}>
-				<View style={styles.section}>
-					<View style={styles.switchLine}>
-						<Text>
-							I consent to be contacted by BikeMN and/or their
-							partners for a testimonial interview about my
-							experience using this app
-						</Text>
-
-						<View style={styles.switchRight}>
-							<Switch
-								trackColor={{
-									false: "#cccccc",
-									true: "#9cb59a",
-								}}
-								thumbColor={
-									consents.follow_up ? "#23ab1a" : "#707070"
-								}
-								ios_backgroundColor="#3e3e3e"
-								value={consents.follow_up}
-								onChange={() => {
-									setConsents({
-										...consents,
-										follow_up: !consents.follow_up,
-									});
-								}}
-								onValueChange={() => validateSave()}
-							/>
-							<Text>{consents.follow_up ? "Yes" : "No"}</Text>
-						</View>
-					</View>
-				</View>
-				<View style={styles.section}>
-					<View style={styles.switchLine}>
-						<Text>
-							I consent to receiving marketing and/or other
-							promotional content from BikeMN
-						</Text>
-
-						<View style={styles.switchRight}>
-							<Switch
-								trackColor={{
-									false: "#cccccc",
-									true: "#9cb59a",
-								}}
-								thumbColor={
-									consents.marketing ? "#23ab1a" : "#707070"
-								}
-								ios_backgroundColor="#3e3e3e"
-								value={consents.marketing}
-								onChange={() =>
-									setConsents({
-										...consents,
-										marketing: !consents.marketing,
-									})
-								}
-								onValueChange={() => validateSave()}
-							/>
-							<Text>{consents.marketing ? "Yes" : "No"}</Text>
-						</View>
-					</View>
-				</View>
-				<View style={styles.section}>
-					<View style={styles.switchLine}>
-						<View style={styles.textBlock}>
-							<Text>
-								The iBikeMN app gives its users full control
-								over starting and stopping GPS location services
-								while using the app. The specific location
-								coordinates received from your device's GPS
-								services BikeMN will not be saved nor shared
-								with any third parties by the app nor BikeMN for
-								any reason.
-							</Text>
-						</View>
-						<View style={styles.textBlock}>
-							<Text>
-								The specific location coordinates received from
-								your device's GPS services BikeMN will not be
-								saved nor shared with any third parties by the
-								app nor BikeMN for any reason.
-							</Text>
-						</View>
-						<View style={styles.textBlock}>
-							<Text>
-								I consent to the iBikeMN app using my device's
-								GPS location services to capture location
-								coordinates in order to calculate my travel
-								distance while using the app.
-							</Text>
-						</View>
-						<View style={styles.textBlock}>
-							<Text>
-								I understand that my GPS location coordinates
-								are only being used to calculate travel distance
-								data for use in BikeMN's grant reporting and to
-								validate my participation in the incentive
-								program for potential rewards.
-							</Text>
-						</View>
-						<View style={styles.switchRight}>
-							<Switch
-							disabled={consents.location_tracking}
-								trackColor={{
-									false: "#cccccc",
-									true: "#9cb59a",
-								}}
-								thumbColor={
-									consents.location_tracking
-										? "#23ab1a"
-										: "#707070"
-								}
-								ios_backgroundColor="#3e3e3e"
-								value={consents.location_tracking}
-								onChange={(e) => {
-									setConsents({
-										...consents,
-										location_tracking:
-											!consents.location_tracking,
-									});
-								}}
-								onValueChange={async (value) => {
-									if (
-										value &&
-										!consents.location_tracking
-									) {
-										const foo =
-											await InitialLocationPermissionRequest(
-												dispatch
-											);
-										console.log("foo", foo);
-									} else {
-										Alert.alert(
-											"Location Services Disabled",
-											"Please enable location services for this app in your device settings.",
-											[
-												{
-													text: "Open Settings",
-													onPress: () => {
-														if (
-															Platform.OS ===
-															"ios"
-														) {
-															Linking.openURL(
-																"app-settings:"
-															);
-														} else {
-															Linking.openSettings();
-														}
-													},
-												},
-												{
-													text: "Cancel",
-													style: "cancel",
-												},
-											]
-										);
-									}
-									validateSave();
-									// 	console.log('E', e);
-									// 	console.log('choice', consents.location_tracking);
-								}}
-							/>
-							<Text>
-								{consents.location_tracking ? "Yes" : "No"}
-							</Text>
-						</View>
-					</View>
-				</View>
-				<View style={styles.section}>
-					<View style={styles.switchLine}>
-						<Text>
-							Would you like to participate in the iBikeMN app
-							incentive rewards program? You will be able to earn
-							points based on your commuting activity, and
-							exchange them for gift cards to local bike stores.
-							*requires GPS location services to be enabled
-						</Text>
-
-						<View style={styles.switchRight}>
-							<Switch
-								disabled={!preferences.location_tracking}
-								trackColor={{
-									false: "#cccccc",
-									true: "#9cb59a",
-								}}
-								thumbColor={
-									consents.incentive ? "#23ab1a" : "#707070"
-								}
-								ios_backgroundColor="#3e3e3e"
-								value={
-									preferences.location_tracking &&
-									consents.incentive
-								}
-								onChange={() =>
-									setConsents({
-										...consents,
-
-										incentive: !consents.incentive,
-									})
-								}
-								onValueChange={() => validateSave()}
-							/>
-							<Text>
-								{preferences.location_tracking &&
-								consents.incentive
-									? "Yes"
-									: "No"}
-							</Text>
-						</View>
-					</View>
+		// <KeyboardAvoidingScrollView>
+		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
+			{/* <View style={styles.flexOne}> */}
+			<View style={styles.section}>
+				<View style={styles.switchLine}>
+					<Text>
+						I consent to be contacted by BikeMN and/or their
+						partners for a testimonial interview about my experience
+						using this app
+					</Text>
 				</View>
 
-				<View style={styles.section}>
-					<View style={styles.switchLine}>
-						<Text>I consent to biometrics</Text>
-
-						<View style={styles.switchRight}>
-							<Switch
-								trackColor={{
-									false: "#cccccc",
-									true: "#9cb59a",
-								}}
-								thumbColor={
-									consents.biometrics
-										? "#23ab1a"
-										: "#707070"
-								}
-								ios_backgroundColor="#3e3e3e"
-								value={consents.biometrics}
-								onChange={() =>
-									setConsents({
-										...consents,
-										biometrics: !consents.biometrics,
-									})
-								}
-								onValueChange={() => validateSave()}
-							/>
-							<Text>{consents.biometrics ? "Yes" : "No"}</Text>
-						</View>
-					</View>
+				<View style={styles.switchRight}>
+					<Switch
+						trackColor={{
+							false: "#cccccc",
+							true: "#9cb59a",
+						}}
+						thumbColor={consents.follow_up ? "#23ab1a" : "#707070"}
+						ios_backgroundColor="#3e3e3e"
+						value={consents.follow_up}
+						onChange={() => {
+							setConsents({
+								...consents,
+								follow_up: !consents.follow_up,
+							});
+						}}
+						onValueChange={() => validateSave()}
+					/>
+					<Text>{consents.follow_up ? "Yes" : "No"}</Text>
 				</View>
-				<View style={styles.section}>
-					<View style={styles.switchLine}>
-						<Text>I consent to notifications</Text>
+			</View>
+			<View style={styles.section}>
+				<View style={styles.switchLine}>
+					<Text>
+						I consent to receiving marketing and/or other
+						promotional content from BikeMN
+					</Text>
 
-						<View style={styles.switchRight}>
-							<Switch
-								trackColor={{
-									false: "#cccccc",
-									true: "#9cb59a",
-								}}
-								thumbColor={
-									consents.notifications
-										? "#23ab1a"
-										: "#707070"
-								}
-								ios_backgroundColor="#3e3e3e"
-								value={consents.notifications}
-								onChange={() =>
-									setConsents({
-										...consents,
-										notifications:
-											!consents.notifications,
-									})
-								}
-								onValueChange={() => validateSave()}
-							/>
-							<Text>
-								{consents.notifications ? "Yes" : "No"}
-							</Text>
-						</View>
+					<View style={styles.switchRight}>
+						<Switch
+							trackColor={{
+								false: "#cccccc",
+								true: "#9cb59a",
+							}}
+							thumbColor={
+								consents.marketing ? "#23ab1a" : "#707070"
+							}
+							ios_backgroundColor="#3e3e3e"
+							value={consents.marketing}
+							onChange={() =>
+								setConsents({
+									...consents,
+									marketing: !consents.marketing,
+								})
+							}
+							onValueChange={() => validateSave()}
+						/>
+						<Text>{consents.marketing ? "Yes" : "No"}</Text>
 					</View>
 				</View>
 			</View>
+			<View style={styles.section}>
+				<View style={styles.switchLine}>
+					<View style={styles.textBlock}>
+						<Text>
+							The iBikeMN app gives its users full control over
+							starting and stopping GPS location services while
+							using the app. The specific location coordinates
+							received from your device's GPS services BikeMN will
+							not be saved nor shared with any third parties by
+							the app nor BikeMN for any reason.
+						</Text>
+					</View>
+					<View style={styles.textBlock}>
+						<Text>
+							The specific location coordinates received from your
+							device's GPS services BikeMN will not be saved nor
+							shared with any third parties by the app nor BikeMN
+							for any reason.
+						</Text>
+					</View>
+					<View style={styles.textBlock}>
+						<Text>
+							I consent to the iBikeMN app using my device's GPS
+							location services to capture location coordinates in
+							order to calculate my travel distance while using
+							the app.
+						</Text>
+					</View>
+					<View style={styles.textBlock}>
+						<Text>
+							I understand that my GPS location coordinates are
+							only being used to calculate travel distance data
+							for use in BikeMN's grant reporting and to validate
+							my participation in the incentive program for
+							potential rewards.
+						</Text>
+					</View>
+					<View style={styles.switchRight}>
+						<Switch
+							// disabled={consents.location_tracking}
+							trackColor={{
+								false: "#cccccc",
+								true: "#9cb59a",
+							}}
+							thumbColor={
+								consents.location_tracking
+									? "#23ab1a"
+									: "#707070"
+							}
+							ios_backgroundColor="#3e3e3e"
+							value={consents.location_tracking}
+							onChange={(e) => {
+								// console.log(' LOCO ONCHANGE', e);
+								setConsents({
+									...consents,
+									location_tracking:
+										!consents.location_tracking,
+								});
+							}}
+							onValueChange={(value) => {
+								console.log("LOCO VALUE CHANGE", value);
+
+								if(!value){
+
+									Alert.alert(
+										"Location Services Disabled",
+										"Please enable location services for this app in your device settings.",
+										[
+											{
+												text: "Open Settings",
+												onPress: () => {
+													if (Platform.OS === "ios") {
+														Linking.openURL(
+															"app-settings:"
+														);
+													} else {
+														Linking.openSettings();
+													}
+												},
+											},
+											{
+												text: "Cancel",
+												style: "cancel",
+											},
+										]
+									);
+								}else{
+									InitialLocationPermissionRequest(dispatch);
+
+								}
+
+
+								// if (value && consents.location_tracking) {
+								// 	const foo =
+								// 		await InitialLocationPermissionRequest(
+								// 			dispatch
+								// 		);
+								// 	console.log("foo", foo);
+								// } else {
+								// 	Alert.alert(
+								// 		"Location Services Disabled",
+								// 		"Please enable location services for this app in your device settings.",
+								// 		[
+								// 			{
+								// 				text: "Open Settings",
+								// 				onPress: () => {
+								// 					if (Platform.OS === "ios") {
+								// 						Linking.openURL(
+								// 							"app-settings:"
+								// 						);
+								// 					} else {
+								// 						Linking.openSettings();
+								// 					}
+								// 				},
+								// 			},
+								// 			{
+								// 				text: "Cancel",
+								// 				style: "cancel",
+								// 			},
+								// 		]
+								// 	);
+								// }
+								validateSave();
+								// 	console.log('E', e);
+								// 	console.log('choice', consents.location_tracking);
+							}}
+						/>
+						<Text>{consents.location_tracking ? "Yes" : "No"}</Text>
+					</View>
+				</View>
+			</View>
+			{/* <View style={styles.section}>
+				<View style={styles.switchLine}>
+					<Text>
+						Would you like to participate in the iBikeMN app
+						incentive rewards program? You will be able to earn
+						points based on your commuting activity, and exchange
+						them for gift cards to local bike stores. *requires GPS
+						location services to be enabled
+					</Text>
+
+					<View style={styles.switchRight}>
+						<Switch
+							disabled={!preferences.location_tracking}
+							trackColor={{
+								false: "#cccccc",
+								true: "#9cb59a",
+							}}
+							thumbColor={
+								consents.incentive ? "#23ab1a" : "#707070"
+							}
+							ios_backgroundColor="#3e3e3e"
+							value={
+								preferences.location_tracking &&
+								consents.incentive
+							}
+							onChange={() =>
+								setConsents({
+									...consents,
+
+									incentive: !consents.incentive,
+								})
+							}
+							onValueChange={() => validateSave()}
+						/>
+						<Text>
+							{preferences.location_tracking && consents.incentive
+								? "Yes"
+								: "No"}
+						</Text>
+					</View>
+				</View>
+			</View>
+
+			<View style={styles.section}>
+				<View style={styles.switchLine}>
+					<Text>I consent to biometrics</Text>
+
+					<View style={styles.switchRight}>
+						<Switch
+							trackColor={{
+								false: "#cccccc",
+								true: "#9cb59a",
+							}}
+							thumbColor={
+								consents.biometrics ? "#23ab1a" : "#707070"
+							}
+							ios_backgroundColor="#3e3e3e"
+							value={consents.biometrics}
+							onChange={() =>
+								setConsents({
+									...consents,
+									biometrics: !consents.biometrics,
+								})
+							}
+							onValueChange={() => validateSave()}
+						/>
+						<Text>{consents.biometrics ? "Yes" : "No"}</Text>
+					</View>
+				</View>
+			</View>
+			<View style={styles.section}>
+				<View style={styles.switchLine}>
+					<Text>I consent to notifications</Text>
+
+					<View style={styles.switchRight}>
+						<Switch
+							trackColor={{
+								false: "#cccccc",
+								true: "#9cb59a",
+							}}
+							thumbColor={
+								consents.notifications ? "#23ab1a" : "#707070"
+							}
+							ios_backgroundColor="#3e3e3e"
+							value={consents.notifications}
+							onChange={() =>
+								setConsents({
+									...consents,
+									notifications: !consents.notifications,
+								})
+							}
+							onValueChange={() => validateSave()}
+						/>
+						<Text>{consents.notifications ? "Yes" : "No"}</Text>
+					</View>
+				</View>
+			</View> */}
+			{/* </View> */}
 
 			<View style={styles.section}>
 				<View style={styles.grid}>
@@ -382,8 +431,7 @@ export default function IntakeFormConsents({ navigation, route }) {
 						}}
 						iconRight={true}
 						disabled={
-							!preferences.location_tracking &&
-							!validateSave()
+							!preferences.location_tracking || !validateSave()
 						}
 						onPress={() => {
 							navigation.jumpTo("Submit");
@@ -395,7 +443,9 @@ export default function IntakeFormConsents({ navigation, route }) {
 					/>
 				</View>
 			</View>
-		</KeyboardAvoidingScrollView>
+		</ScreenWrapper>
+
+		// {/* </KeyboardAvoidingScrollView> */}
 	);
 }
 const styles = StyleSheet.create({
@@ -413,22 +463,30 @@ const styles = StyleSheet.create({
 		fontSize: 13,
 		marginBottom: -5,
 	},
-	switchLine: {
-		flexDirection: "row",
-		flexWrap: "wrap",
+	section: {
+		flex: 1,
+		marginVertical: 5,
 		justifyContent: "space-around",
-		alignItems: "center",
+		alignItems: "flex-start",
 		width: "100%",
-		backgroundColor: "#fff3d6",
-		padding: 10,
+		borderWidth: 1,
+	},
+	switchLine: {
+		// flexDirection: "row",
+		// flexWrap: "wrap",
+		// justifyContent: "space-around",
+		// alignItems: "center",
+		// width: "100%",
+		// backgroundColor: "#fff3d6",
+		// paddingHorizontal: 10,
 	},
 	switchRight: {
 		flexDirection: "row",
 		flexWrap: "wrap",
-		justifyContent: "flex-end",
+		justifyContent: "flex-start",
 		alignItems: "center",
-		width: "auto",
-		paddingHorizontal: 10,
+		width: "100%",
+		// paddingHorizontal: 10,
 	},
 	grid: {
 		flexDirection: "row",
@@ -453,6 +511,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	backBtn: {
 		display: "flex",
@@ -460,6 +520,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 100,
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	ml10: {
 		marginLeft: 10,
@@ -476,11 +538,7 @@ const styles = StyleSheet.create({
 	mt15: {
 		marginTop: 15,
 	},
-	section: {
-		paddingHorizontal: 5,
-		marginTop: 5,
-		marginBottom: 5,
-	},
+
 	sectionTitle: {
 		fontSize: 20,
 		marginTop: 10,

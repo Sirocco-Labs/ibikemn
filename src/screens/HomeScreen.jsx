@@ -1,8 +1,14 @@
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
 import CustomSpeedDial from "../components/CustomSpeedDial/CustomSpeedDial";
-import { StyleSheet, View } from "react-native";
+import {
+	StyleSheet,
+	View,
+	FlatList,
+	RefreshControl,
+	SafeAreaView,
+} from "react-native";
 import { Text, Divider } from "@rneui/themed";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -17,6 +23,8 @@ import { getUserTravelStats } from "../redux/thunks/userRidesThunk";
 import {
 	getActiveIncentives,
 	getUserIncentiveProgress,
+	getUserIncentiveHistory,
+	getAllPreviousChallenges,
 } from "../redux/thunks/incentiveThunk";
 
 import { setIsProgressUpdated } from "../redux/slices/incentiveSlice";
@@ -24,6 +32,9 @@ import { setIsProgressUpdated } from "../redux/slices/incentiveSlice";
 import ExpandChallenges from "../components/ExpandChallenges/ExpandChallenges";
 import UserStatsSection from "../components/UserStatsSection/UserStatsSection";
 import { getMyRideSurveys } from "../redux/thunks/rideSurveyThunk";
+
+import ChallengeCard from "../components/ChallengeCard/ChallengeCard";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function HomeScreen() {
 	const dispatch = useDispatch();
@@ -44,12 +55,16 @@ export default function HomeScreen() {
 	const [mostCommon, setMostCommon] = useState({});
 	const [newChallenge, setNewChallenge] = useState({});
 
-	useEffect(() => {
-		dispatch(getUserTravelStats(user.user_id));
-		dispatch(getActiveIncentives(userInfo));
-		dispatch(getUserIncentiveProgress(user.user_id));
-		dispatch(getMyRideSurveys(user.user_id));
-	}, [dispatch]);
+	useFocusEffect(
+		React.useCallback(() => {
+			dispatch(getUserTravelStats(user.user_id));
+			dispatch(getActiveIncentives(userInfo));
+			dispatch(getUserIncentiveProgress(user.user_id));
+			dispatch(getMyRideSurveys(user.user_id));
+			dispatch(getUserIncentiveHistory(user.user_id));
+			dispatch(getAllPreviousChallenges(user.is_public));
+		}, [dispatch])
+	);
 
 	const onRefresh = async () => {
 		setRefreshing(true);
@@ -59,6 +74,8 @@ export default function HomeScreen() {
 			dispatch(getActiveIncentives(userInfo));
 			dispatch(getUserIncentiveProgress(user.user_id));
 			dispatch(getMyRideSurveys(user.user_id));
+			dispatch(getUserIncentiveHistory(user.user_id));
+			dispatch(getAllPreviousChallenges(user.is_public));
 		} catch (error) {
 		} finally {
 			setRefreshing(false);
@@ -157,15 +174,9 @@ export default function HomeScreen() {
 				background={{ backgroundColor: "#fff" }}
 				onRefresh={onRefresh}
 				refreshing={refreshing}
+				// noScroll={true}
 			>
 				<View style={styles.sectionView}>
-					<Text>
-						New Challenge!
-					</Text>
-					<Text>
-						{/* {newChallenge.info.title} */}
-					</Text>
-
 					<View style={styles.leftColAr}>
 						<Text style={styles.sectionText}>
 							{user.username}'s Stats
@@ -175,12 +186,30 @@ export default function HomeScreen() {
 							survey={mostCommon}
 						/>
 					</View>
-					<View style={styles.expandSectionView}>
-						<ExpandChallenges
-							progress={challengeProgress}
-							active={activeChallenges}
-						/>
-					</View>
+					<Text
+						style={[
+							styles.sectionText,
+							{ alignSelf: "flex-start", marginVertical: 10 },
+						]}
+					>
+						Active Challenges
+					</Text>
+
+
+						<View style={styles.cardSection}>
+							<FlatList
+								data={activeChallenges}
+								horizontal
+								renderItem={({ item }) => (
+									<ChallengeCard
+										item={item}
+										prog={challengeProgress}
+									/>
+								)}
+								keyExtractor={(item) => item.id}
+							/>
+						</View>
+
 				</View>
 			</ScreenWrapper>
 		);
@@ -196,7 +225,7 @@ const styles = StyleSheet.create({
 	keeb: {
 		flex: 1,
 	},
-	scroll: {
+	wrapper: {
 		flexGrow: 1,
 	},
 	innerScroll: {
@@ -211,8 +240,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		width: "100%",
-		padding: 2,
-		marginVertical: 10,
+		padding: 5,
+		marginBottom: 10,
 	},
 	expandSectionView: {
 		flex: 1,
@@ -234,12 +263,13 @@ const styles = StyleSheet.create({
 	},
 	cardSection: {
 		flex: 1,
-		alignItems: "center",
+		flexDirection: "row",
+		alignItems: "flex-start",
 		justifyContent: "space-around",
 		width: "100%",
-		// padding: 5,
+		padding: 5,
 		// borderRadius: 16,
-		marginVertical: 10,
+		marginBottom: 5,
 	},
 	leftColAr: {
 		justifyContent: "space-around",
@@ -284,7 +314,6 @@ const styles = StyleSheet.create({
 		fontWeight: "700",
 		fontSize: 25,
 		color: "#1269A9",
-		marginBottom: 10,
 	},
 });
 

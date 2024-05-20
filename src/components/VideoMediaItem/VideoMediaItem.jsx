@@ -32,7 +32,7 @@ export default function VideoMediaItem({ vid }) {
 			);
 		} else {
             await ScreenOrientation.lockAsync(
-                ScreenOrientation.OrientationLock.DEFAULT
+                ScreenOrientation.OrientationLock.PORTRAIT_UP
 			);
 		}
         setFullScreen(!fullScreen);

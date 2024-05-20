@@ -16,7 +16,9 @@
 		"preview-ios": {
 			"distribution": "internal",
 			"ios": {
-				"buildType": "archive"
+				"buildType": "archive",
+        "enterpriseProvisioning": "adhoc",
+        "provisioningProfilePath":"${EXPO_PUBLIC_IOS_PROVISIONING}"
 			}
 		},
 		"production": {}

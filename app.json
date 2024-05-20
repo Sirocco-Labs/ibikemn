@@ -46,9 +46,6 @@
 				"android.permission.ACCESS_COARSE_LOCATION"
 			]
 		},
-		"web": {
-			"favicon": "./src/assets/favicon.png"
-		},
 		"plugins": [
 			"expo-router",
 			[

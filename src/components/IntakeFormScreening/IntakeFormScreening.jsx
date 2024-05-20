@@ -8,7 +8,6 @@ import {
 	Platform,
 } from "react-native";
 import { Input, Button, Text, Slider, Icon, CheckBox } from "@rneui/themed";
-import { SelectList } from "react-native-dropdown-select-list";
 
 import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -210,7 +209,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 		}, [intake])
 	);
 	useEffect(() => {
-		validateSave()
+		validateSave();
 		console.log("$# UE SCREENING", screening);
 		console.log("$# UE1 INTAKE", intake.screening);
 	}, [screening]);
@@ -332,7 +331,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 			if (screening.org_identity === 0) {
 				setScreening({
 					...screening,
-					org_identity: 'N/A',
+					org_identity: "N/A",
 					admin_identity: false,
 					staff_identity: false,
 				});
@@ -354,7 +353,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 			if (screening[`${target}`] === value) {
 				setScreening({
 					...screening,
-					[`${target}`]: 'N/A',
+					[`${target}`]: "N/A",
 					admin_identity: false,
 					staff_identity: false,
 				});
@@ -733,10 +732,10 @@ export default function IntakeFormScreening({ navigation, route }) {
 														iconRight={false}
 														title={box.title}
 														checked={
-															screening
-																.org_identity !=='N/A' && screening
-																.org_identity ===
-															box.value
+															screening.org_identity !==
+																"N/A" &&
+															screening.org_identity ===
+																box.value
 														}
 														onPress={() => {
 															// loop through previous state

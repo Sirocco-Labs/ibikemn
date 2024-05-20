@@ -1,9 +1,5 @@
 import { ScrollView, StyleSheet, View, Alert } from "react-native";
 import { Input, Button, Text, CheckBox } from "@rneui/themed";
-import {
-	SelectList,
-	MultipleSelectList,
-} from "react-native-dropdown-select-list";
 
 import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -59,7 +55,12 @@ export default function IntakeFormDemographics({ navigation, route }) {
 	const tabFocused = route.name === routeNames[index] ? true : false;
 
 	const [loading, setLoading] = useState(false);
-	const [stopper, setStopper] = useState(demographics.race.includes('Prefer not to answer') || demographics.race.includes('My identities are not included') ? true :false);
+	const [stopper, setStopper] = useState(
+		demographics.race.includes("Prefer not to answer") ||
+			demographics.race.includes("My identities are not included")
+			? true
+			: false
+	);
 
 	useFocusEffect(
 		useCallback(() => {

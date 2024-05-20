@@ -8,6 +8,10 @@
       "distribution": "internal"
     },
     "preview": {
+      "env":{
+        "SUPABASE_URL":"",
+        "SUPABASE_ANON_KEY":""
+      },
       "distribution": "internal",
       "android": {
 			"buildType": "apk",

@@ -36,6 +36,8 @@ import { getMyRideSurveys } from "../redux/thunks/rideSurveyThunk";
 import ChallengeCard from "../components/ChallengeCard/ChallengeCard";
 import { useFocusEffect } from "@react-navigation/native";
 
+import * as Network from "expo-network";
+
 export default function HomeScreen() {
 	const dispatch = useDispatch();
 
@@ -54,7 +56,33 @@ export default function HomeScreen() {
 	const [refreshing, setRefreshing] = useState(false);
 	const [mostCommon, setMostCommon] = useState({});
 	const [newChallenge, setNewChallenge] = useState({});
+	const [connected, setConnected] = useState(true)
 
+	useEffect(() => {
+		Network.getNetworkStateAsync()
+			.then((data) => {
+				console.log("$% NET STATUS", data);
+				setConnected(data)
+
+
+			})
+			.catch((error) => {
+				console.error('NETWORK ERROR', error);
+				return Alert.alert(
+					"Network Error",
+					`You don't seem to be connected to the internet`,
+					[
+						{
+							text: "Try again",
+						},
+						{
+							text: "Cancel",
+							style: "cancel",
+						},
+					]
+				);
+			});
+	}, []);
 	useFocusEffect(
 		React.useCallback(() => {
 			dispatch(getUserTravelStats(user.user_id));
@@ -167,6 +195,30 @@ export default function HomeScreen() {
 		setNewChallenge(findClosestTimestamp(activeChallenges));
 	}, [activeChallenges]);
 
+	const checkConnection = async () => {
+		try {
+			const status = await Network.getNetworkStateAsync();
+			console.log("$%NET --> STATUS", status);
+			return status
+		} catch (error) {
+			console.log("$%NET --> ERROR", error);
+
+			return Alert.alert(
+				"Network Error",
+				`You don't seem to be connected to the internet`,
+				[
+					{
+						text: "Try again",
+					},
+					{
+						text: "Cancel",
+						style: "cancel",
+					},
+				]
+			);
+		}
+	};
+
 	if (user.username !== "finish_set_up") {
 		return (
 			<ScreenWrapper
@@ -195,21 +247,19 @@ export default function HomeScreen() {
 						Active Challenges
 					</Text>
 
-
-						<View style={styles.cardSection}>
-							<FlatList
-								data={activeChallenges}
-								horizontal
-								renderItem={({ item }) => (
-									<ChallengeCard
-										item={item}
-										prog={challengeProgress}
-									/>
-								)}
-								keyExtractor={(item) => item.id}
-							/>
-						</View>
-
+					<View style={styles.cardSection}>
+						<FlatList
+							data={activeChallenges}
+							horizontal
+							renderItem={({ item }) => (
+								<ChallengeCard
+									item={item}
+									prog={challengeProgress}
+								/>
+							)}
+							keyExtractor={(item) => item.id}
+						/>
+					</View>
 				</View>
 			</ScreenWrapper>
 		);

@@ -1,22 +1,37 @@
 import MCIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "../../screens/LoginScreen";
 import RegisterScreen from "../../screens/RegisterScreen";
 
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import { StatusBar, Platform } from "react-native";
+
 export default function AuthNavTabs() {
 	const Tab = createBottomTabNavigator();
+	const styleOptions = {
+		headerStyle: { backgroundColor: "#1269A9" },
+		headerTintColor: "#FFFAF2",
+	};
+	const tabStyle =
+		Platform.OS === "ios"
+			? {
+					height: 80,
+					padding: 2,
+					backgroundColor: "#1269A9",
+			  }
+			: {
+					height: 50,
+					padding: 2,
+					backgroundColor: "#1269A9",
+			  };
 	return (
 		<NavigationContainer>
+			<StatusBar barStyle="light-content" backgroundColor="#1269A9" />
 			<Tab.Navigator
 				initialRouteName="Login"
 				screenOptions={({ route }) => ({
-					tabBarStyle: {
-						height: 50,
-						padding: 2,
-						// backgroundColor: "#0000ff",
-					},
+					tabBarStyle: tabStyle,
 					tabBarItemStyle: {
 						margin: 2,
 						padding: 1,
@@ -41,12 +56,20 @@ export default function AuthNavTabs() {
 							/>
 						);
 					},
-					tabBarActiveTintColor: "#1269A9",
-					tabBarInactiveTintColor: "gray",
+					tabBarActiveTintColor: "#F7B247",
+					tabBarInactiveTintColor: "#FFF",
 				})}
 			>
-				<Tab.Screen name="Login" component={LoginScreen} />
-				<Tab.Screen name="Register" component={RegisterScreen} />
+				<Tab.Screen
+					name="Login"
+					component={LoginScreen}
+					options={styleOptions}
+				/>
+				<Tab.Screen
+					name="Register"
+					component={RegisterScreen}
+					options={styleOptions}
+				/>
 			</Tab.Navigator>
 		</NavigationContainer>
 	);

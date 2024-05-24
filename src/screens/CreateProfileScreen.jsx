@@ -1,12 +1,6 @@
 import "react-native-gesture-handler";
-import { SafeAreaView, View, StyleSheet } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { Text } from "@rneui/themed";
 import MCIcons from "../components/MCIcons/MCIcons";
-
-
 import IntakeFormUserInfo from "../components/IntakeFormUserInfo/IntakeFormUserInfo";
 import IntakeFormAddress from "../components/IntakeFormAddress/IntakeFormAddress";
 import IntakeFormScreening from "../components/IntakeFormScreening/IntakeFormScreening";
@@ -14,23 +8,36 @@ import IntakeFormDemographics from "../components/IntakeFormDemographics/IntakeF
 import IntakeFormConsents from "../components/IntakeFormConsents/IntakeFormConsents";
 import IntakeFormSubmit from "../components/IntakeFormSubmit/IntakeFormSubmit";
 
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import { SafeAreaView, View, StyleSheet, Platform } from "react-native";
+
 export default function CreateProfileScreen() {
 	const Tab = createBottomTabNavigator();
 	const styleOptions = {
 		headerStyle: { backgroundColor: "#1269A9" },
 		headerTintColor: "#FFFAF2",
 	};
+	const tabStyle =
+		Platform.OS === "ios"
+			? {
+					height: 80,
+					padding: 2,
+					backgroundColor: "#1269A9",
+			  }
+			: {
+					height: 50,
+					padding: 2,
+					backgroundColor: "#1269A9",
+			  };
 
 	return (
 		<NavigationContainer>
 			<Tab.Navigator
 				initialRouteName="User"
 				screenOptions={({ navigation, route }) => ({
-					tabBarStyle: {
-						height: 50,
-						padding: 2,
-						backgroundColor: "#1269A9",
-					},
+					tabBarStyle: tabStyle,
 					tabBarItemStyle: {
 						margin: 2,
 						padding: 1,
@@ -73,7 +80,7 @@ export default function CreateProfileScreen() {
 			>
 				<Tab.Screen
 					name="User"
-					options={styleOptions}
+					options={{ ...styleOptions, title: "Personal Information" }}
 					component={IntakeFormUserInfo}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {
@@ -83,14 +90,12 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Address"
-					options={styleOptions}
+					options={{
+						...styleOptions,
+						title: "Home and Work Addresses",
+					}}
 					component={IntakeFormAddress}
 					listeners={({ navigation }) => ({
-						focus: (nav) =>{
-							console.log('nav', nav);
-
-						},
-
 						tabPress: (e) => {
 							e.preventDefault();
 						},
@@ -98,7 +103,7 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Screening"
-					options={styleOptions}
+					options={{ ...styleOptions, title: "Initial Screening" }}
 					component={IntakeFormScreening}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {
@@ -108,7 +113,10 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Demographics"
-					options={styleOptions}
+					options={{
+						...styleOptions,
+						title: "Demographics Information",
+					}}
 					component={IntakeFormDemographics}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {
@@ -118,7 +126,7 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Consents"
-					options={styleOptions}
+					options={{ ...styleOptions, title: "Consents" }}
 					component={IntakeFormConsents}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {
@@ -128,7 +136,7 @@ export default function CreateProfileScreen() {
 				/>
 				<Tab.Screen
 					name="Submit"
-					options={styleOptions}
+					options={{ ...styleOptions, title: "Review and Submit" }}
 					component={IntakeFormSubmit}
 					listeners={({ navigation }) => ({
 						tabPress: (e) => {

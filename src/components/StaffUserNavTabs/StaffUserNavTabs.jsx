@@ -1,14 +1,14 @@
 import MCIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import RideScreen from "../../screens/RideScreen";
+import UserAccountScreen from "../../screens/UserAccountScreen";
+import BikeListScreen from "../../screens/private/BikeListScreen";
+import HomeScreenStackNav from "../HomeScreenStackNav/HomeScreenStackNav";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../../screens/HomeScreen";
-import RideScreen from "../../screens/RideScreen";
-import UserAccountScreen from "../../screens/UserAccountScreen";
-import CalendarScreen from "../../screens/CalendarScreen";
-import SurveyScreen from "../../screens/ResourcesScreen";
-import IncentiveScreen from "../../screens/IncentiveScreen";
-import BikeListScreen from "../../screens/private/BikeListScreen";
+
+import { Platform, StatusBar } from "react-native";
+import { useState } from "react";
 
 export default function StaffUserNavTabs() {
 	const Tab = createBottomTabNavigator();
@@ -16,16 +16,29 @@ export default function StaffUserNavTabs() {
 		headerStyle: { backgroundColor: "#1269A9" },
 		headerTintColor: "#FFFAF2",
 	};
+	const [hide, setHide] = useState(false);
+
+	const tabStyle =
+		Platform.OS === "ios"
+			? {
+					height: 80,
+					padding: 2,
+					backgroundColor: "#1269A9",
+					display: hide ? "none" : "flex",
+			  }
+			: {
+					height: 50,
+					padding: 2,
+					backgroundColor: "#1269A9",
+					display: hide ? "none" : "flex",
+			  };
 	return (
 		<NavigationContainer>
+			<StatusBar barStyle="light-content" backgroundColor="#1269A9" />
 			<Tab.Navigator
 				initialRouteName="Home"
 				screenOptions={({ route }) => ({
-					tabBarStyle: {
-						height: 50,
-						padding: 2,
-						backgroundColor: "#1269A9",
-					},
+					tabBarStyle: tabStyle,
 					tabBarItemStyle: {
 						margin: 2,
 						padding: 1,
@@ -68,8 +81,14 @@ export default function StaffUserNavTabs() {
 				/>
 				<Tab.Screen
 					name="Home"
-					component={HomeScreen}
-					options={styleOptions}
+					children={() => (
+						<HomeScreenStackNav
+							action={{ hide, setHide }}
+						/>
+					)}
+					options={{
+						headerShown: false,
+					}}
 				/>
 				<Tab.Screen
 					name="Account"

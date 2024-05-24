@@ -6,7 +6,7 @@ import {
 	FlatList,
 	Platform,
 } from "react-native";
-import { Text, Button, Card, Input, Dialog } from "@rneui/themed";
+import { Text, Button, Card, Input, Dialog, Icon } from "@rneui/themed";
 
 import ScaleButton from "../ScaleButton/ScaleButton";
 
@@ -18,37 +18,26 @@ export default function BikeCheckoutDialogContent({
 }) {
 	return (
 		<>
-			<View style={styles.cenColBe}>
+			<View style={styles.cenColAr}>
 				<Text style={[styles.mv10, styles.title]}>
 					{`How long will you need ${checkout.nickname}?`}
 				</Text>
 
 				<View style={styles.grid}>
 					<View style={[{ borderRadius: 12, overflow: "hidden" }]}>
-						<ScaleButton>
-							<Button
-								type="outline"
-								raised
-								disabled={howLong <= 1}
-								onPress={() => {
-									handleWeekChange("LESS");
-								}}
-								icon={{
-									title: "less",
-									name: "minus",
-									type: "material-community",
-									size: 30,
-									color: howLong <= 1 ? "grey" : "#1269A9",
-								}}
-								iconContainerStyle={{
-									width: 35,
-									// borderRadius: 12,
-									overflow: "hidden",
-								}}
-								buttonStyle={[styles.button]}
-								containerStyle={{
-									borderRadius: 12,
-								}}
+						<ScaleButton
+							disabled={howLong <= 1}
+							looks={[styles.outlineButton, { width: 50 }]}
+							offLooks={[styles.outlineButtonOff, { width: 50 }]}
+							onPress={() => {
+								handleWeekChange("LESS");
+							}}
+						>
+							<Icon
+								type="material-community"
+								size={35}
+								name="minus"
+								color={howLong <= 1 ? "grey" : "#1269A9"}
 							/>
 						</ScaleButton>
 					</View>
@@ -57,51 +46,30 @@ export default function BikeCheckoutDialogContent({
 						{howLong} {howLong === 1 ? "Week " : "Weeks"}
 					</Text>
 					<View style={{ borderRadius: 12, overflow: "hidden" }}>
-						<ScaleButton>
-							<Button
-								raised
-								type="outline"
-								disabled={howLong >= 4}
-								onPress={() => {
-									handleWeekChange("MORE");
-								}}
-								icon={{
-									name: "plus",
-									type: "material-community",
-									size: 30,
-									color: howLong >= 4 ? "grey" : "#1269A9",
-								}}
-								iconContainerStyle={{
-									width: 35,
-									borderRadius: 12,
-								}}
-								buttonStyle={[styles.button]}
-								containerStyle={{
-									borderRadius: 12,
-								}}
+						<ScaleButton
+							disabled={howLong >= 4}
+							looks={[styles.outlineButton, { width: 50 }]}
+							offLooks={[styles.outlineButtonOff, { width: 50 }]}
+							onPress={() => {
+								handleWeekChange("MORE");
+							}}
+						>
+							<Icon
+								type="material-community"
+								size={35}
+								name="plus"
+								color={howLong >= 4 ? "grey" : "#1269A9"}
 							/>
 						</ScaleButton>
 					</View>
 				</View>
-			</View>
-			<View style={styles.cenColBe}>
-				<ScaleButton>
-					<Button
-						raised
-						onPress={handleCheckout}
-						titleStyle={{ fontWeight: "700" }}
-						buttonStyle={{
-							backgroundColor: "#1269A9",
-							borderRadius: 12,
-							height: 55,
-						}}
-						containerStyle={{
-							width: 200,
-							borderRadius: 12,
-						}}
-					>
-						{`Reserve ${checkout.nickname}`}
-					</Button>
+				<ScaleButton
+					looks={[styles.solidButtonSubmit, { width: 300 }]}
+					onPress={handleCheckout}
+				>
+					<Text
+						style={{ fontWeight: "700", color: "#fff", fontSize:17 }}
+					>{`Reserve ${checkout.nickname}`}</Text>
 				</ScaleButton>
 			</View>
 		</>
@@ -170,7 +138,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		width: "100%",
 		backgroundColor: "#fff",
-		marginVertical: 20,
 		paddingHorizontal: 20,
 	},
 	gridItem: {
@@ -208,6 +175,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 	},
 	cenColAr: {
+		flex: 1,
 		justifyContent: "space-around",
 		alignItems: "center",
 		width: "100%",
@@ -223,6 +191,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 	},
 	cenColBe: {
+		flex: 1,
 		justifyContent: "space-between",
 		alignItems: "center",
 		width: "100%",
@@ -239,5 +208,38 @@ const styles = StyleSheet.create({
 		padding: 2,
 		fontWeight: "700",
 		borderWidth: 1.5,
+	},
+	solidButton: {
+		backgroundColor: "#1269A9",
+		borderRadius: 12,
+		height: 40,
+		padding: 2,
+	},
+	solidButtonOff: {
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 40,
+		padding: 2,
+	},
+	outlineButton: {
+		borderWidth: 1.5,
+		borderColor: "#1269A9",
+		borderRadius: 12,
+		height: 40,
+		padding: 2,
+	},
+	outlineButtonOff: {
+		borderWidth: 1.5,
+		borderColor: "#C0C0C0",
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 40,
+		padding: 2,
+	},
+	solidButtonSubmit: {
+		backgroundColor: "#1269A9",
+		borderRadius: 12,
+		height: 60,
+		padding: 2,
 	},
 });

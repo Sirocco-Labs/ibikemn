@@ -1,9 +1,10 @@
 import { SafeAreaView, View, StyleSheet } from "react-native";
-import { Text, Button } from "@rneui/themed";
+import { Text } from "@rneui/themed";
 import { logoutUser } from "../redux/thunks/authThunk";
 import { useDispatch } from "react-redux";
 import { clearUserData } from "../redux/slices/userSlice";
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
+import ScaleButton from "../components/ScaleButton/ScaleButton";
 
 export default function UserAccountScreen() {
 	const dispatch = useDispatch();
@@ -40,7 +41,20 @@ export default function UserAccountScreen() {
 				</View>
 			</View>
 			<View style={styles.sectionView}>
-				<Button onPress={clearUserThenLogout}>Logout</Button>
+				<ScaleButton
+					looks={[styles.solidButton, { width: 250 }]}
+					onPress={clearUserThenLogout}
+				>
+					<Text
+						style={{
+							fontSize: 18,
+							fontWeight: "700",
+							color: "#fff",
+						}}
+					>
+						Logout
+					</Text>
+				</ScaleButton>
 			</View>
 		</ScreenWrapper>
 	);
@@ -104,5 +118,11 @@ const styles = StyleSheet.create({
 	},
 	mv10: {
 		marginVertical: 10,
+	},
+	solidButton: {
+		backgroundColor: "#1269A9",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
 	},
 });

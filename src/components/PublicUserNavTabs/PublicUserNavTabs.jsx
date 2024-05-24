@@ -1,33 +1,44 @@
 import MCIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../../screens/HomeScreen";
 import RideScreen from "../../screens/RideScreen";
 import UserAccountScreen from "../../screens/UserAccountScreen";
-import CalendarScreen from "../../screens/CalendarScreen";
-import SurveyScreen from "../../screens/ResourcesScreen";
-import IncentiveScreen from "../../screens/IncentiveScreen";
-import { useSelector } from "react-redux";
+import HomeScreenStackNav from "../HomeScreenStackNav/HomeScreenStackNav";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import { Platform, StatusBar } from "react-native";
+import { useState } from "react";
 
 export default function PublicUserNavTabs() {
 	const Tab = createBottomTabNavigator();
-	const user = useSelector((store) => store.user);
 	const styleOptions = {
 		headerStyle: { backgroundColor: "#1269A9" },
 		headerTintColor: "#FFFAF2",
 	};
+	const [hide, setHide] = useState(false);
+
+	const tabStyle =
+		Platform.OS === "ios"
+			? {
+					height: 80,
+					padding: 2,
+					backgroundColor: "#1269A9",
+					display: hide ? "none" : "flex",
+			  }
+			: {
+					height: 50,
+					padding: 2,
+					backgroundColor: "#1269A9",
+					display: hide ? "none" : "flex",
+			  };
 
 	return (
 		<NavigationContainer>
+			<StatusBar barStyle="light-content" backgroundColor="#1269A9" />
 			<Tab.Navigator
 				initialRouteName="Home"
 				screenOptions={({ route }) => ({
-					tabBarStyle: {
-						height: 50,
-						padding: 2,
-						backgroundColor: "#1269A9",
-					},
+					tabBarStyle: tabStyle,
 					tabBarItemStyle: {
 						margin: 2,
 						padding: 1,
@@ -52,8 +63,8 @@ export default function PublicUserNavTabs() {
 							/>
 						);
 					},
-					tabBarActiveTintColor: "#1269A9",
-					tabBarInactiveTintColor: "gray",
+					tabBarActiveTintColor: "#F7B247",
+					tabBarInactiveTintColor: "#FFF",
 				})}
 			>
 				<Tab.Screen
@@ -63,8 +74,15 @@ export default function PublicUserNavTabs() {
 				/>
 				<Tab.Screen
 					name="Home"
-					component={HomeScreen}
-					options={styleOptions}
+					children={({ route }) => (
+						<HomeScreenStackNav
+							action={{ hide, setHide }}
+							topRoute={route}
+						/>
+					)}
+					options={{
+						headerShown: false,
+					}}
 				/>
 				<Tab.Screen
 					name="Account"

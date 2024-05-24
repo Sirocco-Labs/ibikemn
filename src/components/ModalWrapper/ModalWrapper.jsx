@@ -20,6 +20,7 @@ import { clearDistance } from "../../redux/slices/distanceSlice";
 
 import { stopLocationTracking } from "../../tasks/BackgroundLocationTaskManager";
 import { useNavigation } from "@react-navigation/native";
+import ScreenWrapper from "../ScreenWrapper/ScreenWrapper";
 
 export default function ModalWrapper({
 	visible,
@@ -157,7 +158,18 @@ export default function ModalWrapper({
 					webRef={webRef}
 					handleNavigation={handleNavigation}
 					tracker={tracker}
+					goBackWeb={handleBackButton}
 				/>
+				{/* <View
+					style={{
+						backgroundColor: "#1269A9",
+						height: 10,
+						flexDirection: "row",
+						justifyContent: "center",
+						alignItems: "center",
+						padding: 5,
+					}}
+				></View> */}
 			</View>
 		</Modal>
 	) : (
@@ -180,6 +192,7 @@ export default function ModalWrapper({
 			>
 				<Text
 					style={{
+						// flex:1,
 						fontSize: 21,
 						color: "#fff",
 						fontWeight: "600",
@@ -190,7 +203,9 @@ export default function ModalWrapper({
 					{screen}
 				</Text>
 			</View>
+			<ScreenWrapper background={{ backgroundColor: "#fff" }}>
 				<Component close={close} />
+			</ScreenWrapper>
 		</Modal>
 	);
 }

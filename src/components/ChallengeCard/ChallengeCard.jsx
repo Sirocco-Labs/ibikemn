@@ -19,16 +19,27 @@ export default function ChallengeCard({ item, prog }) {
 	};
 
 	useEffect(() => {
+		console.log('$$$$ progressUpdated', is_updated);
+
+	}, [is_updated]);
+
+	useEffect(() => {
 		progressValue(item, prog);
 	}, [prog]);
 
 	const progressValue = (item, prog) => {
-		let check = prog.find((prog) => prog.active_incentive_id === item.id);
+		// console.log("$$ PROG", prog);
+		// console.log("$$ ITEM", item);
+		let check = prog.find((comp) => comp.active_incentive_id === item.id);
 		if (check) {
+			// console.log("$$ CHECK", check);
+			// console.log("$$ CHECK", check);
 			setEarned(check);
 		}
 	};
 	const toGo = (item, earned) => {
+		// console.log("$$ TOGO", item.id, earned);
+
 		const endDate = new Date(item.end_date).toLocaleString("en-US", {
 			weekday: "long",
 			month: "short",
@@ -49,23 +60,68 @@ export default function ChallengeCard({ item, prog }) {
 
 		remaining = Math.round(remaining * 100) / 100;
 
-		return item.info.category.unit_of_measure === "rides"
-			? `Finish ${
-					item.info.point_value === 1
-						? `${remaining} more ${item.info.category.unit_of_measure.slice(
-								0,
-								-1
-						  )}`
-						: `${remaining} more ${item.info.category.unit_of_measure}`
-			  } before:\n${endDate.replace(/,(?=\s\w+)/, "")} at ${endTime}`
-			: `Ride ${
-					item.info.point_value === 1
-						? `${remaining} more ${item.info.category.unit_of_measure.slice(
-								0,
-								-1
-						  )}`
-						: `${remaining} more ${item.info.category.unit_of_measure}`
-			  } before:\n${endDate.replace(/,(?=\s\w+)/, "")} at ${endTime}`;
+		if (earned.completion_progress >= 1) {
+			return (
+				<>
+					<Text
+						style={{
+							fontSize: 18,
+							fontWeight: "bold",
+							color: "#1269A9",
+							textAlign: "center",
+						}}
+					>
+						{`Completed!`}
+					</Text>
+					<Text
+						style={{
+							fontSize: 16,
+							// fontWeight: "bold",
+							color: "#1269A9",
+							textAlign: "center",
+							marginTop:10,
+						}}
+					>
+						{`Keep up the great work `}
+					</Text>
+				</>
+			);
+		} else {
+			return (
+				<Text
+					style={{
+						fontSize: 14,
+						// fontWeight: "bold",
+						color: "#1269A9",
+						textAlign: "center",
+					}}
+				>
+					{item.info.category.unit_of_measure === "rides"
+						? `Finish ${
+								item.info.point_value === 1
+									? `${remaining} more ${item.info.category.unit_of_measure.slice(
+											0,
+											-1
+									  )}`
+									: `${remaining} more ${item.info.category.unit_of_measure}`
+						  } before:\n${endDate.replace(
+								/,(?=\s\w+)/,
+								""
+						  )} at ${endTime}`
+						: `Ride ${
+								item.info.point_value === 1
+									? `${remaining} more ${item.info.category.unit_of_measure.slice(
+											0,
+											-1
+									  )}`
+									: `${remaining} more ${item.info.category.unit_of_measure}`
+						  } before:\n${endDate.replace(
+								/,(?=\s\w+)/,
+								""
+						  )} at ${endTime}`}
+				</Text>
+			);
+		}
 	};
 
 	//    console.log('GOAL PROG', prog);
@@ -88,17 +144,7 @@ export default function ChallengeCard({ item, prog }) {
 						unit={item.info.category.unit_of_measure}
 						motivation={toGo(item, earned)}
 					/>
-
-					<Text
-						style={{
-							fontSize: 14,
-							// fontWeight: "bold",
-							color: "#1269A9",
-							textAlign: "center",
-						}}
-					>
-						{toGo(item, earned)}
-					</Text>
+					{toGo(item, earned)}
 				</View>
 				{(item.promo_video || item.reward_photo) && (
 					<View
@@ -156,10 +202,7 @@ export default function ChallengeCard({ item, prog }) {
 				onDismiss={() => {
 					setDHeight(null);
 				}}
-				overlayStyle={[
-					styles.dialog,
-
-				]}
+				overlayStyle={[styles.dialog]}
 			>
 				<ChallengeRewardDialog chal={item} onMeasure={onMeasure} />
 			</Dialog>

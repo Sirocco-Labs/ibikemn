@@ -207,6 +207,7 @@ export const getUserIncentiveProgress = (user_id) => async (dispatch) => {
 				promo_video,
 				reward_photo,
 				reward_description,
+				is_active,
                 challenge_info:incentive_id(
                     id,
                     title,
@@ -225,7 +226,10 @@ export const getUserIncentiveProgress = (user_id) => async (dispatch) => {
             progress_last_checked
             `
 			)
-			.match({ user_id: user_id, has_been_met: false });
+			.eq("user_id", user_id)
+			// .eq("has_been_met", false)
+			.eq("active_challenge.is_active", true)
+			.order("id", { ascending: true });
 
 		if (getUserProgress.error) {
 			console.error(
@@ -238,15 +242,24 @@ export const getUserIncentiveProgress = (user_id) => async (dispatch) => {
 				getUserProgress.status,
 				getUserProgress.data
 			);
+			const filteredProgress = getUserProgress.data.filter(
+				(row) => row.active_challenge !== null
+			);
+			console.log(
+				"SUPABASE GET USER CHALLENGE PROGRESS SUCCESS! FILTERED PROGRESS: ",
+				filteredProgress
+			);
+			// dispatch(setIncentivesProgress(filteredProgress));
 			dispatch(setIncentivesProgress(getUserProgress.data));
 			// (FIND ME)
-			dispatch(setIsProgressUpdated(true));
 		}
 	} catch (error) {
 		console.error(
 			"INCENTIVE THUNK ERROR ---> getUserIncentiveProgress(user_id)",
 			error
 		);
+	} finally {
+		dispatch(setIsProgressUpdated(true));
 	}
 };
 export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
@@ -256,6 +269,7 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
 	);
 	const { publicUser, user_id, users_table_id } = userInfo;
 	dispatch(setIsProgressUpdated(false));
+	let proceed = false;
 
 	try {
 		let recentRide;
@@ -323,17 +337,14 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
 		}
 
 		let condition;
+		let activeChallenges;
 		if (publicUser) {
 			condition = { is_active: true, is_public: true };
-		} else {
-			condition = { is_active: true };
-		}
-		console.log("THIS IS THE CONDITION:", condition);
-		// Iterate over each active incentive
-		const activeChallenges = await supabase
-			.from("activated_incentives_junction")
-			.select(
-				`
+			// Iterate over each active incentive
+			activeChallenges = await supabase
+				.from("activated_incentives_junction")
+				.select(
+					`
                 id,
                 start_date,
                 end_date,
@@ -350,43 +361,108 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
                     )
                 )
                 `
-			)
-			.lte("start_date", recentRide.ride_end_time)
-			.gt("end_date", recentRide.ride_end_time)
-			.match(condition)
-			.order("id", { ascending: true });
-
-		if (activeChallenges.error) {
-			console.error(
-				"SUPABASE GET ACTIVE CHALLENGES ERROR",
-				activeChallenges.error
-			);
-			throw activeChallenges.error;
-		} else {
-			console.log(
-				"SUPABASE GET ACTIVE CHALLENGES SUCCESS",
-				activeChallenges.data
-			);
-			console.log(
-				"NUMBER OF CHALLENGES RETURNED FROM REQUEST: ",
-				activeChallenges.data.length
-			);
-			const checkTimes = activeChallenges.data
-				.filter(
-					(chal) =>
-						chal.start_date <= recentRide.ride_end_time &&
-						recentRide.ride_end_time < chal.end_date
 				)
-				.map((chal) => ({
-					active_id: chal.id,
-					og_id: chal.incentives.id,
-					og_info: chal.incentives,
-				}));
-			console.log(
-				"******** RECENT RIDE IS BETWEEN THE ACTIVE CHALLENGES START AND END TIMES FOR THESE:",
-				checkTimes
-			);
+				.lte("start_date", recentRide.ride_end_time)
+				.gt("end_date", recentRide.ride_end_time)
+				// .match(condition)
+				.eq("is_active", true)
+				.eq("is_public", true)
+				.order("id", { ascending: true });
+
+			if (activeChallenges.error) {
+				console.error(
+					"SUPABASE GET ACTIVE CHALLENGES ERROR",
+					activeChallenges.error
+				);
+				throw activeChallenges.error;
+			} else {
+				console.log(
+					"SUPABASE GET ACTIVE CHALLENGES SUCCESS",
+					activeChallenges.data
+				);
+				console.log(
+					"NUMBER OF CHALLENGES RETURNED FROM REQUEST: ",
+					activeChallenges.data.length
+				);
+				const checkTimes = activeChallenges.data
+					.filter(
+						(chal) =>
+							chal.start_date <= recentRide.ride_end_time &&
+							recentRide.ride_end_time < chal.end_date
+					)
+					.map((chal) => ({
+						active_id: chal.id,
+						og_id: chal.incentives.id,
+						og_info: chal.incentives,
+					}));
+				console.log(
+					"******** RECENT RIDE IS BETWEEN THE ACTIVE CHALLENGES START AND END TIMES FOR THESE:",
+					checkTimes
+				);
+			}
+		} else {
+			condition = { is_active: true };
+			// Iterate over each active incentive
+			activeChallenges = await supabase
+				.from("activated_incentives_junction")
+				.select(
+					`
+                id,
+                start_date,
+                end_date,
+                incentive_id,
+                incentives: incentive_id(
+                    id,
+                    title,
+                    point_value,
+                    category_id,
+                    category: category_id(
+                        id,
+                        unit_of_measure,
+                        incentive_type
+                    )
+                )
+                `
+				)
+				.lte("start_date", recentRide.ride_end_time)
+				.gt("end_date", recentRide.ride_end_time)
+				// .match(condition)
+				.eq("is_active", true)
+				.order("id", { ascending: true });
+
+			if (activeChallenges.error) {
+				console.error(
+					"SUPABASE GET ACTIVE CHALLENGES ERROR",
+					activeChallenges.error
+				);
+				throw activeChallenges.error;
+			} else {
+				console.log(
+					"SUPABASE GET ACTIVE CHALLENGES SUCCESS",
+					activeChallenges.data
+				);
+				console.log(
+					"NUMBER OF CHALLENGES RETURNED FROM REQUEST: ",
+					activeChallenges.data.length
+				);
+				const checkTimes = activeChallenges.data
+					.filter(
+						(chal) =>
+							chal.start_date <= recentRide.ride_end_time &&
+							recentRide.ride_end_time < chal.end_date
+					)
+					.map((chal) => ({
+						active_id: chal.id,
+						og_id: chal.incentives.id,
+						og_info: chal.incentives,
+					}));
+				console.log(
+					"******** RECENT RIDE IS BETWEEN THE ACTIVE CHALLENGES START AND END TIMES FOR THESE:",
+					checkTimes
+				);
+			}
 		}
+		console.log("THIS IS THE CONDITION:", condition);
 
 		// const existing = activeChallenges.data.map(
 		// 	(chal) => chal.incentives.id
@@ -439,7 +515,15 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
             `
 			)
 			.in("active_incentive_id", verifyingChallengeIds)
-			.match({ user_id: user_id, "active_challenge.is_active":true });
+			.eq("user_id", user_id)
+			.eq("has_been_met", false)
+			.eq("active_challenge.is_active", true)
+			// .match({
+			// 	user_id: user_id,
+			// 	has_been_met: false,
+			// 	"active_challenge.is_active": true,
+			// })
+			.order("id", { ascending: true });
 
 		if (alreadyTracking.error) {
 			console.error(
@@ -450,11 +534,11 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
 			throw alreadyTracking.error;
 		} else {
 			console.log(
-				"SUPABASE GET USER PROGRESS FROM ACTIVE CHALLENGES SUCCESS:",
+				"SUPABASE GET USER PROGRESS FOR NON COMPLETE ACTIVE CHALLENGES SUCCESS:",
 				alreadyTracking.data
 			);
 			console.log(
-				"NUMBER OF ACTIVE CHALLENGES ALREADY BEING TRACKED:",
+				"NUMBER OF NON COMPLETE ACTIVE CHALLENGES ALREADY BEING TRACKED:",
 				alreadyTracking.data.length
 			);
 		}
@@ -604,14 +688,20 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
 		);
 
 		let now = new Date();
+		proceed = true;
 		// (FIND ME)
 		dispatch(setTimeOfProgressUpdate(now.toISOString()));
-		dispatch(getUserIncentiveProgress(user_id));
+		console.log("%$%$PROCEED IN TRY BLOCK", proceed);
 	} catch (error) {
 		console.error(
 			"THUNK ERROR ---> checkChallengeCompletion(userInfo):",
 			error.message
 		);
+	} finally {
+		console.log("%$%$PROCEED IN FINALLY BLOCK", proceed);
+		if (proceed) {
+			dispatch(getUserIncentiveProgress(user_id));
+		}
 	}
 };
 
@@ -621,7 +711,7 @@ const insertTrackingProgress = async (
 	recentRide
 ) => {
 	console.log(
-		"IN INCENTIVE THUNK ---> insertTrackingProgress(activeChallenges, user_id, recentRide, goalType)",
+		"IN INCENTIVE THUNK ---> insertTrackingProgress(activeChallenges, user_id, recentRide)",
 		activeChallenges,
 		user_id,
 		recentRide
@@ -663,11 +753,10 @@ const insertTrackingProgress = async (
 					incentiveType
 				);
 				// Check if the recent ride counts toward the rides goal based on incentive_type
-				if(!recentRide.survey){
+				if (recentRide.is_work_commute) {
 					if (
 						incentiveType === "Replace VMT - Any" ||
-						(incentiveType === "Commutes to work" &&
-							recentRide.is_work_commute)
+						incentiveType === "Commutes to work"
 					) {
 						try {
 							const createRecord = await supabase
@@ -717,13 +806,13 @@ const insertTrackingProgress = async (
 								error
 							);
 						}
-				}
-				}else{
+					}
+				} else {
 					if (
 						incentiveType === "Replace VMT - Any" ||
 						//
 						(incentiveType === "Ride in a group" &&
-							!recentRide.survey.is_solo) ||
+							recentRide.survey.is_solo === false) ||
 						//
 						(incentiveType === "Replace VMT for Errands" &&
 							recentRide.survey.destination_type ===
@@ -796,8 +885,7 @@ const insertTrackingProgress = async (
 						}
 					}
 				}
-
-			} else if (goalType === "miles") {
+			} else if (goalType === "miles" && !recentRide.is_work_commute) {
 				insertValue = recentRide.distance_traveled;
 				console.log(
 					" --------> GOAL TYPE",
@@ -817,7 +905,7 @@ const insertTrackingProgress = async (
 					incentiveType === "Replace VMT - Any" ||
 					//
 					(incentiveType === "Ride in a group" &&
-						!recentRide.survey.is_solo) ||
+						recentRide.survey.is_solo === false) ||
 					//
 					(incentiveType === "Replace VMT for Errands" &&
 						recentRide.survey.destination_type ===
@@ -928,14 +1016,14 @@ const updateTrackingProgress = async (
 	try {
 		for (let i = 0; i < alreadyTracking.length; i++) {
 			let insertValue;
-			let activeChallenge;
+			let trackedChallenge;
 			let goalType;
 			let incentiveType;
 			console.log("AT INDEX", i, "********SUCCESS LOG", successes);
-			console.log("NUMBER OF SUCCESSFUL INSERTS:", successes.length);
+			console.log("NUMBER OF SUCCESSFUL UPDATES:", successes.length);
 
 			console.log("AT INDEX", i, "********FAIL LOG", fails);
-			console.log("NUMBER OF FAILED INSERTS:", fails.length);
+			console.log("NUMBER OF FAILED UPDATES:", fails.length);
 
 			trackedChallenge = alreadyTracking[i];
 			goalType =
@@ -961,127 +1049,131 @@ const updateTrackingProgress = async (
 					incentiveType
 				);
 				// Check if the recent ride counts toward the rides goal based on incentive_type
-				if (
-					incentiveType === "Commutes to work" &&
-					recentRide.is_work_commute
-				) {
-					// insert incentive progress for commutes to work
-					try {
-						const updateRecord = await supabase
-							.from("user_incentive_tracking_junction")
-							.update({
-								earned_points_toward_goal: insertValue,
-							})
-							.eq("id", trackedChallenge.id)
-							.select();
+				if (recentRide.is_work_commute) {
+					if (
+						incentiveType === "Replace VMT - Any" ||
+						(incentiveType === "Commutes to work" &&
+							recentRide.is_work_commute)
+					) {
+						// insert incentive progress for commutes to work
+						try {
+							const updateRecord = await supabase
+								.from("user_incentive_tracking_junction")
+								.update({
+									earned_points_toward_goal: insertValue,
+								})
+								.eq("id", trackedChallenge.id)
+								.select();
 
-						if (updateRecord.error) {
+							if (updateRecord.error) {
+								console.error(
+									"SUPABASE UpdatingTrackingProgressRecords ERROR:",
+									updateRecord.error
+								);
+
+								fails.push({
+									status: "ERROR",
+									info: {
+										data: !updateRecord.data
+											? "NONE"
+											: updateRecord.data,
+										error: updateRecord.error,
+									},
+								});
+							} else {
+								console.log(
+									" SUPABASE UpdatingTrackingProgressRecords SUCCESS!",
+									updateRecord.data
+								);
+								successes.push({
+									status: "SUCCESS",
+									info: {
+										data: updateRecord.data,
+										error: !updateRecord.error
+											? "NONE"
+											: updateRecord.error,
+									},
+								});
+							}
+						} catch (error) {
 							console.error(
-								"SUPABASE UpdatingTrackingProgressRecords ERROR:",
-								updateRecord.error
+								"ERROR UPDATING RECORD FOR RIDES TYPE TRACKED CHALLENGE ",
+								error
 							);
-
-							fails.push({
-								status: "ERROR",
-								info: {
-									data: !updateRecord.data
-										? "NONE"
-										: updateRecord.data,
-									error: updateRecord.error,
-								},
-							});
-						} else {
-							console.log(
-								" SUPABASE UpdatingTrackingProgressRecords SUCCESS!",
-								updateRecord.data
-							);
-							successes.push({
-								status: "SUCCESS",
-								info: {
-									data: updateRecord.data,
-									error: !updateRecord.error
-										? "NONE"
-										: updateRecord.error,
-								},
-							});
 						}
-					} catch (error) {
-						console.error(
-							"ERROR UPDATING RECORD FOR RIDES TYPE TRACKED CHALLENGE ",
-							error
-						);
 					}
-				} else if (
-					//
-					incentiveType === "Replace VMT - Any" ||
-					//
-					(incentiveType === "Ride in a group" &&
-						!recentRide.survey.is_solo) ||
-					//
-					(incentiveType === "Replace VMT for Errands" &&
-						recentRide.survey.destination_type ===
-							"Errands (grocery store, post office, etc)") ||
-					//
-					(incentiveType ===
-						"Replace VMT for Recreational Location" &&
-						recentRide.survey.destination_type ===
-							"A place for recreation (local park, landmark, or trail)") ||
-					//
-					(incentiveType === "Replace VMT for Social Location" &&
-						recentRide.survey.destination_type ===
-							"A place for socializing (a restaurant, bar, library)") ||
-					//
-					(incentiveType === "Take a Bike Trail" &&
-						recentRide.survey.route_type === "Bike trail") ||
-					//
-					(incentiveType === "Use a Bike Lane" &&
-						recentRide.survey.route_type ===
-							"On road infrastructure (a bike lane, cycle track)")
-				) {
-					try {
-						const updateRecord = await supabase
-							.from("user_incentive_tracking_junction")
-							.update({
-								earned_points_toward_goal: insertValue,
-							})
-							.eq("id", trackedChallenge.id)
-							.select();
+				} else {
+					if (
+						incentiveType === "Replace VMT - Any" ||
+						//
+						(incentiveType === "Ride in a group" &&
+							recentRide.survey.is_solo === false) ||
+						//
+						(incentiveType === "Replace VMT for Errands" &&
+							recentRide.survey.destination_type ===
+								"Errands (grocery store, post office, etc)") ||
+						//
+						(incentiveType ===
+							"Replace VMT for Recreational Location" &&
+							recentRide.survey.destination_type ===
+								"A place for recreation (local park, landmark, or trail)") ||
+						//
+						(incentiveType === "Replace VMT for Social Location" &&
+							recentRide.survey.destination_type ===
+								"A place for socializing (a restaurant, bar, library)") ||
+						//
+						(incentiveType === "Take a Bike Trail" &&
+							recentRide.survey.route_type === "Bike trail") ||
+						//
+						(incentiveType === "Use a Bike Lane" &&
+							recentRide.survey.route_type ===
+								"On road infrastructure (a bike lane, cycle track)")
+					) {
+						try {
+							const updateRecord = await supabase
+								.from("user_incentive_tracking_junction")
+								.update({
+									earned_points_toward_goal: insertValue,
+								})
+								.eq("id", trackedChallenge.id)
+								.select();
 
-						if (updateRecord.error) {
+							if (updateRecord.error) {
+								console.error(
+									"SUPABASE UpdatingTrackingProgressRecords ERROR:",
+									updateRecord.error
+								);
+
+								fails.push({
+									status: "ERROR",
+									info: {
+										data: !updateRecord.data
+											? "NONE"
+											: updateRecord.data,
+										error: updateRecord.error,
+									},
+								});
+							} else {
+								console.log(
+									" SUPABASE UpdatingTrackingProgressRecords SUCCESS!",
+									updateRecord.data
+								);
+								successes.push({
+									status: "SUCCESS",
+									info: {
+										data: updateRecord.data,
+										error: !updateRecord.error
+											? "NONE"
+											: updateRecord.error,
+									},
+								});
+							}
+						} catch (error) {
 							console.error(
-								"SUPABASE UpdatingTrackingProgressRecords ERROR:",
-								updateRecord.error
+								"ERROR UPDATING RECORD FOR RIDES TYPE TRACKED CHALLENGE ",
+								error
 							);
-
-							fails.push({
-								status: "ERROR",
-								info: {
-									data: !updateRecord.data
-										? "NONE"
-										: updateRecord.data,
-									error: updateRecord.error,
-								},
-							});
-						} else {
-							console.log(
-								" SUPABASE UpdatingTrackingProgressRecords SUCCESS!",
-								updateRecord.data
-							);
-							successes.push({
-								status: "SUCCESS",
-								info: {
-									data: updateRecord.data,
-									error: !updateRecord.error
-										? "NONE"
-										: updateRecord.error,
-								},
-							});
 						}
-					} catch (error) {
-						console.error(
-							"ERROR UPDATING RECORD FOR RIDES TYPE TRACKED CHALLENGE ",
-							error
-						);
 					}
 				}
 			} else if (goalType === "miles") {
@@ -1102,76 +1194,78 @@ const updateTrackingProgress = async (
 				);
 
 				// Check if the recent ride counts toward the miles goal based on.incentives.category.incentive_type
-				if (
-					incentiveType === "Replace VMT - Any" ||
-					//
-					(incentiveType === "Ride in a group" &&
-						!recentRide.survey.is_solo) ||
-					//
-					(incentiveType === "Replace VMT for Errands" &&
-						recentRide.survey.destination_type ===
-							"Errands (grocery store, post office, etc)") ||
-					//
-					(incentiveType ===
-						"Replace VMT for Recreational Location" &&
-						recentRide.survey.destination_type ===
-							"A place for recreation (local park, landmark, or trail)") ||
-					//
-					(incentiveType === "Replace VMT for Social Location" &&
-						recentRide.survey.destination_type ===
-							"A place for socializing (a restaurant, bar, library)") ||
-					//
-					(incentiveType === "Take a Bike Trail" &&
-						recentRide.survey.route_type === "Bike trail") ||
-					//
-					(incentiveType === "Use a Bike Lane" &&
-						recentRide.survey.route_type ===
-							"On road infrastructure (a bike lane, cycle track)")
-				) {
-					try {
-						const updateRecord = await supabase
-							.from("user_incentive_tracking_junction")
-							.update({
-								earned_points_toward_goal: insertValue,
-							})
-							.eq("id", trackedChallenge.id)
-							.select();
+				if (!recentRide.is_work_commute) {
+					if (
+						incentiveType === "Replace VMT - Any" ||
+						//
+						(incentiveType === "Ride in a group" &&
+							recentRide.survey.is_solo === false) ||
+						//
+						(incentiveType === "Replace VMT for Errands" &&
+							recentRide.survey.destination_type ===
+								"Errands (grocery store, post office, etc)") ||
+						//
+						(incentiveType ===
+							"Replace VMT for Recreational Location" &&
+							recentRide.survey.destination_type ===
+								"A place for recreation (local park, landmark, or trail)") ||
+						//
+						(incentiveType === "Replace VMT for Social Location" &&
+							recentRide.survey.destination_type ===
+								"A place for socializing (a restaurant, bar, library)") ||
+						//
+						(incentiveType === "Take a Bike Trail" &&
+							recentRide.survey.route_type === "Bike trail") ||
+						//
+						(incentiveType === "Use a Bike Lane" &&
+							recentRide.survey.route_type ===
+								"On road infrastructure (a bike lane, cycle track)")
+					) {
+						try {
+							const updateRecord = await supabase
+								.from("user_incentive_tracking_junction")
+								.update({
+									earned_points_toward_goal: insertValue,
+								})
+								.eq("id", trackedChallenge.id)
+								.select();
 
-						if (updateRecord.error) {
+							if (updateRecord.error) {
+								console.error(
+									"SUPABASE UpdatingTrackingProgressRecords ERROR:",
+									updateRecord.error
+								);
+
+								fails.push({
+									status: "ERROR",
+									info: {
+										data: !updateRecord.data
+											? "NONE"
+											: updateRecord.data,
+										error: updateRecord.error,
+									},
+								});
+							} else {
+								console.log(
+									" SUPABASE UpdatingTrackingProgressRecords SUCCESS!",
+									updateRecord.data
+								);
+								successes.push({
+									status: "SUCCESS",
+									info: {
+										data: updateRecord.data,
+										error: !updateRecord.error
+											? "NONE"
+											: updateRecord.error,
+									},
+								});
+							}
+						} catch (error) {
 							console.error(
-								"SUPABASE UpdatingTrackingProgressRecords ERROR:",
-								updateRecord.error
+								"ERROR UPDATING RECORD FOR MILES TYPE TRACKED CHALLENGE ",
+								error
 							);
-
-							fails.push({
-								status: "ERROR",
-								info: {
-									data: !updateRecord.data
-										? "NONE"
-										: updateRecord.data,
-									error: updateRecord.error,
-								},
-							});
-						} else {
-							console.log(
-								" SUPABASE UpdatingTrackingProgressRecords SUCCESS!",
-								updateRecord.data
-							);
-							successes.push({
-								status: "SUCCESS",
-								info: {
-									data: updateRecord.data,
-									error: !updateRecord.error
-										? "NONE"
-										: updateRecord.error,
-								},
-							});
 						}
-					} catch (error) {
-						console.error(
-							"ERROR UPDATING RECORD FOR MILES TYPE TRACKED CHALLENGE ",
-							error
-						);
 					}
 				}
 			}
@@ -1218,7 +1312,10 @@ const verifyProgressCompletion = async (
 			.from("user_incentive_tracking_junction")
 			.select("*")
 			.in("active_incentive_id", verifyingChallengeIds)
-			.eq("user_id", user_id);
+			.match({ user_id: user_id, has_been_met: false });
+		// .eq("user_id", user_id);
+
+		// skip where has_been_met is true (FIND ME!!)
 
 		let tracked = trackedChallenges.data;
 
@@ -1245,7 +1342,7 @@ const verifyProgressCompletion = async (
 			let earned = challenge.earned_points_toward_goal;
 			let progress = earned / goal;
 			let updateObject = {
-				completion_progress: progress,
+				completion_progress: progress >= 1 ? 1 : progress,
 				has_been_met: progress >= 1 ? true : false,
 				progress_last_checked: now.toISOString(),
 				date_completed: progress >= 1 ? now.toISOString() : null,

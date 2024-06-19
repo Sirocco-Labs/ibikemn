@@ -26,7 +26,8 @@ const distanceSlice = createSlice({
 			state.is_tracking = !state.is_tracking;
 		},
 		clearDistance(state) {
-			return { ...state, ...initialState };
+			return initialState;
+			// Object.assign(state, initialState)
 		},
 	},
 });

@@ -21,7 +21,6 @@ export default function CalendarScreen({
 	// const { index, routeNames } = navigation.getState();
 	// const stackFocused = route.name === routeNames[index] ? true : false;
 	// const webRef = useRef();
-	console.log("!# TRACKER", tracker);
 
 	return (
 		<>

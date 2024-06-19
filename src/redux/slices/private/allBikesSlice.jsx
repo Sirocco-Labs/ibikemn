@@ -7,11 +7,15 @@ const allBikesSlice = createSlice({
 	initialState,
 	reducers: {
 		setAllBikes(state, action) {
-		return (state = action.payload);
+			state.length = 0;
+			state.push(...action.payload);
 
+			// return (state = action.payload);
 		},
 		clearAllBikes(state) {
-			return state = initialState
+			state.length = 0;
+
+			// return (state = initialState);
 		},
 	},
 });

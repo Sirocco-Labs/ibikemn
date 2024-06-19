@@ -1,6 +1,6 @@
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, View, StyleSheet, Alert, Linking} from "react-native";
 import { Text, Dialog, Button } from "@rneui/themed";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import haversine from "haversine";
 import {
@@ -17,6 +17,7 @@ import ModalWrapper from "../components/ModalWrapper/ModalWrapper";
 
 import {
 	chooseWorkCommute,
+	clearCommuteSlice,
 	setRideStartTime,
 	toggleRideStarted,
 	toggleSurveyOpen,
@@ -29,23 +30,50 @@ import RideTrackingScreen from "./RideTrackingScreen";
 
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
 import ScaleButton from "../components/ScaleButton/ScaleButton";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { InitialLocationPermissionRequest } from "../tasks/RequestLocationPermission";
 
 export default function RideScreen() {
 	const dispatch = useDispatch();
+	const navigation = useNavigation();
 
 	const distance = useSelector((store) => store.distance);
 	const commute = useSelector((store) => store.commute);
 	const user = useSelector((store) => store.user);
 
+	useFocusEffect(useCallback(()=>{
+		InitialLocationPermissionRequest()
+	}))
+
 	const handleStartTracking = async () => {
 		try {
 			if (!distance.is_tracking) {
-				console.log("TRACKING STARTED!");
-				dispatch(toggleTrackingStatus());
-				// (FIND ME)
-				dispatch(setIsProgressUpdated(false));
-				dispatch(setRideStartTime(new Date().toISOString()));
-				await startLocationTracking(dispatch);
+				// navigation.navigate("StartRiding");
+				const proceed = await startLocationTracking(dispatch);
+				console.log('PROCEED', proceed);
+				if (proceed) {
+					dispatch(toggleTrackingStatus());
+					console.log("TRACKING STARTED!");
+					// (FIND ME)
+					// dispatch(setIsProgressUpdated(false));
+					dispatch(setRideStartTime(new Date().toISOString()));
+				} else {
+					dispatch(clearCommuteSlice());
+					Alert.alert(
+						"Location Permission Required",
+						`iBikeMN needs to access your location in both the foreground and background, please change your settings to "Allow all the time" or "Always".`,
+						[
+							{
+								text: "Go to Settings",
+								onPress: () => Linking.openSettings(), // Directs user to settings
+							},
+							{
+								text: "Cancel",
+								style: "cancel",
+							},
+						]
+					);
+				}
 			}
 		} catch (error) {
 			console.log("TRACKING STARTED ERROR!", error);
@@ -90,30 +118,13 @@ export default function RideScreen() {
 							No
 						</Text>
 					</ScaleButton>
-					{/* <View style={styles.buttonWrapper}>
-						<Button
-							buttonStyle={{ width: 300, padding: 15 }}
-							raised
-							fullWidth
-							onPress={() => {
-								dispatch(chooseWorkCommute());
-								handleStartTracking();
-							}}
-						>
-							YES
-						</Button>
-					</View>
-					<View style={styles.buttonWrapper}>
-						<Button
-							raised
-							buttonStyle={{ width: 300, padding: 15 }}
-							onPress={() => {
-								handleStartTracking();
-							}}
-						>
-							NO
-						</Button>
-					</View> */}
+					{/* <Button
+					onPress={()=>{
+						dispatch(clearDistance())
+					}}
+					>
+						reset
+					</Button> */}
 				</View>
 			</View>
 
@@ -167,13 +178,13 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 		width: "100%",
-		height:'60%'
+		height: "60%",
 	},
 	cenColAr: {
 		justifyContent: "space-around",
 		alignItems: "center",
 		width: "100%",
-		height:'75%'
+		height: "75%",
 	},
 	grid: {
 		flexDirection: "row",

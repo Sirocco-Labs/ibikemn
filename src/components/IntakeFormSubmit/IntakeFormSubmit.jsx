@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {finishProfile} from '../../redux/thunks/userThunk'
 
 import { clearIntakeSlice } from "../../redux/slices/intakeFormSlice";
+import ScreenWrapper from "../ScreenWrapper/ScreenWrapper";
 
 export default function IntakeFormSubmit({ navigation, route }) {
 	const dispatch = useDispatch();
@@ -84,148 +85,154 @@ const inputData = {
 	}
 
 	return (
-		<KeyboardAvoidingScrollView>
+		// <KeyboardAvoidingScrollView>
+		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
 			<View style={styles.flexOne}>
 				<View style={styles.section}>
-					<Text style={styles.fieldTitle}>User Info</Text>
-					<View>
-						<Input
-							disabled={!edit.username}
-							label="Username"
-							placeholder=""
-							inputStyle={styles.input}
-							labelStyle={styles.label}
-							value={formData.userInfo.username}
-						/>
-					</View>
-					<View style={styles.grid}>
-						<View style={styles.gridItem}>
+					<View style={styles.section}>
+						<Text style={styles.fieldTitle}>User Info</Text>
+						<View>
 							<Input
-								disabled={!edit.first_name}
-								label="First Name"
+								disabled={!edit.username}
+								label="Username"
 								placeholder=""
 								inputStyle={styles.input}
 								labelStyle={styles.label}
-								value={formData.userInfo.first_name}
+								value={formData.userInfo.username}
 							/>
 						</View>
+						<View style={styles.grid}>
+							<View style={styles.gridItem}>
+								<Input
+									disabled={!edit.first_name}
+									label="First Name"
+									placeholder=""
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={formData.userInfo.first_name}
+								/>
+							</View>
 
-						<View style={styles.gridItem}>
+							<View style={styles.gridItem}>
+								<Input
+									disabled={!edit.last_name}
+									label="Last Name"
+									placeholder=""
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={formData.userInfo.last_name}
+								/>
+							</View>
+						</View>
+					</View>
+					<View style={styles.section}>
+						<Text style={styles.fieldTitle}>Home Address</Text>
+
+						<View>
 							<Input
-								disabled={!edit.last_name}
-								label="Last Name"
+								disabled={!edit.home_city}
+								label="City"
 								placeholder=""
 								inputStyle={styles.input}
 								labelStyle={styles.label}
-								value={formData.userInfo.last_name}
+								value={formData.homeAddress.city}
 							/>
 						</View>
+						<View style={styles.grid}>
+							<View style={styles.gridItem}>
+								<Input
+									disabled={!edit.home_state}
+									label="State"
+									placeholder=""
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={formData.homeAddress.state}
+								/>
+							</View>
+
+							<View style={styles.gridItem}>
+								<Input
+									disabled={!edit.home_zip}
+									label="Zip"
+									placeholder=""
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={formData.homeAddress.zip}
+								/>
+							</View>
+						</View>
+					</View>
+					<View style={styles.section}>
+						<Text style={styles.fieldTitle}>Work Address</Text>
+
+						<View>
+							<Input
+								disabled={!edit.work_city}
+								label="City"
+								placeholder=""
+								inputStyle={styles.input}
+								labelStyle={styles.label}
+								value={formData.workAddress.city}
+							/>
+						</View>
+						<View style={styles.grid}>
+							<View style={styles.gridItem}>
+								<Input
+									disabled={!edit.work_state}
+									label="State"
+									placeholder=""
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={formData.workAddress.state}
+								/>
+							</View>
+
+							<View style={styles.gridItem}>
+								<Input
+									disabled={!edit.work_zip}
+									label="Zip"
+									placeholder=""
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={formData.workAddress.zip}
+								/>
+							</View>
+						</View>
+					</View>
+
 					</View>
 				</View>
-				<View style={styles.section}>
-					<Text style={styles.fieldTitle}>Home Address</Text>
-
-					<View>
-						<Input
-							disabled={!edit.home_city}
-							label="City"
-							placeholder=""
-							inputStyle={styles.input}
-							labelStyle={styles.label}
-							value={formData.homeAddress.city}
-						/>
-					</View>
-					<View style={styles.grid}>
-						<View style={styles.gridItem}>
-							<Input
-								disabled={!edit.home_state}
-								label="State"
-								placeholder=""
-								inputStyle={styles.input}
-								labelStyle={styles.label}
-								value={formData.homeAddress.state}
+					<View style={styles.btnSection}>
+						<View style={styles.grid}>
+							<Button
+								title={"Back"}
+								icon={{ name: "arrow-left", color: "white" }}
+								onPress={() => {
+									navigation.jumpTo("Consents");
+								}}
+								buttonStyle={styles.backBtn}
+								titleStyle={{
+									marginRight: 15,
+								}}
+							/>
+							<Button
+								title={"Submit"}
+								icon={{ name: "send", color: "white" }}
+								iconRight={true}
+								onPress={() => {
+									handleSubmit();
+								}}
+								buttonStyle={styles.nextBtn}
+								titleStyle={{
+									marginLeft: 15,
+									marginRight: 10,
+								}}
 							/>
 						</View>
-
-						<View style={styles.gridItem}>
-							<Input
-								disabled={!edit.home_zip}
-								label="Zip"
-								placeholder=""
-								inputStyle={styles.input}
-								labelStyle={styles.label}
-								value={formData.homeAddress.zip}
-							/>
-						</View>
-					</View>
-				</View>
-				<View style={styles.section}>
-					<Text style={styles.fieldTitle}>Work Address</Text>
-
-					<View>
-						<Input
-							disabled={!edit.work_city}
-							label="City"
-							placeholder=""
-							inputStyle={styles.input}
-							labelStyle={styles.label}
-							value={formData.workAddress.city}
-						/>
-					</View>
-					<View style={styles.grid}>
-						<View style={styles.gridItem}>
-							<Input
-								disabled={!edit.work_state}
-								label="State"
-								placeholder=""
-								inputStyle={styles.input}
-								labelStyle={styles.label}
-								value={formData.workAddress.state}
-							/>
-						</View>
-
-						<View style={styles.gridItem}>
-							<Input
-								disabled={!edit.work_zip}
-								label="Zip"
-								placeholder=""
-								inputStyle={styles.input}
-								labelStyle={styles.label}
-								value={formData.workAddress.zip}
-							/>
-						</View>
-					</View>
-				</View>
-
-				<View style={[styles.grid, styles.mb15]}>
-					<Button
-						title={"Back"}
-						icon={{ name: "arrow-left", color: "white" }}
-						onPress={() => {
-							navigation.jumpTo("Consents");
-						}}
-						buttonStyle={styles.backBtn}
-						titleStyle={{
-							marginRight: 15,
-						}}
-					/>
-					<Button
-						title={"Submit"}
-						icon={{ name: "send", color: "white" }}
-						iconRight={true}
-						onPress={() => {
-							handleSubmit()
-							// navigation.jumpTo("User");
-						}}
-						buttonStyle={styles.nextBtn}
-						titleStyle={{
-							marginLeft: 15,
-							marginRight: 5,
-						}}
-					/>
-				</View>
 			</View>
-		</KeyboardAvoidingScrollView>
+		</ScreenWrapper>
+
+		// {/* </KeyboardAvoidingScrollView> */}
 	);
 }
 const styles = StyleSheet.create({
@@ -324,5 +331,9 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 		fontWeight: "bold",
 		marginBottom: 15,
+	},
+	btnSection: {
+		width: "100%",
+		marginBottom: 5,
 	},
 });

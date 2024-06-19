@@ -20,9 +20,11 @@ const ProgressBike = ({ earned, loading, stats, unit, motivation }) => {
 	}, [loading, earned]);
 
 	return earned >= 1 ? (
-		<View style={styles.completed}>
-			<Text style={{ color: "#1269A9" }}>Challenge Completed!</Text>
-		</View>
+		// <View style={styles.completed}>
+		// 	<Text style={{ color: "#1269A9" }}>Challenge Completed!</Text>
+		// </View>
+		<>
+		</>
 	) : (
 		<View style={[styles.container]}>
 			<View style={[styles.innerContainer]}>

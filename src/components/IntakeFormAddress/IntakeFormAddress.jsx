@@ -77,14 +77,15 @@ export default function IntakeFormAddress({ navigation, route }) {
 			// noScroll={true}
 		>
 			{/* <View style={styles.flexOne}> */}
+			<View style={styles.screenFormat}>
 				<KeyboardAvoidingView
 					behavior={Platform.OS === "ios" ? "padding" : null}
-					style={{
-						flexGrow: 2,
-						justifyContent: "space-around",
-						alignItems: "center",
-						width: "100%",
-					}}
+					// style={{
+					// 	flexGrow: 2,
+					// 	justifyContent: "center",
+					// 	alignItems: "center",
+					// 	width: "100%",
+					// }}
 				>
 					<View style={styles.section}>
 						<Text style={styles.sectionTitle}>Home Address</Text>
@@ -143,12 +144,12 @@ export default function IntakeFormAddress({ navigation, route }) {
 
 				<KeyboardAvoidingView
 					behavior={Platform.OS === "ios" ? "padding" : null}
-					style={{
-						flexGrow: 2,
-						justifyContent: "space-around",
-						alignItems: "center",
-						width: "100%",
-					}}
+					// style={{
+					// 	flexGrow: 2,
+					// 	justifyContent: "center",
+					// 	alignItems: "center",
+					// 	width: "100%",
+					// }}
 				>
 					<View style={styles.section}>
 						<Text style={styles.sectionTitle}>Work Address</Text>
@@ -205,55 +206,55 @@ export default function IntakeFormAddress({ navigation, route }) {
 						</View>
 					</View>
 				</KeyboardAvoidingView>
+			</View>
 
-				<View style={styles.section}>
-					<View style={styles.grid}>
-						<Button
-							title={"Back"}
-							icon={{
-								name: "arrow-left",
-								color: "white",
-							}}
-							onPress={() => {
-								navigation.jumpTo("User");
-							}}
-							buttonStyle={styles.backBtn}
-							titleStyle={{
-								marginRight: 15,
-							}}
-						/>
-						<Button
-							title={"Save"}
-							icon={{ name: "save", color: "white" }}
-							iconRight
-							loading={loading}
-							disabled={validateSave()}
-							onPress={handleSave}
-							buttonStyle={styles.nextBtn}
-							// titleStyle={styles.ml15}
-						/>
-						<Button
-							title={"Next"}
-							icon={{
-								name: "arrow-right",
-								color: "white",
-							}}
-							iconRight={true}
-							disabled={
-								!intake.homeAddress.zip &&
-								!intake.workAddress.zip
-								// validateSave()
-							}
-							onPress={() => {
-								navigation.jumpTo("Screening");
-							}}
-							buttonStyle={styles.nextBtn}
-							titleStyle={{
-								marginLeft: 15,
-							}}
-						/>
-					</View>
+			<View style={styles.btnSection}>
+				<View style={styles.grid}>
+					<Button
+						title={"Back"}
+						icon={{
+							name: "arrow-left",
+							color: "white",
+						}}
+						onPress={() => {
+							navigation.jumpTo("User");
+						}}
+						buttonStyle={styles.backBtn}
+						titleStyle={{
+							marginRight: 15,
+						}}
+					/>
+					<Button
+						title={"Save"}
+						icon={{ name: "save", color: "white" }}
+						iconRight
+						loading={loading}
+						disabled={validateSave()}
+						onPress={handleSave}
+						buttonStyle={styles.nextBtn}
+						// titleStyle={styles.ml15}
+					/>
+					<Button
+						title={"Next"}
+						icon={{
+							name: "arrow-right",
+							color: "white",
+						}}
+						iconRight={true}
+						disabled={
+							!intake.homeAddress.zip && !intake.workAddress.zip
+							// validateSave()
+						}
+						onPress={() => {
+							navigation.jumpTo("Screening");
+						}}
+						buttonStyle={styles.nextBtn}
+						titleStyle={{
+							marginLeft: 15,
+						}}
+					/>
 				</View>
+			</View>
 			{/* </View> */}
 		</ScreenWrapper>
 		// {/* </KeyboardAvoidingScrollView> */}
@@ -314,10 +315,23 @@ const styles = StyleSheet.create({
 	mr15: {
 		marginRight: 15,
 	},
+	screenFormat: {
+		flex: 1,
+		alignItems: "center",
+
+	},
+	btnSection: {
+		paddingHorizontal: 0,
+		marginTop: 5,
+		marginBottom: 5,
+		width: "100%",
+
+	},
 	section: {
 		paddingHorizontal: 5,
 		marginTop: 5,
 		marginBottom: 5,
+
 	},
 	sectionTitle: {
 		fontSize: 20,

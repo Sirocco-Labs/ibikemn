@@ -14,29 +14,28 @@ const preferenceSlice = createSlice({
 	initialState,
 	reducers: {
 		setFollowUpPreferences(state, action) {
-			return { ...state, ["follow_up"]: action.payload };
+			return { ...state, follow_up: action.payload };
 		},
 		setMarketingPreferences(state, action) {
-			return { ...state, ["marketing"]: action.payload };
+			return { ...state, marketing: action.payload };
 		},
 		setIncentivesPreferences(state, action) {
-			return { ...state, ["incentive"]: action.payload };
+			return { ...state, incentive: action.payload };
 		},
 		setLocationPreferences(state, action) {
-			return { ...state, ["location_tracking"]: action.payload };
+			return { ...state, location_tracking: action.payload };
 		},
 		setBiometricsPreferences(state, action) {
-			return { ...state, ["biometrics"]: action.payload };
+			return { ...state, biometrics: action.payload };
 		},
 		setNotificationPreferences(state, action) {
-			return { ...state, ["notifications"]: action.payload };
+			return { ...state, notifications: action.payload };
 		},
-        setAllPreferences(state, action){
-            return {...state, ...action.payload}
-
-        },
+		setAllPreferences(state, action){
+		    return {...state, ...action.payload}
+		},
 		clearAllPreferences(state) {
-			return { ...state, ...initialState };
+			return initialState;
 		},
 	},
 });
@@ -53,9 +52,3 @@ export const {
 } = preferenceSlice.actions;
 
 export default preferenceSlice.reducer;
-
-
-
-
-
-

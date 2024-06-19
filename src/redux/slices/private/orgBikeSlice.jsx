@@ -1,16 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = []
+const initialState = [];
 
 const orgBikeSlice = createSlice({
 	name: "orgBikes",
 	initialState,
 	reducers: {
 		setOrgBikes(state, action) {
-           return state = action.payload
+			state.length = 0;
+			state.push(...action.payload);
+
+			// return (state = action.payload);
 		},
 		clearOrgBikes(state) {
-           return state = initialState
+			state.length = 0;
+
+			// return (state = initialState);
 		},
 	},
 });

@@ -2,7 +2,6 @@ import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { setLocationCoordinates } from "../redux/slices/distanceSlice";
 
-
 export const BACKGROUND_LOCATION = "background-location-task";
 
 export const backgroundLocationTask = (dispatch) => {
@@ -31,32 +30,38 @@ export const backgroundLocationTask = (dispatch) => {
 };
 
 export const startLocationTracking = async (dispatch) => {
-    const  foregroundStatus  =
-		await Location.requestForegroundPermissionsAsync();
-	if (foregroundStatus.status !== "granted") {
-		console.log("Foreground permissions not granted");
-		return;
-	}
+	let proceed = true
+		const foregroundStatus =
+			await Location.requestForegroundPermissionsAsync();
+		if (foregroundStatus.status !== "granted") {
+			console.log("Foreground permissions not granted");
+			proceed = false
+		}
 
-	const backgroundStatus  =
-		await Location.requestBackgroundPermissionsAsync();
-	if (backgroundStatus.status !== "granted") {
-		console.log("Background permissions not granted");
-		return;
-	}
-	await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION, {
-		accuracy: Location.Accuracy.BestForNavigation,
-		activityType:3,
-		timeInterval: 5000,
-		distanceInterval: 1,
-		foregroundService: {
-			killServiceOnDestroy:true,
-			notificationTitle: "Location Tracking",
-			notificationBody: "Tracking your location",
-			notificationColor: "#FF0000",
-		},
-		pausesUpdatesAutomatically: false,
-	});
+		const backgroundStatus =
+			await Location.requestBackgroundPermissionsAsync();
+		if (backgroundStatus.status !== "granted") {
+			console.log("Background permissions not granted");
+			// throw new Error("Background permissions not granted");
+			proceed = false;
+		} else {
+			await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION, {
+				accuracy: Location.Accuracy.BestForNavigation,
+				activityType: 3,
+				timeInterval: 5000,
+				distanceInterval: 1,
+				foregroundService: {
+					killServiceOnDestroy: true,
+					notificationTitle: "Location Tracking",
+					notificationBody: "Tracking your location",
+					notificationColor: "#FF0000",
+				},
+				pausesUpdatesAutomatically: false,
+			});
+		}
+
+	return proceed
+
 };
 
 export const stopLocationTracking = async () => {

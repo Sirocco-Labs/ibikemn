@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-	resources:[]
+	resources: [],
 };
 
 const resourceMediaSlice = createSlice({
@@ -10,9 +10,11 @@ const resourceMediaSlice = createSlice({
 	reducers: {
 		setResourceMedia(state, action) {
 			return { ...state, resources: action.payload };
+			// state.resources = action.payload;
 		},
 		clearMediaSlice(state) {
-			return { ...state, ...initialState };
+			return initialState;
+			// state.resources = initialState.resources;
 		},
 	},
 });

@@ -10,8 +10,6 @@ export default function ScaleButton({
 	disabled,
 	offLooks,
 }) {
-	console.log('!# LOOKS', looks);
-	console.log('!# OFF LOOKS', offLooks);
 	const scale = useRef(new Animated.Value(0)).current;
 
 	const handlePressIn = () => {

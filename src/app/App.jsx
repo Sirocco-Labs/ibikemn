@@ -19,9 +19,10 @@ function App() {
 	const [authenticated, setAuthenticated] = useState("");
 	const [userSession, setUserSession] = useState("");
 	const [loading, setLoading] = useState(true);
-
 	const user = useSelector((store) => store.user);
-	InitialLocationPermissionRequest(dispatch);
+	const feedback = useSelector((store)=> store.feedback)
+
+	InitialLocationPermissionRequest();
 	useEffect(() => {
 		backgroundLocationTask(dispatch);
 		console.log("APP LOADED");
@@ -66,6 +67,10 @@ function App() {
 		};
 	}, []);
 
+	// useEffect(()=>{
+
+	// },[feedback])
+
 	if (loading && !authenticated) {
 		return <SplashScreen />;
 	} else {
@@ -76,8 +81,6 @@ function App() {
 				return <PublicUserNavTabs />;
 			} else if (user.is_employee && authenticated) {
 				return <StaffUserNavTabs />;
-			} else if (user.is_admin && authenticated) {
-				return <AdminUserNavTabs />;
 			} else {
 				return <AuthNavTabs />;
 			}

@@ -7,6 +7,8 @@ import { setIntakeDemographics } from "../../redux/slices/intakeFormSlice";
 import KeyboardAvoidingScrollView from "../KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
 import { useFocusEffect } from "@react-navigation/native";
 
+import ScreenWrapper from "../ScreenWrapper/ScreenWrapper";
+
 export default function IntakeFormDemographics({ navigation, route }) {
 	const dispatch = useDispatch();
 	const inputData = {
@@ -179,225 +181,246 @@ export default function IntakeFormDemographics({ navigation, route }) {
 	};
 
 	return (
-		<KeyboardAvoidingScrollView>
-			<View style={styles.flexOne}>
-				<View style={styles.section}>
-					<View>
-						<Input
-							keyboardType="numeric"
-							label="Age"
-							placeholder=""
-							inputStyle={styles.input}
-							labelStyle={styles.label}
-							value={`${demographics.age}`}
-							onChangeText={(text) => {
-								setDemographics({
-									...demographics,
-									age: text,
-								});
-								validateSave();
-							}}
-						/>
-					</View>
-					<View>
-						<Input
-							label="What is your current gender identity?"
-							placeholder=""
-							inputStyle={styles.input}
-							labelStyle={styles.label}
-							value={demographics.gender_identity}
-							onChangeText={(text) => {
-								setDemographics({
-									...demographics,
-									gender_identity: text,
-								});
-								validateSave();
-							}}
-						/>
-					</View>
-				</View>
-				<View style={styles.section}>
-					<View>
-						<Text style={[styles.fieldTitle, { marginLeft: 5 }]}>
-							What are your racial/ethnic identities?
-						</Text>
-						<Text style={[{ marginLeft: 8, marginBottom: 10 }]}>
-							(choose all that apply)
-						</Text>
-					</View>
-					<View style={styles.gridCB}>
-						{raceData.map((box, i) => (
-							<View
-								style={
-									checkForLast(raceData, i)
-										? styles.lastGridItemCB
-										: styles.gridItemCB
-								}
-								key={i}
-							>
-								<CheckBox
-									iconRight={false}
-									title={box.title}
-									disabled={
-										!demographics.race.includes(
-											box.title
-										) && stopper
-									}
-									// checked={race[i].choice shouldBeChecked(race[1], demographics)}
-									checked={demographics.race.includes(
-										box.title
-									)}
-									onPress={() => {
-										// loop through previous state
-										// if the index of the previous state is the same as the index passed in
-										// then return that object with the change in choice value
-										setRace((last) =>
-											last.map((object, index) =>
-												index === i
-													? {
-															...object,
-															choice: !object.choice,
-													  }
-													: object
-											)
-										);
-
-										updatePayload("race", box.title);
-
+		// <KeyboardAvoidingScrollView>
+			<ScreenWrapper background={{ backgroundColor: "#fff" }}>
+				<View style={styles.flexOne}>
+					<View style={styles.section}>
+						<View style={styles.section}>
+							<View>
+								<Input
+									keyboardType="numeric"
+									label="Age"
+									placeholder=""
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={`${demographics.age}`}
+									onChangeText={(text) => {
+										setDemographics({
+											...demographics,
+											age: text,
+										});
 										validateSave();
-									}}
-									textStyle={{
-										fontSize: 12,
-										fontWeight: "bold",
-									}}
-									containerStyle={{
-										height: "auto",
-										paddingVertical: 0,
-										paddingLeft: 0,
-										margin: 0,
-										// borderColor: "magenta",
-										// borderWidth: 1,
 									}}
 								/>
 							</View>
-						))}
-					</View>
-				</View>
-				<View style={styles.section}>
-					<View>
-						<Text style={[styles.fieldTitle, { marginLeft: 5 }]}>
-							Which of the following best describes your personal
-							income last year?
-						</Text>
-					</View>
-					<View style={styles.gridCB}>
-						{incomeData.map((box, i) => (
-							<View
-								style={
-									checkForLast(incomeData, i)
-										? styles.lastGridItemCB
-										: styles.gridItemCB
-								}
-								key={i}
-							>
-								<CheckBox
-									iconRight={false}
-									title={box.title}
-									checked={
-										demographics.income_level === box.value
-									}
-									// checked={income[i].choice}
-									onPress={() => {
-										// loop through previous state
-										// if the index of the previous state is the same as the index passed in
-										// then return that object with the change in choice value
-										setIncome((last) =>
-											last.map(
-												(object, index) =>
-													index === i && {
-														...object,
-														choice: !object.choice,
-													}
-											)
-										);
-
-										updatePayload(
-											"income_level",
-											box.value
-										);
-
+							<View>
+								<Input
+									label="Please describe your gender identity"
+									placeholder=""
+									inputStyle={styles.input}
+									labelStyle={styles.label}
+									value={demographics.gender_identity}
+									onChangeText={(text) => {
+										setDemographics({
+											...demographics,
+											gender_identity: text,
+										});
 										validateSave();
-									}}
-									textStyle={{
-										fontSize: 12,
-										fontWeight: "bold",
-									}}
-									containerStyle={{
-										height: "auto",
-										paddingVertical: 0,
-										paddingLeft: 0,
-										margin: 0,
-										// borderColor: "magenta",
-										// borderWidth: 1,
 									}}
 								/>
 							</View>
-						))}
-					</View>
-				</View>
+						</View>
+						<View style={styles.section}>
+							<View>
+								<Text
+									style={[
+										styles.fieldTitle,
+										{ marginLeft: 5 },
+									]}
+								>
+									What are your racial/ethnic identities?
+								</Text>
+								<Text
+									style={[
+										{ marginLeft: 8, marginBottom: 10 },
+									]}
+								>
+									(choose all that apply)
+								</Text>
+							</View>
+							<View style={styles.gridCB}>
+								{raceData.map((box, i) => (
+									<View
+										style={
+											checkForLast(raceData, i)
+												? styles.lastGridItemCB
+												: styles.gridItemCB
+										}
+										key={i}
+									>
+										<CheckBox
+											iconRight={false}
+											title={box.title}
+											disabled={
+												!demographics.race.includes(
+													box.title
+												) && stopper
+											}
+											// checked={race[i].choice shouldBeChecked(race[1], demographics)}
+											checked={demographics.race.includes(
+												box.title
+											)}
+											onPress={() => {
+												// loop through previous state
+												// if the index of the previous state is the same as the index passed in
+												// then return that object with the change in choice value
+												setRace((last) =>
+													last.map((object, index) =>
+														index === i
+															? {
+																	...object,
+																	choice: !object.choice,
+															  }
+															: object
+													)
+												);
 
-				<View style={styles.section}>
-					<View style={styles.grid}>
-						<Button
-							title={"Back"}
-							icon={{
-								name: "arrow-left",
-								color: "white",
-							}}
-							onPress={() => {
-								navigation.jumpTo("Screening");
-							}}
-							buttonStyle={styles.backBtn}
-							titleStyle={{
-								marginRight: 15,
-							}}
-						/>
-						<Button
-							title={"Save"}
-							icon={{ name: "save", color: "white" }}
-							iconRight
-							loading={loading}
-							disabled={validateSave()}
-							onPress={handleSave}
-							buttonStyle={styles.nextBtn}
-							// titleStyle={styles.ml15}
-						/>
-						<Button
-							title={"Next"}
-							icon={{
-								name: "arrow-right",
-								color: "white",
-							}}
-							iconRight={true}
-							disabled={
-								(!intake.demographics.age &&
-									!intake.demographics.gender_identity &&
-									!intake.demographics.race.length > 0 &&
-									!intake.demographics.income_level) ||
-								validateSave()
-							}
-							onPress={() => {
-								navigation.jumpTo("Consents");
-							}}
-							buttonStyle={styles.nextBtn}
-							titleStyle={{
-								marginLeft: 15,
-							}}
-						/>
+												updatePayload(
+													"race",
+													box.title
+												);
+
+												validateSave();
+											}}
+											textStyle={{
+												fontSize: 12,
+												fontWeight: "bold",
+											}}
+											containerStyle={{
+												height: "auto",
+												paddingVertical: 0,
+												paddingLeft: 0,
+												margin: 0,
+												// borderColor: "magenta",
+												// borderWidth: 1,
+											}}
+										/>
+									</View>
+								))}
+							</View>
+						</View>
+						<View style={styles.section}>
+							<View>
+								<Text
+									style={[
+										styles.fieldTitle,
+										{ marginLeft: 5 },
+									]}
+								>
+									Which of the following best describes your
+									personal income last year?
+								</Text>
+							</View>
+							<View style={styles.gridCB}>
+								{incomeData.map((box, i) => (
+									<View
+										style={
+											checkForLast(incomeData, i)
+												? styles.lastGridItemCB
+												: styles.gridItemCB
+										}
+										key={i}
+									>
+										<CheckBox
+											iconRight={false}
+											title={box.title}
+											checked={
+												demographics.income_level ===
+												box.value
+											}
+											// checked={income[i].choice}
+											onPress={() => {
+												// loop through previous state
+												// if the index of the previous state is the same as the index passed in
+												// then return that object with the change in choice value
+												setIncome((last) =>
+													last.map(
+														(object, index) =>
+															index === i && {
+																...object,
+																choice: !object.choice,
+															}
+													)
+												);
+
+												updatePayload(
+													"income_level",
+													box.value
+												);
+
+												validateSave();
+											}}
+											textStyle={{
+												fontSize: 12,
+												fontWeight: "bold",
+											}}
+											containerStyle={{
+												height: "auto",
+												paddingVertical: 0,
+												paddingLeft: 0,
+												margin: 0,
+												// borderColor: "magenta",
+												// borderWidth: 1,
+											}}
+										/>
+									</View>
+								))}
+							</View>
+						</View>
 					</View>
+					</View>
+					<View style={styles.btnSection}>
+						<View style={styles.grid}>
+							<Button
+								title={"Back"}
+								icon={{
+									name: "arrow-left",
+									color: "white",
+								}}
+								onPress={() => {
+									navigation.jumpTo("Screening");
+								}}
+								buttonStyle={styles.backBtn}
+								titleStyle={{
+									marginRight: 15,
+								}}
+							/>
+							<Button
+								title={"Save"}
+								icon={{ name: "save", color: "white" }}
+								iconRight
+								loading={loading}
+								disabled={validateSave()}
+								onPress={handleSave}
+								buttonStyle={styles.nextBtn}
+								// titleStyle={styles.ml15}
+							/>
+							<Button
+								title={"Next"}
+								icon={{
+									name: "arrow-right",
+									color: "white",
+								}}
+								iconRight={true}
+								disabled={
+									(!intake.demographics.age &&
+										!intake.demographics.gender_identity &&
+										!intake.demographics.race.length > 0 &&
+										!intake.demographics.income_level) ||
+									validateSave()
+								}
+								onPress={() => {
+									navigation.jumpTo("Consents");
+								}}
+								buttonStyle={styles.nextBtn}
+								titleStyle={{
+									marginLeft: 15,
+								}}
+							/>
+						</View>
 				</View>
-			</View>
-		</KeyboardAvoidingScrollView>
+			</ScreenWrapper>
+		// {/* </KeyboardAvoidingScrollView> */}
 	);
 }
 
@@ -454,6 +477,7 @@ const styles = StyleSheet.create({
 	flexOne: {
 		flex: 1,
 		backgroundColor: "#fff",
+		paddingTop: 15,
 	},
 	nextBtn: {
 		display: "flex",
@@ -486,7 +510,7 @@ const styles = StyleSheet.create({
 		marginTop: 15,
 	},
 	section: {
-		paddingHorizontal: 5,
+		// paddingHorizontal: 5,
 		marginTop: 5,
 		marginBottom: 5,
 	},
@@ -505,5 +529,9 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: "auto",
 		marginBottom: 15,
+	},
+	btnSection: {
+		width: "100%",
+		marginBottom: 5,
 	},
 });

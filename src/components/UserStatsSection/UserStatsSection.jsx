@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 
 export default function UserStatsSection({ survey, travelStats }) {
-	console.log(survey);
-
 	return (
 		<>
 			<ListItem

@@ -37,11 +37,10 @@ export default function CalendarScreen({
 					display: "flex",
 					flexDirection: "row",
 					justifyContent: "space-around",
-					alignItems: "center",
+					alignItems: "flex-end",
 					paddingVertical: 10,
-					marginHorizontal: 20,
+					marginHorizontal: 15,
 					marginBottom: 15,
-					// height: 80,
 				}}
 			>
 				<View
@@ -58,15 +57,16 @@ export default function CalendarScreen({
 							{ width: "100%" },
 						]}
 						onPress={goBackWeb}
+						disabled={!tracker.canGoBack}
 					>
 						<Icon
 							type="material-community"
 							name="arrow-left-thin"
 							size={40}
-							color={"#F7B247"}
+							color={tracker.canGoBack ? "#F7B247" : "grey"}
 						/>
 					</ScaleButton>
-					<Text>Back</Text>
+					<Text style={styles.controls}>Back</Text>
 				</View>
 				<View
 					style={{
@@ -86,10 +86,11 @@ export default function CalendarScreen({
 							name="close-circle-outline"
 							type="material-community"
 							color="#F7B247"
-							size={40}
+							size={30}
+							style={{ marginBottom: 2 }}
 						/>
 					</ScaleButton>
-					<Text>Close</Text>
+					<Text style={styles.controls}>Close</Text>
 				</View>
 
 				<View
@@ -116,7 +117,7 @@ export default function CalendarScreen({
 							size={40}
 							color={tracker.canGoForward ? "#F7B247" : "grey"}
 						/>
-						<Text>Forward</Text>
+						<Text style={styles.controls}>Forward</Text>
 					</ScaleButton>
 				</View>
 			</View>
@@ -205,5 +206,10 @@ const styles = StyleSheet.create({
 	titleText: {
 		fontWeight: "bold",
 		fontSize: 20,
+	},
+	controls: {
+		// fontWeight: "bold",
+		fontSize: 16,
+		color:'#fff'
 	},
 });

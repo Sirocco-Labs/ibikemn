@@ -8,7 +8,7 @@ import {
 	SafeAreaView,
 } from "react-native";
 import { Text, Divider, Dialog } from "@rneui/themed";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -73,7 +73,7 @@ export default function HomeScreen() {
 	const [rewardNotice, setRewardNotice] = useState(false);
 
 	useFocusEffect(
-		React.useCallback(() => {
+		useCallback(() => {
 			dispatch(getUserTravelStats(user.user_id));
 			dispatch(getActiveIncentives(userInfo));
 			dispatch(getMyRideSurveys(user.user_id));
@@ -128,7 +128,24 @@ export default function HomeScreen() {
 							value = "Fitness";
 						}
 						propCounts[value] = (propCounts[value] || 0) + 1;
-					} else {
+					} else if(property === 'route_type'){
+						if (
+							value ===
+							"On road infrastructure (a bike lane, cycle track)"
+						) {
+							value = "Bike Lane";
+						} else if (value === "Bike trail") {
+							value = "Bike Trail";
+						} else if (value === "A mix of both") {
+							value = "Mixed";
+						} else if (
+							value ===
+							"My route didn't include any bike friendly pathways"
+						) {
+							value = "Unfriendly";
+						}
+						propCounts[value] = (propCounts[value] || 0) + 1;
+					}else {
 						propCounts[value] = (propCounts[value] || 0) + 1;
 					}
 					return propCounts;
@@ -301,7 +318,7 @@ export default function HomeScreen() {
 						</View>
 					)} */}
 					<View style={styles.leftColAr}>
-						<Text style={styles.sectionText}>
+						<Text style={[styles.sectionText, {marginBottom:10}]}>
 							{user.username}'s Stats
 						</Text>
 						<UserStatsSection
@@ -312,10 +329,10 @@ export default function HomeScreen() {
 					<Text
 						style={[
 							styles.sectionText,
-							{ alignSelf: "flex-start", marginVertical: 10 },
+							{ alignSelf: "flex-start", marginTop: 20,marginBottom:5 },
 						]}
 					>
-						Active Challenges
+						Active Challenge Progress
 					</Text>
 
 					<View style={styles.cardSection}>

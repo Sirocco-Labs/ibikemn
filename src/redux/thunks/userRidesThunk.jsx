@@ -1,5 +1,8 @@
 import { supabase } from "../../services/supabase/supabase";
-import { setUserTravelStats } from "../slices/travelStatsSlice";
+import {
+	setUserTravelStats,
+	clearUserTravelStats,
+} from "../slices/travelStatsSlice";
 import { setRideId } from "../slices/commuteSlice";
 
 export const getAllUserRides = (user_id) => async (dispatch) => {
@@ -20,7 +23,7 @@ export const getAllUserRides = (user_id) => async (dispatch) => {
 				"SUPABASE GET ALL USER RIDES SUCCESS! : ",
 				allUserRides.data
 			);
-			dispatch(setAllUserRides(allUserRides.data))
+			dispatch(setAllUserRides(allUserRides.data));
 		}
 	} catch (error) {
 		console.log(
@@ -43,12 +46,15 @@ export const getUserTravelStats = (user_id) => async (dispatch) => {
 				"SUPABASE GET ALL USER TRAVEL STATS ERROR! : ",
 				travelStats.error
 			);
+			if (travelStats.error.details === "The result contains 0 rows") {
+				dispatch(clearUserTravelStats());
+			}
 		} else {
 			console.log(
 				"SUPABASE GET ALL USER TRAVEL STATS SUCCESS! : ",
 				travelStats.data
 			);
-			dispatch(setUserTravelStats(travelStats.data))
+			dispatch(setUserTravelStats(travelStats.data));
 		}
 	} catch (error) {
 		console.log(
@@ -62,7 +68,11 @@ export const addToAllRides = (rideData) => async (dispatch) => {
 	// const {user_id, distance_traveled, is_work_commute} = rideData
 
 	try {
-		const insertRide = await supabase.from("all_rides").insert(rideData).select('*').single();
+		const insertRide = await supabase
+			.from("all_rides")
+			.insert(rideData)
+			.select("*")
+			.single();
 		if (insertRide.error) {
 			console.log("SUPABASE INSERT RIDE ERROR! : ", insertRide.error);
 		} else {
@@ -72,9 +82,9 @@ export const addToAllRides = (rideData) => async (dispatch) => {
 				insertRide.data
 			);
 			dispatch(updateTravelStats(rideData));
-			dispatch(setRideId(insertRide.data.id))
+			dispatch(setRideId(insertRide.data.id));
 
-			return {data: insertRide.data}
+			return { data: insertRide.data };
 		}
 	} catch (error) {
 		console.log(
@@ -195,7 +205,9 @@ export const updateTravelStats = (rideData) => async (dispatch) => {
 					if (updateTravelStats.error) {
 						console.log(
 							"SUPABASE UPDATE FUN TRAVEL STATS ERROR",
-							updateTravelStats.error, 'updater', updater
+							updateTravelStats.error,
+							"updater",
+							updater
 						);
 					} else {
 						console.log(
@@ -215,5 +227,4 @@ export const updateTravelStats = (rideData) => async (dispatch) => {
 			error
 		);
 	}
-
 };

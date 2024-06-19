@@ -218,7 +218,7 @@ export default function UserStatsSection({ survey, travelStats }) {
 					}}
 				/>
 				<ListItem.Content style={{ alignItems: "flex-start" }}>
-					<ListItem.Title>Route</ListItem.Title>
+					<ListItem.Title>Route Type</ListItem.Title>
 					<ListItem.Subtitle>
 						{survey.route_type ? survey.route_type.value : null}
 					</ListItem.Subtitle>

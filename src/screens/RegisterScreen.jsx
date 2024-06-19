@@ -14,6 +14,7 @@ import { Button, Input, Text, Icon } from "@rneui/themed";
 import { emailSignUp } from "../redux/thunks/authThunk";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
+import ScaleButton from "../components/ScaleButton/ScaleButton";
 
 function RegisterScreen() {
 	const dispatch = useDispatch();
@@ -48,9 +49,9 @@ function RegisterScreen() {
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View style={styles.container}>
 					<Text
-						// onPress={() => {
-						// 	setRegData(testData);
-						// }}
+					// onPress={() => {
+					// 	setRegData(testData);
+					// }}
 					>
 						Fill
 					</Text>
@@ -143,7 +144,26 @@ function RegisterScreen() {
 					/>
 					{/* </View> */}
 					{/* <View style={styles.mb20}> */}
-					<Button
+
+					<ScaleButton
+						onPress={() => {
+							dispatch(emailSignUp(regData));
+							setRegData(formData);
+							setError(noError);
+						}}
+						looks={[styles.solidButton, { width: "auto" }]}
+					>
+						<Text
+							style={{
+								fontWeight: "700",
+								color: "#fff",
+								fontSize: 20,
+							}}
+						>
+							Create Account
+						</Text>
+					</ScaleButton>
+					{/* <Button
 						title="Register"
 						// disabled={feedback.error}
 						onPress={() => {
@@ -151,7 +171,7 @@ function RegisterScreen() {
 								setRegData(formData);
 							setError(noError);
 						}}
-					/>
+					/> */}
 					{/* </View> */}
 				</View>
 			</TouchableWithoutFeedback>
@@ -218,8 +238,35 @@ const styles = StyleSheet.create({
 	},
 	errorStyle: {
 		fontSize: 12,
-        // marginVertical:3,
-        marginTop:1,
-        marginBottom:13
+		// marginVertical:3,
+		marginTop: 1,
+		marginBottom: 13,
+	},
+	solidButton: {
+		backgroundColor: "#1269A9",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
+	},
+	solidButtonOff: {
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
+	},
+	outlineButton: {
+		borderWidth: 1.5,
+		borderColor: "#1269A9",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
+	},
+	outlineButtonOff: {
+		borderWidth: 1.5,
+		borderColor: "#C0C0C0",
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
 	},
 });

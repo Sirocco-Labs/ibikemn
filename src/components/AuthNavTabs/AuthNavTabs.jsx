@@ -7,6 +7,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { StatusBar, Platform } from "react-native";
 
+import Toast from "react-native-toast-message";
+
 export default function AuthNavTabs() {
 	const Tab = createBottomTabNavigator();
 	const styleOptions = {
@@ -40,7 +42,7 @@ export default function AuthNavTabs() {
 						tabBarIcon: ({ focused, color, size }) => {
 							let iconName;
 
-							if (route.name === "Login") {
+							if (route.name === "Sign In") {
 								iconName = focused
 									? "login-variant"
 									: "login-variant";
@@ -63,7 +65,7 @@ export default function AuthNavTabs() {
 					})}
 				>
 					<Tab.Screen
-						name="Login"
+						name="Sign In"
 						component={LoginScreen}
 						options={styleOptions}
 					/>

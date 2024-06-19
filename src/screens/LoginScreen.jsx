@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage"; // for development only
+import ScaleButton from "../components/ScaleButton/ScaleButton";
+
 import {
 	setLoginError,
 	setLoginSuccess,
@@ -94,13 +96,18 @@ export default function LoginScreen() {
 							{ cancelable: false }
 						)} */}
 					<View style={[styles.verticallySpaced, styles.mt20]}>
-						<Button
+						<ScaleButton
+							onPress={() => dispatch(loginUser(loginData))}
+							looks={[styles.solidButton, { width: 'auto' }]}
+						>
+							<Text style={{ fontWeight: "700", color: "#fff", fontSize:20 }}>
+								Sign In
+							</Text>
+						</ScaleButton>
+						{/* <Button
 							title="Log In"
 							// disabled={feedback.error}
-							onPress={() =>
-								dispatch(loginUser(loginData))
-							}
-						/>
+						/> */}
 					</View>
 					<View style={[styles.verticallySpaced, styles.mt20]}>
 						<Button
@@ -161,5 +168,32 @@ const styles = StyleSheet.create({
 		// marginVertical:3,
 		marginTop: 1,
 		marginBottom: 13,
+	},
+	solidButton: {
+		backgroundColor: "#1269A9",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
+	},
+	solidButtonOff: {
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
+	},
+	outlineButton: {
+		borderWidth: 1.5,
+		borderColor: "#1269A9",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
+	},
+	outlineButtonOff: {
+		borderWidth: 1.5,
+		borderColor: "#C0C0C0",
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
 	},
 });

@@ -220,7 +220,7 @@ export default function HomeScreen() {
 	const sortedChallenges = [...challengesNotMet, ...challengesMet];
 
 	useEffect(() => {
-		if (rewardWinner.length > 0) {
+		if (rewardWinner && rewardWinner.length > 0) {
 			console.log("setting winner true");
 			setWinner(true);
 		}

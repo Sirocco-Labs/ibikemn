@@ -77,6 +77,7 @@ export const getWinningInfo = (userId) => async (dispatch) => {
 				"SUPABASE GET REWARD STATUS ERROR!!:",
 				rewardInfo.error
 			);
+			dispatch(setRewardStatus([]));
 		} else {
 			console.log(
 				"SUPABASE GET REWARD STATUS SUCCESS!!:",

@@ -119,7 +119,8 @@ export default function RideTrackingScreen() {
 				} else {
 					Alert.alert(
 						"Optional Survey ",
-						"Would you like to take a super quick survey to help BikeMN's grant reporting?",
+						"Would you like to take a super quick survey to help BikeMN's grant reporting?\n\nSome challenge criteria is dependent on your survey too.",
+
 						[
 							{
 								text: "Sure!",
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
 		color: "#fff",
 	},
 	timeText: {
-		fontSize: 85,
+		fontSize: 75,
 		color: "#fff",
 	},
 	solidButton: {

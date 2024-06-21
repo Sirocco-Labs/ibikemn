@@ -31,6 +31,7 @@ export default function LoginScreen() {
 	// };
 	const [loginData, setLoginData] = useState(loginFormData);
 	const feedback = useSelector((store) => store.feedback);
+	const [hidden, setHidden]= useState(true)
 
 	const showLoginError = (message) => {
 		Toast.show({
@@ -40,7 +41,6 @@ export default function LoginScreen() {
 			text2Style: { fontSize: 11, color: "#000" },
 			onHide: () => {
 				dispatch(clearFeedback({ sliceName: "login", type: "error" }));
-
 				setLoginData(loginFormData);
 			},
 		});
@@ -73,10 +73,6 @@ export default function LoginScreen() {
 							<Input
 								autoFocus={true}
 								label="Email"
-								leftIcon={{
-									type: "font-awesome",
-									name: "envelope",
-								}}
 								onChangeText={(text) =>
 									setLoginData({ ...loginData, email: text })
 								}
@@ -90,9 +86,12 @@ export default function LoginScreen() {
 						<View style={styles.verticallySpaced}>
 							<Input
 								label="Password"
-								leftIcon={{
+								rightIcon={{
 									type: "font-awesome",
-									name: "lock",
+									name: hidden ?  "eye-slash" : "eye",
+									onPress: () => {
+										setHidden(!hidden);
+									},
 								}}
 								onChangeText={(text) =>
 									setLoginData({
@@ -101,7 +100,7 @@ export default function LoginScreen() {
 									})
 								}
 								value={loginData.password}
-								secureTextEntry={true}
+								secureTextEntry={hidden}
 								placeholder="Password"
 								autoCapitalize={"none"}
 								errorStyle={styles.errorStyle}
@@ -188,8 +187,8 @@ const styles = StyleSheet.create({
 		marginVertical: 0,
 	},
 	labelStyle: {
-		fontSize: 14,
-		marginVertical: -10,
+		fontSize: 18,
+		color:'#000'
 	},
 	errorStyle: {
 		fontSize: 12,

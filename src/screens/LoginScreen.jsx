@@ -1,18 +1,23 @@
-import { Alert, StyleSheet, View, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform} from "react-native";
+import {
+	Alert,
+	StyleSheet,
+	View,
+	KeyboardAvoidingView,
+	TouchableWithoutFeedback,
+	Keyboard,
+	Platform,
+} from "react-native";
 import { Button, Input, Text } from "@rneui/themed";
 import { useDispatch, useSelector } from "react-redux";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage"; // for development only
 import ScaleButton from "../components/ScaleButton/ScaleButton";
 
-import {
-	setLoginError,
-	setLoginSuccess,
-	clearLoginFeedback,
-} from "../redux/slices/feedbackSlice";
+import { clearFeedback } from "../redux/slices/feedbackSlice";
 
 import { loginUser } from "../redux/thunks/authThunk";
+import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
 	const dispatch = useDispatch();
@@ -25,10 +30,27 @@ export default function LoginScreen() {
 	// 	password: process.env.EXPO_PUBLIC_TEST_PASSWORD,
 	// };
 	const [loginData, setLoginData] = useState(loginFormData);
+	const feedback = useSelector((store) => store.feedback);
 
-	const close = () => {
-		dispatch(clearLoginFeedback());
+	const showLoginError = (message) => {
+		Toast.show({
+			type: "error",
+			text1: `${message}`,
+			text2: "Please try again",
+			text2Style: { fontSize: 11, color: "#000" },
+			onHide: () => {
+				dispatch(clearFeedback({ sliceName: "login", type: "error" }));
+
+				setLoginData(loginFormData);
+			},
+		});
 	};
+
+	useEffect(() => {
+		if (feedback.login.error.value) {
+			showLoginError(feedback.login.error.message);
+		}
+	}, [feedback.login]);
 
 	const clearAsyncStorage = async () => {
 		try {
@@ -46,75 +68,70 @@ export default function LoginScreen() {
 		>
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View style={styles.container}>
-					{/* AUTOFILL TEXT AND CLEAR ASYNC BUTTON ARE FOR DEVELOPMENT ONLY */}
-					<Text
-						style={styles.boldText}
-						// onPress={() => {
-						// 	setLoginData(testData);
-						// }}
-					>
-						AUTOFILL
-					</Text>
-					<View style={[styles.verticallySpaced]}>
-						<Input
-							autoFocus={true}
-							label="Email"
-							leftIcon={{
-								type: "font-awesome",
-								name: "envelope",
-							}}
-							onChangeText={(text) =>
-								setLoginData({ ...loginData, email: text })
-							}
-							value={loginData.email}
-							placeholder="email@address.com"
-							autoCapitalize={"none"}
-							errorStyle={styles.errorStyle}
-							labelStyle={styles.labelStyle}
-						/>
+					<View style={styles.inputContainer}>
+						<View style={[styles.verticallySpaced]}>
+							<Input
+								autoFocus={true}
+								label="Email"
+								leftIcon={{
+									type: "font-awesome",
+									name: "envelope",
+								}}
+								onChangeText={(text) =>
+									setLoginData({ ...loginData, email: text })
+								}
+								value={loginData.email}
+								placeholder="email@address.com"
+								autoCapitalize={"none"}
+								errorStyle={styles.errorStyle}
+								labelStyle={styles.labelStyle}
+							/>
+						</View>
+						<View style={styles.verticallySpaced}>
+							<Input
+								label="Password"
+								leftIcon={{
+									type: "font-awesome",
+									name: "lock",
+								}}
+								onChangeText={(text) =>
+									setLoginData({
+										...loginData,
+										password: text,
+									})
+								}
+								value={loginData.password}
+								secureTextEntry={true}
+								placeholder="Password"
+								autoCapitalize={"none"}
+								errorStyle={styles.errorStyle}
+								labelStyle={styles.labelStyle}
+							/>
+						</View>
 					</View>
-					<View style={styles.verticallySpaced}>
-						<Input
-							label="Password"
-							leftIcon={{ type: "font-awesome", name: "lock" }}
-							onChangeText={(text) =>
-								setLoginData({ ...loginData, password: text })
-							}
-							value={loginData.password}
-							secureTextEntry={true}
-							placeholder="Password"
-							autoCapitalize={"none"}
-							errorStyle={styles.errorStyle}
-							labelStyle={styles.labelStyle}
-						/>
-					</View>
-					{/* {feedback.error &&
-						Alert.alert(
-							"Log in error",
-							`${feedback.message}`,
-							[{ text: "TRY AGAIN", onPress: close }],
-							{ cancelable: false }
-						)} */}
-					<View style={[styles.verticallySpaced, styles.mt20]}>
+
+					<View style={[styles.verticallySpaced, styles.mb20]}>
 						<ScaleButton
 							onPress={() => dispatch(loginUser(loginData))}
-							looks={[styles.solidButton, { width: 'auto' }]}
+							looks={[styles.solidButton, { width: "auto" }]}
 						>
-							<Text style={{ fontWeight: "700", color: "#fff", fontSize:20 }}>
+							<Text
+								style={{
+									fontWeight: "700",
+									color: "#fff",
+									fontSize: 20,
+								}}
+							>
 								Sign In
 							</Text>
 						</ScaleButton>
-						{/* <Button
-							title="Log In"
-							// disabled={feedback.error}
-						/> */}
 					</View>
-					<View style={[styles.verticallySpaced, styles.mt20]}>
-						<Button
-							title="CLEAR ASYNC STORAGE"
-							onPress={clearAsyncStorage}
-						/>
-					</View>
+					{/* <View style={[styles.verticallySpaced, styles.mt20]}>
+								<Button
+									title="CLEAR ASYNC STORAGE"
+									onPress={clearAsyncStorage}
+								/>
+							</View> */}
 				</View>
 			</TouchableWithoutFeedback>
 		</KeyboardAvoidingView>
@@ -124,20 +141,31 @@ const styles = StyleSheet.create({
 	flexOne: {
 		flex: 1,
 	},
+	inputContainer: {
+		flex: 1,
+		justifyContent: "space-between",
+		alignItems: "center",
+		width: "100%",
+	},
 	container: {
 		flex: 1,
-		justifyContent: "space-around",
-		// marginTop: 10,
-		// marginBottom:40,
-		padding: 12,
+		justifyContent: "space-between",
+		alignItems: "center",
+		width: "100%",
+		padding: 15,
 	},
 	verticallySpaced: {
+		flex: 1,
 		paddingTop: 4,
 		paddingBottom: 4,
+		justifyContent: "center",
 		alignSelf: "stretch",
 	},
 	mt20: {
 		marginTop: 20,
+	},
+	mb20: {
+		marginBottom: 20,
 	},
 	mt40: {
 		marginTop: 40,

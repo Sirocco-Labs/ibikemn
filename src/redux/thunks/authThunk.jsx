@@ -33,6 +33,15 @@ export const loginUser = (credentials) => async (dispatch) => {
 		const response = await supabase.auth.signInWithPassword(credentials);
 		if (response.error) {
 			console.log("SUPABASE LOGIN ERROR!: ", response.error.message);
+			const feedback = {
+				sliceName: "login",
+				type: "error",
+				details: {
+					value: true,
+					message: "Invalid login credentials",
+				},
+			};
+			dispatch(setFeedback(feedback));
 		} else {
 			console.log("SUPABASE LOGIN SUCCESS!: ", response.data);
 			const id = response.data.user.id;

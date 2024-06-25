@@ -32,7 +32,6 @@ import {
 	setShowRewardDialog,
 } from "../redux/slices/incentiveSlice";
 
-import ExpandChallenges from "../components/ExpandChallenges/ExpandChallenges";
 import UserStatsSection from "../components/UserStatsSection/UserStatsSection";
 import { getMyRideSurveys } from "../redux/thunks/rideSurveyThunk";
 

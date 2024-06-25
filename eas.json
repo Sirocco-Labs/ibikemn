@@ -1,19 +1,32 @@
 {
   "cli": {
-    "version": ">= 7.8.2"
+    "version": ">= 7.8.2",
+	"appVersionSource": "remote"
   },
   "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
-    },
-    "preview": {
-      "distribution": "internal",
-      "android": {
-			"buildType": "apk"
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal"
+		},
+		"preview": {
+			"distribution": "internal",
+			"android": {
+				"buildType": "apk"
+			}
+		},
+		"previewIOS": {
+			"distribution": "internal",
+			"ios": {
+        "enterpriseProvisioning": "adhoc"
+			}
+		},
+		"production": {
+			"autoIncrement": true,
+			"env":{
+				"EXPO_PUBLIC_SUPABASE_URL":"$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
+				"EXPO_PUBLIC_SUPABASE_ANON_KEY":"$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
+			}
 		}
-    },
-    "production": {}
   },
   "submit": {
     "production": {}

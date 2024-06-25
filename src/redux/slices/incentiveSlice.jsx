@@ -6,9 +6,9 @@ const initialState = {
     progress:[],
 	allPrevious:[],
     updated:true,
-    last_updated:''
-
-
+    last_updated:'',
+	reward:[],
+	showRewardDialog:true
 }
 
 const incentiveSlice = createSlice({
@@ -33,9 +33,36 @@ const incentiveSlice = createSlice({
 		setTimeOfProgressUpdate(state, action) {
 			return { ...state, last_updated: action.payload };
 		},
+		setRewardStatus(state, action) {
+			return { ...state, reward: action.payload };
+		},
+		setShowRewardDialog(state, action) {
+			return { ...state, showRewardDialog: action.payload };
+		},
 		clearIncentiveSlice(state) {
 			return initialState;
 		},
+		// setActiveIncentives(state, action) {
+		// 	state.active = action.payload;
+		// },
+		// setIncentivesHistory(state, action) {
+		// 	state.history = action.payload;
+		// },
+		// setIncentivesProgress(state, action) {
+		// 	state.progress = action.payload;
+		// },
+		// setAllPreviousIncentives(state, action) {
+		// 	state.allPrevious = action.payload;
+		// },
+		// setIsProgressUpdated(state, action) {
+		// 	state.updated = action.payload;
+		// },
+		// setTimeOfProgressUpdate(state, action) {
+		// 	state.last_updated = action.payload;
+		// },
+		// clearIncentiveSlice(state) {
+		// 	Object.assign(state, initialState);
+		// },
 	},
 });
 
@@ -45,7 +72,9 @@ export const {
 	setIncentivesProgress,
 	setAllPreviousIncentives,
 	setIsProgressUpdated,
-    setTimeOfProgressUpdate,
+	setTimeOfProgressUpdate,
+	setRewardStatus,
+	setShowRewardDialog,
 	clearIncentiveSlice,
 } = incentiveSlice.actions;
 

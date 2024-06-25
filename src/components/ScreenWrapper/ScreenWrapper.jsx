@@ -53,6 +53,7 @@ export default function ScreenWrapper({
 const styles = StyleSheet.create({
 	safe: {
 		flex: 1,
+		backgroundColor:'#fff'
 	},
 	noScroll: {
 		flexGrow: 1,

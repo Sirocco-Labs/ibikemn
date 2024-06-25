@@ -1,4 +1,4 @@
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, View, StyleSheet, Alert } from "react-native";
 import { Text } from "@rneui/themed";
 
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
@@ -11,7 +11,6 @@ import ResourceMediaSection from "../components/ResourceMediaSection/ResourceMed
 import VideoMediaItem from "../components/VideoMediaItem/VideoMediaItem";
 import ScaleButton from "../components/ScaleButton/ScaleButton";
 import * as Linking from "expo-linking";
-
 
 export default function ResourcesScreen() {
 	const dispatch = useDispatch();
@@ -27,7 +26,6 @@ export default function ResourcesScreen() {
 	const [vids, setVids] = useState([]);
 	const [photos, setPhotos] = useState([]);
 
-
 	useEffect(() => {
 		if (resourceMedia.length > 0) {
 			const videos = resourceMedia.filter(
@@ -42,11 +40,34 @@ export default function ResourcesScreen() {
 	}, [resourceMedia]);
 
 	const handleEmail = () => {
-		const email = "siroccolabs@gmail.com";
+		const email = "example@gmail.com";
 		const subject = "I'd like to join Pedal Pals";
 		const body = `Hi! My name is ${user.first_name} ${user.last_name} and I'd like to join the Pedal Pals program.`;
 		const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
-		Linking.openURL(mailtoLink);
+		Linking.canOpenURL("mailto:")
+			.then((supported) => {
+				if (supported) {
+					Linking.openURL(mailtoLink);
+				}
+			})
+			.catch((error) => {
+				Alert.alert(
+					"No Default Email Client",
+					"Please set up a default email client or send your information directly to ____@bikemn.org.",
+					[
+						{
+							text: "OK",
+							onPress: () => console.log("OK Pressed"),
+						},
+					],
+					{ cancelable: false }
+				);
+				console.error(
+					"Error checking if email client is supported:",
+					error
+				);
+				// Handle the error as needed
+			});
 	};
 
 	return (
@@ -58,7 +79,10 @@ export default function ResourcesScreen() {
 				<View style={styles.leftColAr}>
 					<Text>Become a Pedal Pal</Text>
 					<ScaleButton
-						looks={[styles.solidButton, { width: 200, marginTop:10, alignSelf:'center'}]}
+						looks={[
+							styles.solidButton,
+							{ width: 200, marginTop: 10, alignSelf: "center" },
+						]}
 						onPress={handleEmail}
 					>
 						<Text

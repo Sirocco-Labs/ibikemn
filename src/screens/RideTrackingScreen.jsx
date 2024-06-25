@@ -28,6 +28,10 @@ import { addToAllRides } from "../redux/thunks/userRidesThunk";
 import { useNavigation } from "@react-navigation/native";
 import { updateUserIncentiveProgress } from "../redux/thunks/incentiveThunk";
 import { checkChallengeCompletion } from "../redux/thunks/incentiveThunk";
+import ScaleButton from "../components/ScaleButton/ScaleButton";
+
+import * as Network from "expo-network";
+
 
 export default function RideTrackingScreen() {
 	const dispatch = useDispatch();
@@ -36,6 +40,7 @@ export default function RideTrackingScreen() {
 	const distance = useSelector((store) => store.distance);
 	const commute = useSelector((store) => store.commute);
 	const user = useSelector((store) => store.user);
+
 
 	const handleStopTracking = async () => {
 		try {
@@ -79,7 +84,6 @@ export default function RideTrackingScreen() {
 		return () => clearInterval(interval);
 	}, []);
 
-
 	const handleSubmitDistance = () => {
 		console.log(
 			"HANDLE SUBMIT DISTANCE COMMUTE SLICE BEFORE EVERYTHING ELSE",
@@ -104,36 +108,48 @@ export default function RideTrackingScreen() {
 			users_table_id: user.id,
 		};
 
-		dispatch(addToAllRides(rideData)).then(()=>{
-			dispatch(clearDistance());
-			if (commute.is_work_commute) {
-				// (FIND ME)
-				dispatch(checkChallengeCompletion(userInfo));
-				dispatch(clearCommuteSlice());
-				navigation.jumpTo("Home");
-			} else {
-				navigation.jumpTo("Home");
-				return Alert.alert(
-					"Optional Survey ",
-					"Would you like to take a super quick survey to help BikeMN's grant reporting?",
-					[
-						{
-							text: "Sure!",
-							onPress: () => dispatch(toggleSurveyOpen()),
-						},
-						{
-							text: "No thanks",
-							style: "cancel",
-						},
-					],
-					{ cancelable: false }
-				);
-			}
+		dispatch(addToAllRides(rideData))
+			.then(() => {
+				dispatch(clearDistance());
+				if (commute.is_work_commute) {
+					// (FIND ME)
+					dispatch(checkChallengeCompletion(userInfo));
+					dispatch(clearCommuteSlice());
+					navigation.navigate("HomeScreen");
+				} else {
+					Alert.alert(
+						"Optional Survey ",
+						"Would you like to take a super quick survey to help BikeMN's grant reporting?\n\nSome challenge criteria is dependent on your survey too.",
 
-		}).catch(error =>{
-			console.log('ERROR I GUESS', error);
-		})
-
+						[
+							{
+								text: "Sure!",
+								onPress: () => {
+									dispatch(toggleSurveyOpen());
+									if (commute.is_survey_open) {
+										navigation.navigate("HomeScreen");
+									}
+								},
+							},
+							{
+								text: "No thanks",
+								style: "cancel",
+								onPress: () => {
+									navigation.navigate("HomeScreen");
+									// dispatch(toggleSurveyOpen());
+									// if (commute.is_survey_open) {
+									// 		navigation.jumpTo("Home");
+									// 	}
+								},
+							},
+						],
+						{ cancelable: false }
+					);
+				}
+			})
+			.catch((error) => {
+				console.log("ERROR I GUESS", error);
+			});
 	};
 
 	const handleEndTime = () => {
@@ -158,17 +174,24 @@ export default function RideTrackingScreen() {
 						minute: "2-digit",
 					})}
 				</Text>
-
-				<Button
-					raised
+				<ScaleButton
+					looks={[styles.solidButton, { width: 300 }]}
 					onPress={() => {
 						handleEndTime();
 						handleStopTracking();
 						handleSubmitDistance();
 					}}
 				>
-					Finish Ride
-				</Button>
+					<Text
+						style={{
+							fontSize: 18,
+							fontWeight: "700",
+							// color:'#1269A9'
+						}}
+					>
+						Finish Ride
+					</Text>
+				</ScaleButton>
 			</View>
 		</View>
 	);
@@ -190,7 +213,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		display: "flex",
 		flexDirection: "column",
-		backgroundColor: "#fff",
+		backgroundColor: "#1269A9",
 		alignItems: "center",
 		justifyContent: "center",
 		padding: 20,
@@ -204,7 +227,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		width: "100%",
 		padding: 15,
-		backgroundColor: "#fff",
+		// backgroundColor: "#fff",
 		marginVertical: 10,
 	},
 	grid: {
@@ -258,8 +281,37 @@ const styles = StyleSheet.create({
 	},
 	distanceText: {
 		fontSize: 35,
+		color: "#fff",
 	},
 	timeText: {
-		fontSize: 85,
+		fontSize: 75,
+		color: "#fff",
+	},
+	solidButton: {
+		backgroundColor: "#F7B247",
+		borderRadius: 12,
+		height: 55,
+		padding: 2,
+	},
+	solidButtonOff: {
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
+	},
+	outlineButton: {
+		borderWidth: 2,
+		borderColor: "#1269A9",
+		borderRadius: 12,
+		height: 55,
+		padding: 2,
+	},
+	outlineButtonOff: {
+		borderWidth: 1.5,
+		borderColor: "#C0C0C0",
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
 	},
 });

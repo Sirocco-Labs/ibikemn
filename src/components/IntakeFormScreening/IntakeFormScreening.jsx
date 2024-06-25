@@ -17,7 +17,10 @@ import KeyboardAvoidingScrollView from "../KeyboardAvoidingScrollView/KeyboardAv
 import { confirmSecret } from "../../redux/thunks/authThunk";
 import ScreenWrapper from "../ScreenWrapper/ScreenWrapper";
 import { useFocusEffect } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
+import { clearFeedback, setFeedback } from "../../redux/slices/feedbackSlice";
 
+import { setIntakeSecret, setOrg } from "../../redux/slices/intakeFormSlice";
 export default function IntakeFormScreening({ navigation, route }) {
 	const dispatch = useDispatch();
 
@@ -35,9 +38,10 @@ export default function IntakeFormScreening({ navigation, route }) {
 
 	const [loading, setLoading] = useState(false);
 	const [selected, setSelected] = useState("");
-	const [value, setValue] = useState(1);
+	const [value, setValue] = useState(null);
 
 	const intake = useSelector((store) => store.intake);
+	const feedback = useSelector((store) => store.feedback);
 	const [screening, setScreening] = useState(intake.screening);
 
 	// const discovery = [
@@ -192,10 +196,45 @@ export default function IntakeFormScreening({ navigation, route }) {
 	const [employment, setEmployment] = useState(employmentData);
 	const [advance, setAdvance] = useState(false);
 
+	const showVerifyError = (message) => {
+		Toast.show({
+			type: "error",
+			text1: `${message}`,
+			text2: "Please try again",
+			text2Style: { fontSize: 11, color: "#000" },
+			onHide: () => {
+				dispatch(
+					clearFeedback({ sliceName: "registration", type: "error" })
+				);
+				setSecret('')
+			},
+		});
+	};
+	const showVerifySuccess = (message) => {
+		Toast.show({
+			type: "success",
+			text1: `${message}`,
+			onHide: () => {
+				dispatch(
+					clearFeedback({
+						sliceName: "registration",
+						type: "success",
+					})
+				);
+				setSecret("");
+			},
+		});
+	};
+
 	useFocusEffect(
 		useCallback(() => {
 			console.log("$# UCB SCREENING", screening);
 			console.log("$# UCB INTAKE", intake.screening);
+			setValue(
+				intake.screening.bike_confidence === 0
+					? 1
+					: intake.screening.bike_confidence
+			);
 			validateSave();
 			return () => {
 				console.log("$# UCB RETURN");
@@ -205,24 +244,37 @@ export default function IntakeFormScreening({ navigation, route }) {
 						? intake.screening.bike_confidence
 						: 1
 				);
+				setAdvance(false)
 			};
 		}, [intake])
 	);
+
 	useEffect(() => {
-		validateSave();
+		console.log("## FEEDBACK CHANGED");
+		if (feedback.registration.error.value) {
+			showVerifyError(feedback.registration.error.message);
+		}
+		if (feedback.registration.success.value) {
+			showVerifySuccess(feedback.registration.success.message);
+		}
+	}, [feedback.registration]);
+
+	useEffect(() => {
 		console.log("$# UE SCREENING", screening);
+		console.log("$# UE ADVANCE", advance);
 		console.log("$# UE1 INTAKE", intake.screening);
+		validateSave();
 	}, [screening]);
 
 	useEffect(() => {
 		console.log("$# UE2 INTAKE", intake.screening);
 
 		setScreening(intake.screening);
-		setValue(
-			intake.screening.bike_confidence !== 0
-				? intake.screening.bike_confidence
-				: 1
-		);
+		// setValue(
+		// 	intake.screening.bike_confidence !== 0
+		// 		? intake.screening.bike_confidence
+		// 		: 1
+		// );
 		if (
 			tabFocused &&
 			loading &&
@@ -235,11 +287,10 @@ export default function IntakeFormScreening({ navigation, route }) {
 		}
 	}, [intake]);
 
-	// useEffect(() => {
-	// 	setValue(screening.bike_confidence)
-	// 	validateSave();
-	// }, [screening.bike_confidence]);
+
+
 	useEffect(() => {
+		console.log("$# VALUE CHANGED");
 		setScreening({ ...screening, bike_confidence: value });
 		validateSave();
 	}, [value]);
@@ -288,13 +339,17 @@ export default function IntakeFormScreening({ navigation, route }) {
 			screening.commute_frequency &&
 			screening.bike_confidence >= 1
 		) {
-			if (screening.admin_identity === true) {
+			if (
+				screening.admin_identity === true &&
+				screening.org_identity === 0
+			) {
 				return false;
 			} else if (
-				screening.admin_identity === false &&
-				screening.staff_identity === false
+				screening.admin_identity === null &&
+				screening.staff_identity === null &&
+				advance === false
 			) {
-				return true;
+				return false;
 			} else if (
 				screening.admin_identity === false &&
 				screening.staff_identity === true &&
@@ -308,25 +363,13 @@ export default function IntakeFormScreening({ navigation, route }) {
 		return true;
 	};
 
-	// const Revert = () => {
-	// 	if (screening.staff_identity === false) {
-	// 		setScreening({ ...screening, org_identity: 0 });
-	// 		// setScreening({ ...screening, staff_identity: false });
-	// 	}
-	// };
-	// const [checked, setChecked] = useState(discoveryData);
-	// const [discovery, setDiscovery] = useState(discoveryData);
-	// const [frequency, setFrequency] = useState(frequencyData);
-	// const [employment, setEmployment] = useState(employmentData);
-	// const [advance, setAdvance] = useState(false);
-
-	const updatePayload = (target, value) => {
+	const updatePayload = (target, updateValue) => {
 		if (target === "admin_identity") {
 			console.log(
 				"$# UPDATE PAYLOAD ADMIN: screening, target, value",
 				screening,
 				target,
-				value
+				updateValue
 			);
 			if (screening.org_identity === 0) {
 				setScreening({
@@ -334,60 +377,60 @@ export default function IntakeFormScreening({ navigation, route }) {
 					org_identity: "N/A",
 					admin_identity: false,
 					staff_identity: false,
+					bike_confidence: value,
 				});
 			} else {
 				setScreening({
 					...screening,
-					admin_identity: value,
-					staff_identity: !value,
+					admin_identity: updateValue,
+					staff_identity: !updateValue,
 					org_identity: 0,
+					bike_confidence: value,
 				});
 			}
 		} else if (target === "org_identity") {
 			console.log(
-				"$# UPDATE PAYLOAD ORG: screening, target, value",
+				"$# UPDATE PAYLOAD ORG: screening, target, updateValue",
 				screening,
 				target,
-				value
+				updateValue
 			);
-			if (screening[`${target}`] === value) {
+			if (screening[`${target}`] === updateValue) {
 				setScreening({
 					...screening,
 					[`${target}`]: "N/A",
 					admin_identity: false,
 					staff_identity: false,
+					bike_confidence: value,
 				});
 			} else {
 				setScreening({
 					...screening,
 					admin_identity: false,
 					staff_identity: true,
-					org_identity: value,
+					org_identity: updateValue,
+					bike_confidence: value,
 				});
 			}
 		} else {
 			console.log(
-				"$# UPDATE PAYLOAD: screening, target, value",
+				"$# UPDATE PAYLOAD: screening, target, updateValue",
 				screening,
 				target,
-				value
+				updateValue
 			);
-			if (screening[`${target}`] === value) {
+			if (screening[`${target}`] === updateValue) {
 				setScreening({
 					...screening,
 					[`${target}`]: 0,
+					bike_confidence: value,
 				});
 			} else {
-				setScreening({ ...screening, [`${target}`]: value });
-
-				// if (screening[`${target}`] !== value) {
-				// 	setScreening({ ...screening, [`${target}`]: value });
-				// } else {
-				// 	setScreening({
-				// 		...screening,
-				// 		[`${target}`]: inputData[`${target}`],
-				// 	});
-				// }
+				setScreening({
+					...screening,
+					[`${target}`]: updateValue,
+					bike_confidence: value,
+				});
 			}
 		}
 	};
@@ -421,32 +464,43 @@ export default function IntakeFormScreening({ navigation, route }) {
 	const [secret, setSecret] = useState("");
 
 	const checkSecret = () => {
-		handleSave();
 		dispatch(confirmSecret(secret));
+
+		// handleSave();
 	};
 
-	const shouldBeCheckedDisco = (data, screening) => {
-		console.log("$# SCREENING Disco", screening);
-		console.log("$#  INTAKE Disco", intake.screening);
-		console.log("$# data Disco", data);
-		let checked = screening.how_did_you_hear === data.value;
-		return checked;
-	};
-	const shouldBeCheckedFreq = (data, screening) => {
-		console.log("$# SCREENING Freq", screening);
-		console.log("$# INTAKE Freq", intake.screening);
-		console.log("$# data Freq", data);
-		let checked = screening.commute_frequency === data.value;
+	const handleNext = () => {
+		console.log('ADVANCE', advance);
+		if (
+			!intake.screening.how_did_you_hear &&
+			!intake.screening.commute_frequency &&
+			!intake.screening.bike_confidence
+		) {
+			return true;
+		} else if (advance === true && intake.screening.secret) {
+				if (
+					intake.screening.how_did_you_hear &&
+					intake.screening.commute_frequency &&
+					intake.screening.bike_confidence
+				) {
+					return false;
+				} else {
+					return true;
+				}
+			}
 
-		return checked;
 	};
-
-	const handleSlider = (slideVal) => {};
 
 	return (
 		// <KeyboardAvoidingScrollView>
 		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
 			<View style={styles.flexOne}>
+				{/* <Button
+				onPress={()=>{dispatch(setOrg())}}
+				>
+					clear
+
+				</Button> */}
 				<View style={styles.section}>
 					<View>
 						<View>
@@ -634,6 +688,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 								}
 								onPress={() => {
 									setAdvance(!advance);
+									// dispatch(setIntakeSecret(false))
 									validateSave();
 								}}
 								textStyle={{
@@ -793,7 +848,9 @@ export default function IntakeFormScreening({ navigation, route }) {
 						)}
 					</View>
 
-					<View style={styles.section}>
+				</View>
+			</View>
+					<View style={styles.btnSection}>
 						<View style={styles.grid}>
 							<Button
 								title={"Back"}
@@ -826,11 +883,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 									color: "white",
 								}}
 								iconRight={true}
-								disabled={
-									!intake.screening.how_did_you_hear &&
-									!intake.screening.commute_frequency &&
-									!intake.screening.bike_confidence
-								}
+								disabled={handleNext()}
 								onPress={() => {
 									navigation.jumpTo("Demographics");
 								}}
@@ -841,8 +894,6 @@ export default function IntakeFormScreening({ navigation, route }) {
 							/>
 						</View>
 					</View>
-				</View>
-			</View>
 		</ScreenWrapper>
 		// {/* </KeyboardAvoidingScrollView> */}
 	);
@@ -932,8 +983,12 @@ const styles = StyleSheet.create({
 	mt15: {
 		marginTop: 15,
 	},
+	btnSection: {
+		width:'100%',
+		marginBottom: 5,
+	},
 	section: {
-		paddingHorizontal: 5,
+		// paddingHorizontal: 5,
 		marginTop: 5,
 		marginBottom: 5,
 	},

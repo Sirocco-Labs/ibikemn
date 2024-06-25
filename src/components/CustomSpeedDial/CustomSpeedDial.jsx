@@ -1,18 +1,14 @@
-import { useEffect, useState, useRef } from "react";
 import MCIcons from "../MCIcons/MCIcons";
-import { Text, SpeedDial, Button } from "@rneui/themed";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
-
-import IncentiveScreen from "../../screens/IncentiveScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
-import ResourcesScreen from "../../screens/ResourcesScreen";
 
-import { useDispatch, useSelector } from "react-redux";
-
+import { Text, SpeedDial, Button } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect, useState, useRef } from "react";
 
 export default function CustomSpeedDial() {
 	const [openSD, setOpenSD] = useState(false);
-
+	const navigation = useNavigation();
 	const dialogSwitch = {
 		challenges: false,
 		events: false,
@@ -25,44 +21,47 @@ export default function CustomSpeedDial() {
 	};
 
 	const openIncentiveScreen = () => {
-		setToggle({ ...toggle, challenges: !toggle.challenges });
-		setOpenSD(!openSD);
+		navigation.navigate("Incentive");
+		// setToggle({ ...toggle, challenges: !toggle.challenges });
+		setOpenSD(false);
 	};
 	const openCalendarScreen = () => {
+		// navigation.navigate("Events");
 		setToggle({ ...toggle, events: !toggle.events });
-		setOpenSD(!openSD);
+		setOpenSD(false);
 	};
 	const openResourcesScreen = () => {
-		setToggle({ ...toggle, resources: !toggle.resources });
-		setOpenSD(!openSD);
+		navigation.navigate("Resources");
+		// setToggle({ ...toggle, resources: !toggle.resources });
+		setOpenSD(false);
 	};
 	return (
 		<>
-			<ModalWrapper
+			{/* <ModalWrapper
 				visible={toggle.challenges}
 				action={setToggle}
 				screen={"Previous Challenges"}
 				component={IncentiveScreen}
-			/>
+			/> */}
 			<ModalWrapper
 				visible={toggle.events}
 				action={setToggle}
 				screen={"Events"}
 				component={CalendarScreen}
 			/>
-			<ModalWrapper
+			{/* <ModalWrapper
 				visible={toggle.resources}
 				action={setToggle}
 				screen={"BikeMN Resources"}
 				component={ResourcesScreen}
-			/>
+			/> */}
 
 			<SpeedDial
 				isOpen={openSD}
 				icon={{ name: "menu", color: "#1269A9" }}
 				openIcon={{ name: "close", color: "#F7B247" }}
-				onOpen={() => setOpenSD(!openSD)}
-				onClose={() => setOpenSD(!openSD)}
+				onOpen={() => setOpenSD(true)}
+				onClose={() => setOpenSD(false)}
 				color={openSD ? "#1269A9" : "#F7B247"}
 				labelPressable={true}
 				transitionDuration={100}

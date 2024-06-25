@@ -1,12 +1,6 @@
 import "react-native-gesture-handler";
-import { SafeAreaView, View, StyleSheet } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { Text } from "@rneui/themed";
 import MCIcons from "../components/MCIcons/MCIcons";
-
-
 import IntakeFormUserInfo from "../components/IntakeFormUserInfo/IntakeFormUserInfo";
 import IntakeFormAddress from "../components/IntakeFormAddress/IntakeFormAddress";
 import IntakeFormScreening from "../components/IntakeFormScreening/IntakeFormScreening";
@@ -14,130 +8,164 @@ import IntakeFormDemographics from "../components/IntakeFormDemographics/IntakeF
 import IntakeFormConsents from "../components/IntakeFormConsents/IntakeFormConsents";
 import IntakeFormSubmit from "../components/IntakeFormSubmit/IntakeFormSubmit";
 
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import { SafeAreaView, View, StyleSheet, Platform } from "react-native";
+import Toast from "react-native-toast-message";
+// import { useDispatch } from "react-redux";
+// import { clearAllFeedback, clearFeedback } from "../redux/slices/feedbackSlice";
+
+
 export default function CreateProfileScreen() {
+	// const dispatch = useDispatch()
 	const Tab = createBottomTabNavigator();
 	const styleOptions = {
 		headerStyle: { backgroundColor: "#1269A9" },
 		headerTintColor: "#FFFAF2",
 	};
+	const tabStyle =
+		Platform.OS === "ios"
+			? {
+					height: 80,
+					padding: 2,
+					backgroundColor: "#1269A9",
+			  }
+			: {
+					height: 50,
+					padding: 2,
+					backgroundColor: "#1269A9",
+			  };
 
 	return (
-		<NavigationContainer>
-			<Tab.Navigator
-				initialRouteName="User"
-				screenOptions={({ navigation, route }) => ({
-					tabBarStyle: {
-						height: 50,
-						padding: 2,
-						backgroundColor: "#1269A9",
-					},
-					tabBarItemStyle: {
-						margin: 2,
-						padding: 1,
-					},
-					tabBarIcon: ({ focused, color, size }) => {
-						let iconName;
+		<>
+			<NavigationContainer>
+				<Tab.Navigator
+					initialRouteName="User"
+					screenOptions={({ navigation, route }) => ({
+						tabBarStyle: tabStyle,
+						tabBarItemStyle: {
+							margin: 2,
+							padding: 1,
+						},
+						tabBarIcon: ({ focused, color, size }) => {
+							let iconName;
 
-						if (route.name === "User") {
-							iconName = focused ? "account" : "account-outline";
-						} else if (route.name === "Address") {
-							iconName = focused
-								? "card-account-details"
-								: "card-account-details-outline";
-						} else if (route.name === "Screening") {
-							iconName = focused
-								? "clipboard-list"
-								: "clipboard-list-outline";
-						} else if (route.name === "Demographics") {
-							iconName = focused
-								? "information"
-								: "information-outline";
-						} else if (route.name === "Consents") {
-							iconName = focused
-								? "thumbs-up-down"
-								: "thumbs-up-down-outline";
-						} else if (route.name === "Submit") {
-							iconName = focused ? "send" : "send-lock";
-						}
-						return (
-							<MCIcons
-								name={iconName}
-								size={size}
-								color={color}
-							/>
-						);
-					},
-					tabBarActiveTintColor: "#F7B247",
-					tabBarInactiveTintColor: "#FFF",
-				})}
-			>
-				<Tab.Screen
-					name="User"
-					options={styleOptions}
-					component={IntakeFormUserInfo}
-					listeners={({ navigation }) => ({
-						tabPress: (e) => {
-							e.preventDefault();
+							if (route.name === "User") {
+								iconName = focused
+									? "account"
+									: "account-outline";
+							} else if (route.name === "Address") {
+								iconName = focused
+									? "card-account-details"
+									: "card-account-details-outline";
+							} else if (route.name === "Screening") {
+								iconName = focused
+									? "clipboard-list"
+									: "clipboard-list-outline";
+							} else if (route.name === "Demographics") {
+								iconName = focused
+									? "information"
+									: "information-outline";
+							} else if (route.name === "Consents") {
+								iconName = focused
+									? "thumbs-up-down"
+									: "thumbs-up-down-outline";
+							} else if (route.name === "Submit") {
+								iconName = focused ? "send" : "send-lock";
+							}
+							return (
+								<MCIcons
+									name={iconName}
+									size={size}
+									color={color}
+								/>
+							);
 						},
+						tabBarActiveTintColor: "#F7B247",
+						tabBarInactiveTintColor: "#FFF",
+						tabBarHideOnKeyboard: true,
 					})}
-				/>
-				<Tab.Screen
-					name="Address"
-					options={styleOptions}
-					component={IntakeFormAddress}
-					listeners={({ navigation }) => ({
-						focus: (nav) =>{
-							console.log('nav', nav);
-
-						},
-
-						tabPress: (e) => {
-							e.preventDefault();
-						},
-					})}
-				/>
-				<Tab.Screen
-					name="Screening"
-					options={styleOptions}
-					component={IntakeFormScreening}
-					listeners={({ navigation }) => ({
-						tabPress: (e) => {
-							e.preventDefault();
-						},
-					})}
-				/>
-				<Tab.Screen
-					name="Demographics"
-					options={styleOptions}
-					component={IntakeFormDemographics}
-					listeners={({ navigation }) => ({
-						tabPress: (e) => {
-							e.preventDefault();
-						},
-					})}
-				/>
-				<Tab.Screen
-					name="Consents"
-					options={styleOptions}
-					component={IntakeFormConsents}
-					listeners={({ navigation }) => ({
-						tabPress: (e) => {
-							e.preventDefault();
-						},
-					})}
-				/>
-				<Tab.Screen
-					name="Submit"
-					options={styleOptions}
-					component={IntakeFormSubmit}
-					listeners={({ navigation }) => ({
-						tabPress: (e) => {
-							e.preventDefault();
-						},
-					})}
-				/>
-			</Tab.Navigator>
-		</NavigationContainer>
+				>
+					<Tab.Screen
+						name="User"
+						options={{
+							...styleOptions,
+							title: "Personal Information",
+						}}
+						component={IntakeFormUserInfo}
+						listeners={({ navigation }) => ({
+							tabPress: (e) => {
+								e.preventDefault();
+							},
+						})}
+					/>
+					<Tab.Screen
+						name="Address"
+						options={{
+							...styleOptions,
+							title: "Home and Work Addresses",
+						}}
+						component={IntakeFormAddress}
+						listeners={({ navigation }) => ({
+							tabPress: (e) => {
+								e.preventDefault();
+							},
+						})}
+					/>
+					<Tab.Screen
+						name="Screening"
+						options={{
+							...styleOptions,
+							title: "Initial Screening",
+						}}
+						component={IntakeFormScreening}
+						listeners={({ navigation }) => ({
+							tabPress: (e) => {
+								e.preventDefault();
+							},
+						})}
+					/>
+					<Tab.Screen
+						name="Demographics"
+						options={{
+							...styleOptions,
+							title: "Demographics Information",
+						}}
+						component={IntakeFormDemographics}
+						listeners={({ navigation }) => ({
+							tabPress: (e) => {
+								e.preventDefault();
+							},
+						})}
+					/>
+					<Tab.Screen
+						name="Consents"
+						options={{ ...styleOptions, title: "Consents" }}
+						component={IntakeFormConsents}
+						listeners={({ navigation }) => ({
+							tabPress: (e) => {
+								e.preventDefault();
+							},
+						})}
+					/>
+					<Tab.Screen
+						name="Submit"
+						options={{
+							...styleOptions,
+							title: "Review and Submit",
+						}}
+						component={IntakeFormSubmit}
+						listeners={({ navigation }) => ({
+							tabPress: (e) => {
+								e.preventDefault();
+							},
+						})}
+					/>
+				</Tab.Navigator>
+			</NavigationContainer>
+			<Toast swipeable={true} position="bottom" bottomOffset={100} />
+		</>
 	);
 }
 

@@ -2,14 +2,14 @@ import MCIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../../screens/HomeScreen";
-import RideScreen from "../../screens/RideScreen";
-import UserAccountScreen from "../../screens/UserAccountScreen";
-import BikeListScreen from "../../screens/private/BikeListScreen";
-import ManageCalendarScreen from "../../screens/private/admin/ManageCalendarScreen";
-import ManageDataScreen from "../../screens/private/admin/ManageDataScreen";
-import ManageIncentiveScreen from "../../screens/private/admin/ManageIncentiveScreen";
-import ManageOrganizationScreen from "../../screens/private/admin/ManageOrganizationScreen";
+// import HomeScreen from "../../screens/HomeScreen";
+// import RideScreen from "../../screens/RideScreen";
+// import UserAccountScreen from "../../screens/UserAccountScreen";
+// import BikeListScreen from "../../screens/private/BikeListScreen";
+// import ManageCalendarScreen from "../../screens/private/admin/ManageCalendarScreen";
+// import ManageDataScreen from "../../screens/private/admin/ManageDataScreen";
+// import ManageIncentiveScreen from "../../screens/private/admin/ManageIncentiveScreen";
+// import ManageOrganizationScreen from "../../screens/private/admin/ManageOrganizationScreen";
 
 export default function AdminUserNavTabs() {
 	const Tab = createBottomTabNavigator();
@@ -69,7 +69,7 @@ export default function AdminUserNavTabs() {
 					tabBarInactiveTintColor: "gray",
 				})}
 			>
-				<Tab.Screen name="Bikes" component={BikeListScreen} />
+				{/* <Tab.Screen name="Bikes" component={BikeListScreen} />
 				<Tab.Screen
 					name="Organizations"
 					component={ManageOrganizationScreen}
@@ -82,7 +82,7 @@ export default function AdminUserNavTabs() {
 					name="Milestones"
 					component={ManageIncentiveScreen}
 				/>
-				<Tab.Screen name="Account" component={UserAccountScreen} />
+				<Tab.Screen name="Account" component={UserAccountScreen} /> */}
 			</Tab.Navigator>
 		</NavigationContainer>
 	);

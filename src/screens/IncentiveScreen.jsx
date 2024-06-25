@@ -41,19 +41,21 @@ export default function IncentiveScreen() {
 						)}
 					/>
 				</View>
-				<View style={styles.sectionView}>
-					<Text style={styles.sectionHeader}>
-						Previous Challenge Progress
-					</Text>
 
-					<FlatList
-						data={progressHistory}
-						keyExtractor={(item) => item.id}
-						renderItem={({ item }) => (
-							<UserChallengeHistoryItem item={item} />
-						)}
-					/>
-				</View>
+					<View style={styles.sectionView}>
+						<Text style={styles.sectionHeader}>
+							Previous Challenge Progress
+						</Text>
+
+						<FlatList
+							data={progressHistory}
+							keyExtractor={(item) => item.id}
+							renderItem={({ item }) => (
+								<UserChallengeHistoryItem item={item} />
+							)}
+						/>
+					</View>
+
 			</View>
 		</SafeAreaView>
 	);
@@ -62,6 +64,7 @@ export default function IncentiveScreen() {
 const styles = StyleSheet.create({
 	wrapper: {
 		flexGrow: 1,
+		paddingHorizontal: 10,
 	},
 	sectionView: {
 		flex: 1,

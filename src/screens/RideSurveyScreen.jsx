@@ -9,14 +9,14 @@ import { Text, Button, Input, CheckBox } from "@rneui/themed";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCommuteSlice } from "../redux/slices/commuteSlice";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 
 import { addRideSurvey } from "../redux/thunks/rideSurveyThunk";
 import KeyboardAvoidingScrollView from "../components/KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
 import { checkChallengeCompletion } from "../redux/thunks/incentiveThunk";
+import ScaleButton from "../components/ScaleButton/ScaleButton";
 
 export default function RideSurveyScreen() {
-
 	const inputStyling = useRef(null);
 	const inputRef = useRef(null);
 	const dispatch = useDispatch();
@@ -47,7 +47,7 @@ export default function RideSurveyScreen() {
 		{
 			title: "Other",
 			choice: false,
-			flavor: ""
+			flavor: "",
 		},
 	];
 
@@ -80,9 +80,13 @@ export default function RideSurveyScreen() {
 		route: routeData,
 	};
 	const user = useSelector((store) => store.user);
-	const commute = useSelector((store)=>store.commute);
+	const commute = useSelector((store) => store.commute);
 
 	const [survey, setSurvey] = useState(surveyData);
+
+	const navigateHome = () => {
+		navigation.navigate("HomeScreen");
+	};
 
 	const handleSubmit = () => {
 		let destination = survey.destination.find((obj) => obj.choice === true);
@@ -104,15 +108,15 @@ export default function RideSurveyScreen() {
 		const userInfo = {
 			user_id: user.user_id,
 			publicUser: user.is_public,
-			users_table_id: user.id
+			users_table_id: user.id,
 		};
 
 		console.log("PAYLOAD", payload);
 		dispatch(addRideSurvey(payload));
 		// (FIND ME)
-		dispatch(checkChallengeCompletion(userInfo))
+		dispatch(checkChallengeCompletion(userInfo));
 		// dispatch(updateUserIncentiveProgress(userInfo))
-		navigation.jumpTo("Home");
+		navigation.navigate("HomeScreen");
 		dispatch(clearCommuteSlice());
 	};
 
@@ -136,140 +140,17 @@ export default function RideSurveyScreen() {
 		validateSurvey();
 	}, [survey]);
 
-
 	const skipSurvey = () => {
 		dispatch(clearCommuteSlice());
-		navigation.jumpTo("Home");
+		navigateHome();
 	};
 
 	return (
-		<View style={styles.popUp}>
-			<View style={styles.container}>
-				<TouchableOpacity
-					activeOpacity={1}
-					onPress={() => Keyboard.dismiss()}
-				>
-					<View>
-						<Text style={styles.fieldTitle}>Where did you go?</Text>
-						<View style={styles.gridCB}>
-							{destinationData.map(
-								(box, i) =>
-									box.title !== "Other" && (
-										<View
-											style={styles.lastGridItemCB}
-											key={i}
-										>
-											<CheckBox
-												iconRight={false}
-												title={box.title}
-												checked={
-													survey.destination[i].choice
-												}
-												onPress={() => {
-													setSurvey({
-														...survey,
-														destination:
-															survey.destination.map(
-																(
-																	object,
-																	index
-																) =>
-																	index ===
-																		i && {
-																		...object,
-																		choice: !object.choice,
-																	}
-															),
-													});
-												}}
-												textStyle={{
-													fontSize: 12,
-													fontWeight: "bold",
-												}}
-												containerStyle={{
-													height: "auto",
-													paddingVertical: 0,
-													paddingLeft: 0,
-													margin: 0,
-												}}
-											/>
-										</View>
-									)
-							)}
-							<Input
-								ref={inputRef}
-								placeholder={"Other"}
-								value={survey.destination[4].flavor}
-								inputStyle={styles.input}
-								labelStyle={styles.label}
-								onChangeText={(text) =>
-									setSurvey({
-										...survey,
-										destination: survey.destination.map(
-											(object) =>
-												object.title === "Other" && {
-													...object,
-													flavor: text,
-												}
-										),
-									})
-								}
-								onEndEditing={() => {
-									setSurvey({
-										...survey,
-										destination: survey.destination.map(
-											(object) =>
-												object.title === "Other" && {
-													...object,
-													choice: !object.choice,
-												}
-										),
-									});
-								}}
-							/>
-						</View>
-					</View>
-
-					<View>
-						<Text style={styles.fieldTitle}>
-							What kind of route did you take?
-						</Text>
-						<View style={styles.gridCB}>
-							{routeData.map((box, i) => (
-								<View style={styles.lastGridItemCB} key={i}>
-									<CheckBox
-										iconRight={false}
-										title={box.title}
-										checked={survey.route[i].choice}
-										onPress={() => {
-											setSurvey({
-												...survey,
-												route: survey.route.map(
-													(object, index) =>
-														index === i && {
-															...object,
-															choice: !object.choice,
-														}
-												),
-											});
-										}}
-										textStyle={{
-											fontSize: 12,
-											fontWeight: "bold",
-										}}
-										containerStyle={{
-											height: "auto",
-											paddingVertical: 0,
-											paddingLeft: 0,
-											margin: 0,
-										}}
-									/>
-								</View>
-							))}
-						</View>
-					</View>
-				</TouchableOpacity>
-
+		<View style={styles.section}>
+			<TouchableOpacity
+				activeOpacity={1}
+				onPress={() => Keyboard.dismiss()}
+			>
 				<View>
 					<View>
 						<Text style={styles.smallFieldTitle}>
@@ -348,27 +229,160 @@ export default function RideSurveyScreen() {
 						</View>
 					</View>
 				</View>
-			</View>
-			<View style={{ width: "60%" }}>
-				{canSubmit ? (
-					<Button raised onPress={skipSurvey}>
-						Skip Survey
-					</Button>
-				) : (
-					<Button
-						raised
-						disabled={validateSurvey()}
-						onPress={handleSubmit}
+				<View>
+					<Text style={styles.fieldTitle}>Where did you go?</Text>
+					<View style={styles.gridCB}>
+						{destinationData.map(
+							(box, i) =>
+								box.title !== "Other" && (
+									<View style={styles.lastGridItemCB} key={i}>
+										<CheckBox
+											iconRight={false}
+											title={box.title}
+											checked={
+												survey.destination[i].choice
+											}
+											onPress={() => {
+												setSurvey({
+													...survey,
+													destination:
+														survey.destination.map(
+															(object, index) =>
+																index === i && {
+																	...object,
+																	choice: !object.choice,
+																}
+														),
+												});
+											}}
+											textStyle={{
+												fontSize: 12,
+												fontWeight: "bold",
+											}}
+											containerStyle={{
+												height: "auto",
+												paddingVertical: 0,
+												paddingLeft: 0,
+												margin: 0,
+											}}
+										/>
+									</View>
+								)
+						)}
+						<Input
+							ref={inputRef}
+							placeholder={"Other"}
+							value={survey.destination[4].flavor}
+							inputStyle={styles.input}
+							labelStyle={styles.label}
+							onChangeText={(text) =>
+								setSurvey({
+									...survey,
+									destination: survey.destination.map(
+										(object) =>
+											object.title === "Other" && {
+												...object,
+												flavor: text,
+											}
+									),
+								})
+							}
+							onEndEditing={() => {
+								setSurvey({
+									...survey,
+									destination: survey.destination.map(
+										(object) =>
+											object.title === "Other" && {
+												...object,
+												choice: !object.choice,
+											}
+									),
+								});
+							}}
+						/>
+					</View>
+				</View>
+
+				<View>
+					<Text style={styles.fieldTitle}>
+						What kind of route did you take?
+					</Text>
+					<View style={styles.gridCB}>
+						{routeData.map((box, i) => (
+							<View style={styles.lastGridItemCB} key={i}>
+								<CheckBox
+									iconRight={false}
+									title={box.title}
+									checked={survey.route[i].choice}
+									onPress={() => {
+										setSurvey({
+											...survey,
+											route: survey.route.map(
+												(object, index) =>
+													index === i && {
+														...object,
+														choice: !object.choice,
+													}
+											),
+										});
+									}}
+									textStyle={{
+										fontSize: 12,
+										fontWeight: "bold",
+									}}
+									containerStyle={{
+										height: "auto",
+										paddingVertical: 0,
+										paddingLeft: 0,
+										margin: 0,
+									}}
+								/>
+							</View>
+						))}
+					</View>
+				</View>
+			</TouchableOpacity>
+
+			<View>
+				<ScaleButton
+					looks={[styles.solidButton, { width: 300 }]}
+					offLooks={[styles.solidButtonOff, { width: 300 }]}
+					disabled={validateSurvey()}
+					onPress={handleSubmit}
+				>
+					<Text
+						style={{
+							fontSize: 18,
+							fontWeight: "700",
+							color: "#fff",
+						}}
 					>
 						Submit
-					</Button>
-				)}
+					</Text>
+				</ScaleButton>
+				{/* <Button
+					raised
+					disabled={validateSurvey()}
+					onPress={handleSubmit}
+				>
+					Submit
+				</Button> */}
 			</View>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
+	section: {
+		flex: 1,
+		justifyContent: "space-around",
+		alignItems: "center",
+	},
+	sectionCenter: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
 	container: {
 		display: "flex",
 		flexDirection: "column",
@@ -498,5 +512,32 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: 13,
 		marginBottom: -5,
+	},
+	solidButton: {
+		backgroundColor: "#1269A9",
+		borderRadius: 12,
+		height: 55,
+		padding: 2,
+	},
+	solidButtonOff: {
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 55,
+		padding: 2,
+	},
+	outlineButton: {
+		borderWidth: 2,
+		borderColor: "#1269A9",
+		borderRadius: 12,
+		height: 55,
+		padding: 2,
+	},
+	outlineButtonOff: {
+		borderWidth: 1.5,
+		borderColor: "#C0C0C0",
+		backgroundColor: "#E5E4E2",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
 	},
 });

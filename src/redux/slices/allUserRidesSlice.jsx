@@ -7,10 +7,12 @@ const allUserRidesSlice = createSlice({
 	initialState,
 	reducers: {
 		setAllUserRides(state, action) {
-			return action.payload;
+			state.length = 0;
+			state.push(...action.payload);
 		},
 		clearAllUserRides(state) {
-			return initialState;
+			state.length = 0;
+			// return initialState;
 		},
 	},
 });

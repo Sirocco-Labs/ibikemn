@@ -1,7 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { Text } from "@rneui/themed";
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import {
 	staffGetBikes,
 	getMyBike,
@@ -18,7 +18,7 @@ export default function BikeListScreen() {
 	const orgBikes = useSelector((store) => store.orgBikes);
 	const user = useSelector((store) => store.user);
 	useFocusEffect(
-		React.useCallback(() => {
+		useCallback(() => {
 			dispatch(staffGetBikes(user.org_id));
 			dispatch(getMyBike(user.user_id));
 		}, [dispatch])
@@ -36,8 +36,8 @@ export default function BikeListScreen() {
 			>
 				{myBike.bike_id === 0 ? `Reserve a Bike` : `Your Bike`}
 			</Text>
-			{myBike.bike_id !== 0 && <ManageMyBike myBike={myBike} />}
 			<View style={styles.sectionView}>
+			{myBike.bike_id !== 0 && <ManageMyBike myBike={myBike} />}
 				{myBike.bike_id === 0 && (
 					<AvailableBikeList
 						orgBikes={orgBikes}

@@ -7,7 +7,7 @@ import {
 	Platform,
 	Keyboard,
 	StyleSheet,
-	Alert
+	Alert,
 } from "react-native";
 import { Input, Button, Text, CheckBox, Icon } from "@rneui/themed";
 import KeyboardAvoidingWrapper from "../KeyboardAvoidingWrapper/KeyboardAvoidingWrapper";
@@ -20,7 +20,6 @@ import { setIntakeUserInfo } from "../../redux/slices/intakeFormSlice";
 
 import KeyboardAvoidingScrollView from "../KeyboardAvoidingScrollView/KeyboardAvoidingScrollView";
 
-
 export default function IntakeFormUserInfo({ navigation, route }) {
 	const dispatch = useDispatch();
 	const inputData = {
@@ -29,33 +28,33 @@ export default function IntakeFormUserInfo({ navigation, route }) {
 		last_name: "",
 		age: false,
 	};
-	const {index, routeNames} = navigation.getState()
-	const tabFocused = route.name === routeNames[index] ? true : false
+	const { index, routeNames } = navigation.getState();
+	const tabFocused = route.name === routeNames[index] ? true : false;
 	const intake = useSelector((store) => store.intake);
 
-	useEffect(()=>{
+	useEffect(() => {
 		setUserInfo(intake.userInfo);
 		if (tabFocused && loading && intake.userInfo.username) {
 			Alert.alert("Success", "Your user information has been saved.");
-			setLoading(false)
+			setLoading(false);
 		}
-	},[intake])
+	}, [intake]);
 
 	const [userInfo, setUserInfo] = useState(inputData);
 	const [loading, setLoading] = useState(false);
 
 	const handleSave = () => {
-		dispatch(setIntakeUserInfo(userInfo))
-		setLoading(!loading)
+		dispatch(setIntakeUserInfo(userInfo));
+		setLoading(!loading);
 	};
-	const validateSave = () =>{
-		if(userInfo.username && userInfo.first_name && userInfo.last_name){
-			if(userInfo.age){
-				return false
+	const validateSave = () => {
+		if (userInfo.username && userInfo.first_name && userInfo.last_name) {
+			if (userInfo.age) {
+				return false;
 			}
 		}
-		return true
-	}
+		return true;
+	};
 
 	const handleJumpTo = () => {
 		navigation.jumpTo("Address");
@@ -127,31 +126,31 @@ export default function IntakeFormUserInfo({ navigation, route }) {
 							/>
 						</View>
 					</View>
-					<View style={styles.section}>
-						<View style={styles.grid}>
-							<Button
-								title={"Save"}
-								icon={{ name: "save", color: "white" }}
-								iconRight
-								loading={loading}
-								disabled={validateSave()}
-								onPress={handleSave}
-								buttonStyle={styles.nextBtn}
-								// titleStyle={styles.ml15}
-							/>
+				</View>
+				<View style={styles.btnSection}>
+					<View style={styles.grid}>
+						<Button
+							title={"Save"}
+							icon={{ name: "save", color: "white" }}
+							iconRight
+							loading={loading}
+							disabled={validateSave()}
+							onPress={handleSave}
+							buttonStyle={styles.nextBtn}
+							// titleStyle={styles.ml15}
+						/>
 
-							<Button
-								title={"Next"}
-								icon={{ name: "arrow-right", color: "white" }}
-								iconRight
-								disabled={
-									validateSave() && !intake.userInfo.username
-								}
-								onPress={handleJumpTo}
-								buttonStyle={styles.nextBtn}
-								titleStyle={styles.ml15}
-							/>
-						</View>
+						<Button
+							title={"Next"}
+							icon={{ name: "arrow-right", color: "white" }}
+							iconRight
+							disabled={
+								validateSave() && !intake.userInfo.username
+							}
+							onPress={handleJumpTo}
+							buttonStyle={styles.nextBtn}
+							titleStyle={styles.ml15}
+						/>
 					</View>
 				</View>
 			</View>
@@ -170,6 +169,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: "#fff",
 		justifyContent: "space-between",
+		paddingTop: 15,
 	},
 	section: {
 		paddingHorizontal: 5,
@@ -178,8 +178,7 @@ const styles = StyleSheet.create({
 	},
 	btnSection: {
 		paddingHorizontal: 5,
-		marginTop: 5,
-		marginBottom: 25,
+		marginBottom: 15,
 	},
 	sectionTitle: {
 		fontSize: 20,
@@ -213,8 +212,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 		width: 120,
-		borderRadius:12,
-		backgroundColor:'#1269A9'
+		borderRadius: 12,
+		backgroundColor: "#1269A9",
 	},
 	backBtn: {
 		display: "flex",

@@ -9,7 +9,7 @@ import {
 	BackHandler,
 	ActivityIndicator,
 } from "react-native";
-import { Text, SpeedDial, Dialog, Button, FAB } from "@rneui/themed";
+import { Text, SpeedDial, Dialog, Button, FAB, Icon } from "@rneui/themed";
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,6 +20,7 @@ import { clearDistance } from "../../redux/slices/distanceSlice";
 
 import { stopLocationTracking } from "../../tasks/BackgroundLocationTaskManager";
 import { useNavigation } from "@react-navigation/native";
+import ScreenWrapper from "../ScreenWrapper/ScreenWrapper";
 
 export default function ModalWrapper({
 	visible,
@@ -38,6 +39,10 @@ export default function ModalWrapper({
 
 	const distance = useSelector((store) => store.distance);
 	const commute = useSelector((store) => store.commute);
+
+	const [rideTrack, setRideTrack] = useState(
+		header === "Start Riding" ? true : false
+	);
 
 	const handleBackButton = () => {
 		if (webRef.current) {
@@ -89,7 +94,7 @@ export default function ModalWrapper({
 	};
 
 	const forceQuitRide = async () => {
-		navigation.jumpTo("Home");
+		navigation.navigate("HomeScreen");
 		try {
 			if (distance.is_tracking) {
 				await stopLocationTracking();
@@ -120,13 +125,55 @@ export default function ModalWrapper({
 		}
 		if (commute.is_survey_open) {
 			dispatch(clearCommuteSlice());
-			navigation.jumpTo("Home");
+			navigation.navigate("HomeScreen");
 		}
 	};
 
 	const handleNavigation = (navState) => {
 		console.log("navState", navState);
 		setTracker(navState);
+	};
+
+	const skipSurvey = () => {
+		dispatch(clearCommuteSlice());
+		navigation.navigate("HomeScreen");
+	};
+	const renderQuitOrSkip = () => {
+		return header === "Start Riding" ? (
+			<View
+				style={{
+					flex: 1,
+					backgroundColor: "#1269A9",
+					justifyContent: "flex-start",
+					alignItems: "center",
+					flexDirection: "row",
+					padding: 5,
+				}}
+			>
+			</View>
+		) : (
+			<View
+				style={{
+					flex: 1,
+					backgroundColor: "#1269A9",
+					justifyContent: "flex-start",
+					alignItems: "center",
+					flexDirection: "row",
+				}}
+			>
+				<Button
+					icon={{
+						type: "material-community",
+						name: "close",
+						color: "#F7B247",
+					}}
+					buttonStyle={{ backgroundColor: "#1269A9" }}
+					onPress={skipSurvey}
+				>
+					Skip Survey
+				</Button>
+			</View>
+		);
 	};
 
 	return screen === "Events" ? (
@@ -157,7 +204,18 @@ export default function ModalWrapper({
 					webRef={webRef}
 					handleNavigation={handleNavigation}
 					tracker={tracker}
+					goBackWeb={handleBackButton}
 				/>
+				{/* <View
+					style={{
+						backgroundColor: "#1269A9",
+						height: 10,
+						flexDirection: "row",
+						justifyContent: "center",
+						alignItems: "center",
+						padding: 5,
+					}}
+				></View> */}
 			</View>
 		</Modal>
 	) : (
@@ -167,30 +225,27 @@ export default function ModalWrapper({
 			// animationType="fade"
 			transparent={false}
 			visible={visible}
-			fullScreen={false}
+			fullScreen={true}
 			statusBarTranslucent={false}
 			onRequestClose={handleBackButton}
 		>
 			<View
 				style={{
-					flex: 0,
-					paddingTop: 10,
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "flex-end",
 					backgroundColor: "#1269A9",
+					width: "100%",
+					height: "11%",
 				}}
 			>
-				<Text
-					style={{
-						fontSize: 21,
-						color: "#fff",
-						fontWeight: "600",
-						marginLeft: 15,
-						marginBottom: 15,
-					}}
-				>
-					{screen}
-				</Text>
+				{renderQuitOrSkip()}
 			</View>
+			<ScreenWrapper
+				background={{ backgroundColor: rideTrack ? "#1269A9" : "#fff" }}
+			>
 				<Component close={close} />
+			</ScreenWrapper>
 		</Modal>
 	);
 }

@@ -20,9 +20,11 @@ const userSlice = createSlice({
 	reducers: {
 		setUser(state, action) {
 			return { ...state, ...action.payload };
+			// Object.assign(state, action.payload);
 		},
 		clearUserData(state) {
-			return { ...state, ...initialState };
+			return initialState;
+			// Object.assign(state, initialState);
 		},
 	},
 });

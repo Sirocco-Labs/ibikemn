@@ -184,7 +184,7 @@ export default function RideTrackingScreen() {
 				>
 					<Text
 						style={{
-							fontSize: 18,
+							fontSize: 30,
 							fontWeight: "700",
 							// color:'#1269A9'
 						}}
@@ -286,11 +286,12 @@ const styles = StyleSheet.create({
 	timeText: {
 		fontSize: 75,
 		color: "#fff",
+		letterSpacing:4
 	},
 	solidButton: {
 		backgroundColor: "#F7B247",
 		borderRadius: 12,
-		height: 55,
+		height: 65,
 		padding: 2,
 	},
 	solidButtonOff: {

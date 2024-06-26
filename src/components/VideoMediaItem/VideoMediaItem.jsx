@@ -112,11 +112,8 @@ export default function VideoMediaItem({ vid }) {
 
 	return (
 		<>
-			<Text style={{ alignSelf: "flex-start", marginBottom: 10 }}>
+			<Text style={{ alignSelf: "flex-start", marginBottom: 10, fontWeight:'700' }}>
 				{media_title}
-			</Text>
-			<Text style={{ alignSelf: "flex-start", marginBottom: 10 }}>
-				{how}
 			</Text>
 			<View
 				style={[
@@ -134,9 +131,6 @@ export default function VideoMediaItem({ vid }) {
 					<View
 						style={{
 							flex: 1,
-							borderWidth: 2,
-							borderColor: "#1269A9",
-							borderRadius: 5,
 						}}
 					>
 						<ActivityIndicator
@@ -164,6 +158,7 @@ export default function VideoMediaItem({ vid }) {
 									width: fullScreen
 										? "100%"
 										: videoContainerWidth,
+										borderRadius:12
 							  },
 					]}
 					resizeMode="contain"
@@ -244,7 +239,7 @@ export default function VideoMediaItem({ vid }) {
 					</TouchableOpacity>
 				</View>
 			</View>
-			<Text style={{ alignSelf: "flex-start", marginBottom: 10 }}>
+			<Text style={{ alignSelf: "flex-start", marginBottom: 20 }}>
 				{media_caption}
 			</Text>
 		</>
@@ -322,6 +317,9 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		backgroundColor: "rgba(0, 0, 0, 0.5)",
 		padding: 10,
+		borderRadius:12,
+		// borderBottomLeftRadius:12,
+		// borderBottomRightRadius:12
 	},
 	progress: {
 		flexDirection: "row",

@@ -8,6 +8,7 @@ import HomeScreen from "../../screens/HomeScreen";
 import CalendarScreen from "../../screens/CalendarScreen";
 import IncentiveScreen from "../../screens/IncentiveScreen";
 import ResourcesScreen from "../../screens/ResourcesScreen";
+import PedalPalsScreen from "../../screens/PedalPalsScreen";
 
 const Stack = createStackNavigator();
 
@@ -75,12 +76,6 @@ export default function HomeScreenStackNav({ action }) {
 					title: "Home",
 				}}
 			/>
-			{/* <Stack.Screen
-				name="Events"
-				component={CalendarScreen}
-				options={{ title: "Events" }}
-				animationEnabled
-			/> */}
 			<Stack.Screen
 				name="Incentive"
 				component={IncentiveScreen}
@@ -90,6 +85,11 @@ export default function HomeScreenStackNav({ action }) {
 				name="Resources"
 				component={ResourcesScreen}
 				options={{ ...styleOptions, title: "BikeMN Resources" }}
+			/>
+			<Stack.Screen
+				name="Pedal Pals"
+				component={PedalPalsScreen}
+				options={{ ...styleOptions, title: "Pedal Pals" }}
 			/>
 		</Stack.Navigator>
 	);

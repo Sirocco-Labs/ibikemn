@@ -5,6 +5,7 @@ import CalendarScreen from "../../screens/CalendarScreen";
 import { Text, SpeedDial, Button } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useRef } from "react";
+import { StyleSheet } from "react-native";
 
 export default function CustomSpeedDial() {
 	const [openSD, setOpenSD] = useState(false);
@@ -35,6 +36,11 @@ export default function CustomSpeedDial() {
 		// setToggle({ ...toggle, resources: !toggle.resources });
 		setOpenSD(false);
 	};
+	const openPedalPalsScreen = () => {
+		navigation.navigate("Pedal Pals");
+		// setToggle({ ...toggle, resources: !toggle.resources })
+		setOpenSD(false);
+	};
 	return (
 		<>
 			{/* <ModalWrapper
@@ -60,8 +66,8 @@ export default function CustomSpeedDial() {
 				isOpen={openSD}
 				icon={{ name: "menu", color: "#1269A9" }}
 				openIcon={{ name: "close", color: "#F7B247" }}
-				onOpen={() => setOpenSD(true)}
-				onClose={() => setOpenSD(false)}
+				onOpen={() => setOpenSD(!openSD)}
+				onClose={() => setOpenSD(!openSD)}
 				color={openSD ? "#1269A9" : "#F7B247"}
 				labelPressable={true}
 				transitionDuration={100}
@@ -74,9 +80,7 @@ export default function CustomSpeedDial() {
 						size: 20,
 					})}
 					title="Challenges"
-					titleStyle={{
-						fontWeight: "bold",
-					}}
+					titleStyle={styles.titleStyle}
 					onPress={openIncentiveScreen}
 					color="#1269A9"
 					// color="#F7B247"
@@ -88,9 +92,7 @@ export default function CustomSpeedDial() {
 						size: 20,
 					})}
 					title="Events"
-					titleStyle={{
-						fontWeight: "bold",
-					}}
+					titleStyle={styles.titleStyle}
 					onPress={openCalendarScreen}
 					color="#1269A9"
 					// color="#F7B247"
@@ -103,10 +105,21 @@ export default function CustomSpeedDial() {
 						size: 20,
 					})}
 					title={"Resources"}
-					titleStyle={{
-						fontWeight: "bold",
-					}}
+					titleStyle={styles.titleStyle}
 					onPress={openResourcesScreen}
+					color="#1269A9"
+					// color="#F7B247"
+				/>
+				<SpeedDial.Action
+					size="large"
+					icon={MCIcons({
+						name: "emoticon-cool",
+						color: "#F7B247",
+						size: 20,
+					})}
+					title={"Pedal Pals"}
+					titleStyle={styles.titleStyle}
+					onPress={openPedalPalsScreen}
 					color="#1269A9"
 					// color="#F7B247"
 				/>
@@ -114,3 +127,15 @@ export default function CustomSpeedDial() {
 		</>
 	);
 }
+
+const styles = StyleSheet.create({
+	titleStyle: {
+		fontWeight: "bold",
+		// borderWidth: 1,
+		borderRadius: 10,
+		backgroundColor: "#fff",
+		paddingVertical: 10, // Adjust padding as needed
+		paddingHorizontal: 8,
+		overflow: "hidden",
+	},
+});

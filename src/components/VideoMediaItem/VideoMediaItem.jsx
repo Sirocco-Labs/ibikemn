@@ -112,7 +112,13 @@ export default function VideoMediaItem({ vid }) {
 
 	return (
 		<>
-			<Text style={{ alignSelf: "flex-start", marginBottom: 10, fontWeight:'700' }}>
+			<Text
+				style={{
+					fontSize:17,
+					marginBottom: 10,
+					fontWeight: "700",
+				}}
+			>
 				{media_title}
 			</Text>
 			<View
@@ -158,7 +164,7 @@ export default function VideoMediaItem({ vid }) {
 									width: fullScreen
 										? "100%"
 										: videoContainerWidth,
-										borderRadius:12
+									borderRadius: 12,
 							  },
 					]}
 					resizeMode="contain"
@@ -239,7 +245,7 @@ export default function VideoMediaItem({ vid }) {
 					</TouchableOpacity>
 				</View>
 			</View>
-			<Text style={{ alignSelf: "flex-start", marginBottom: 20 }}>
+			<Text style={{ alignSelf: "center", marginBottom: 20 }}>
 				{media_caption}
 			</Text>
 		</>

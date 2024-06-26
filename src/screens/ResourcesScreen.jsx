@@ -45,7 +45,7 @@ export default function ResourcesScreen() {
 		>
 			<View style={styles.sectionView}>
 				<View
-				style={[styles.leftColAr, {marginVertical:10}]}
+				style={[styles.leftColAr]}
 				>
 				<Text style={styles.sectionText}>Educational Resources</Text>
 

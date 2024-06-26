@@ -85,7 +85,7 @@ export default function UserAccountScreen() {
 			.catch((error) => {
 				Alert.alert(
 					"No Default Email Client",
-					"Please set up a default email client on your device or send the report directly to dev@siroccolabs.com.",
+					"Please set up a default email client for your device or send the report directly to dev@siroccolabs.com.",
 					[
 						{
 							text: "OK",
@@ -112,7 +112,7 @@ export default function UserAccountScreen() {
 			.catch((error) => {
 				Alert.alert(
 					"No Default Email Client",
-					"Please set up a default email client on your device or send your email directly to info@bikemn.org.",
+					"Please set up a default email client for your device or send your email directly to info@bikemn.org.",
 					[
 						{
 							text: "OK",

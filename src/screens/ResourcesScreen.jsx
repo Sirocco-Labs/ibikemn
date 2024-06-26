@@ -53,7 +53,7 @@ export default function ResourcesScreen() {
 			.catch((error) => {
 				Alert.alert(
 					"No Default Email Client",
-					"Please set up a default email client or send your information directly to ____@bikemn.org.",
+					"Please set up a default email client for you device or send your information directly to ____@bikemn.org.",
 					[
 						{
 							text: "OK",

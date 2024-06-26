@@ -1,34 +1,48 @@
 {
   "cli": {
     "version": ">= 7.8.2",
-	"appVersionSource": "remote"
+    "appVersionSource": "remote"
   },
   "build": {
-		"development": {
-			"developmentClient": true,
-			"distribution": "internal"
-		},
-		"preview": {
-			"distribution": "internal",
-			"android": {
-				"buildType": "apk"
-			}
-		},
-		"previewIOS": {
-			"distribution": "internal",
-			"ios": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development"
+    },
+    "android-prev": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "channel": "android-prev"
+    },
+    "ios-prev": {
+      "distribution": "internal",
+      "ios": {
         "enterpriseProvisioning": "adhoc"
-			}
-		},
-		"production": {
-			"autoIncrement": true,
-			"env":{
-				"EXPO_PUBLIC_SUPABASE_URL":"$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
-				"EXPO_PUBLIC_SUPABASE_ANON_KEY":"$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
-			}
-		}
+      },
+      "channel": "ios-prev"
+    },
+    "android-prod": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
+      },
+      "channel": "android-prod"
+    },
+    "ios-prod": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
+      },
+      "channel": "ios-prod"
+    }
   },
   "submit": {
-    "production": {}
+    "production": {
+      
+    }
   }
 }

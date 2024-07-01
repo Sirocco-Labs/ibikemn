@@ -44,3 +44,4 @@ yarn-error.*
 ios/
 android/
 iBikeMN-googleServiceAccountKey.*
+iBikeMN-asc-key.*

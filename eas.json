@@ -43,7 +43,7 @@
   "submit": {
     "production": {
       "android": {
-			"serviceAccountKeyPath": "",
+			"serviceAccountKeyPath": "./iBikeMN-googleServiceAccountKey.json",
 			"track": "production",
 			"env": {
 				"EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
@@ -51,6 +51,12 @@
 			}
 		},
       "ios": {
+        "appleId": "",
+        "ascAppId": "",
+        "appleTeamId": "",
+        "companyName": "",
+        
+
 			"env": {
 				"EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
 				"EXPO_PUBLIC_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"

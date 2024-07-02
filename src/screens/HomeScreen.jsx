@@ -68,6 +68,7 @@ export default function HomeScreen() {
 	const [newChallenge, setNewChallenge] = useState({});
 	const [connected, setConnected] = useState(true);
 	const [winner, setWinner] = useState(false);
+	const [showFAB, setShowFAB] = useState(false);
 
 	const [rewardNotice, setRewardNotice] = useState(false);
 
@@ -127,7 +128,7 @@ export default function HomeScreen() {
 							value = "Fitness";
 						}
 						propCounts[value] = (propCounts[value] || 0) + 1;
-					} else if(property === 'route_type'){
+					} else if (property === "route_type") {
 						if (
 							value ===
 							"On road infrastructure (a bike lane, cycle track)"
@@ -144,7 +145,7 @@ export default function HomeScreen() {
 							value = "Unfriendly";
 						}
 						propCounts[value] = (propCounts[value] || 0) + 1;
-					}else {
+					} else {
 						propCounts[value] = (propCounts[value] || 0) + 1;
 					}
 					return propCounts;
@@ -223,6 +224,9 @@ export default function HomeScreen() {
 			console.log("setting winner true");
 			setWinner(true);
 		}
+	}, []);
+	useEffect(() => {
+		setShowFAB(true);
 	}, []);
 
 	if (user.username !== "finish_set_up") {
@@ -315,7 +319,9 @@ export default function HomeScreen() {
 						</View>
 					)} */}
 					<View style={styles.leftColAr}>
-						<Text style={[styles.sectionText, {marginBottom:10}]}>
+						<Text
+							style={[styles.sectionText, { marginBottom: 10 }]}
+						>
 							{user.username}'s Stats
 						</Text>
 						<UserStatsSection
@@ -326,7 +332,11 @@ export default function HomeScreen() {
 					<Text
 						style={[
 							styles.sectionText,
-							{ alignSelf: "flex-start", marginTop: 20,marginBottom:5 },
+							{
+								alignSelf: "flex-start",
+								marginTop: 20,
+								marginBottom: 5,
+							},
 						]}
 					>
 						Active Challenge Progress
@@ -350,7 +360,7 @@ export default function HomeScreen() {
 						/>
 					</View>
 				</View>
-				<CustomSpeedDial />
+				{showFAB && <CustomSpeedDial />}
 			</ScreenWrapper>
 		);
 	} else {
@@ -394,7 +404,7 @@ const styles = StyleSheet.create({
 	},
 	rewardSection: {
 		// flex: 1,
-		height:'auto',
+		height: "auto",
 		alignItems: "flex-start",
 		justifyContent: "space-between",
 		width: "100%",

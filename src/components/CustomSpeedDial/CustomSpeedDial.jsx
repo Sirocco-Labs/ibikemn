@@ -44,7 +44,7 @@ export default function CustomSpeedDial() {
 		// Delay the initial render state change
 		const timer = setTimeout(() => {
 			setDidMount(true);
-		}, 1000); // Adjust the delay as needed
+		}, 500); // Adjust the delay as needed
 
 		return () => clearTimeout(timer);
 	}, []);

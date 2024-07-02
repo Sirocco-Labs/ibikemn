@@ -9,8 +9,9 @@ export default function SplashScreen() {
 			<Image
 				source={splash}
 				style={{
-					resizeMode: "cover",
-					position: "absolute",
+					flex:1,
+					resizeMode: "contain",
+					// position: "absolute",
 				}}
 			/>
 		</View>

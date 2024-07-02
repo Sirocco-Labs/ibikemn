@@ -37,14 +37,26 @@ export default function CustomSpeedDial() {
 		navigation.navigate("Pedal Pals");
 		setOpenSD(false);
 	};
-	useEffect(()=>{
-		setDidMount(true)
-		setOpenSD(false)
-	},[])
-	const handleSDToggle = () =>{
-		setOpenSD(!openSD)
 
-	}
+	const [initialRender, setInitialRender] = useState(true);
+
+	useEffect(() => {
+		// Delay the initial render state change
+		const timer = setTimeout(() => {
+			setDidMount(true);
+		}, 1000); // Adjust the delay as needed
+
+		return () => clearTimeout(timer);
+	}, []);
+
+	// useEffect(() => {
+	// 	setOpenSD(false);
+	// }, []);
+
+	const handleSDToggle = () => {
+		setOpenSD(!openSD);
+	};
+
 	return (
 		<>
 			<ModalWrapper
@@ -53,90 +65,91 @@ export default function CustomSpeedDial() {
 				screen={"Events"}
 				component={CalendarScreen}
 			/>
-
-			<SpeedDial
-				isOpen={openSD}
-				icon={{ name: "menu", color: "#1269A9" }}
-				openIcon={{ name: "close", color: "#F7B247" }}
-				onOpen={handleSDToggle}
-				onClose={handleSDToggle}
-				color={openSD ? "#1269A9" : "#F7B247"}
-				labelPressable={true}
-				transitionDuration={150}
-				// color="#1269A9"
-				visible={didMount}
-			>
-				<SpeedDial.Action
-					icon={{
-						type: "material-community",
-						name: "trophy-variant",
-						color: "#F7B247",
-						size: 20,
-					}}
-					iconContainerStyle={{
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-					title="Challenges"
-					titleStyle={styles.titleStyle}
-					onPress={openIncentiveScreen}
-					color="#1269A9"
-					// color="#F7B247"
-				/>
-				<SpeedDial.Action
-					icon={{
-						type: "material-community",
-						name: "calendar-month",
-						color: "#F7B247",
-						size: 20,
-					}}
-					iconContainerStyle={{
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-					title="Events"
-					titleStyle={styles.titleStyle}
-					onPress={openCalendarScreen}
-					color="#1269A9"
-					// color="#F7B247"
-				/>
-				<SpeedDial.Action
-					size="large"
-					icon={{
-						type: "material-community",
-						name: "star-shooting",
-						color: "#F7B247",
-						size: 20,
-					}}
-					iconContainerStyle={{
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-					title={"Resources"}
-					titleStyle={styles.titleStyle}
-					onPress={openResourcesScreen}
-					color="#1269A9"
-					// color="#F7B247"
-				/>
-				<SpeedDial.Action
-					size="large"
-					icon={{
-						type: "material-community",
-						name: "emoticon-cool",
-						color: "#F7B247",
-						size: 20,
-					}}
-					iconContainerStyle={{
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-					title={"Pedal Pals"}
-					titleStyle={styles.titleStyle}
-					onPress={openPedalPalsScreen}
-					color="#1269A9"
-					// color="#F7B247"
-				/>
-			</SpeedDial>
+			{didMount && (
+				<SpeedDial
+					isOpen={openSD}
+					icon={{ name: "menu", color: "#1269A9" }}
+					openIcon={{ name: "close", color: "#F7B247" }}
+					onOpen={handleSDToggle}
+					onClose={handleSDToggle}
+					color={openSD ? "#1269A9" : "#F7B247"}
+					labelPressable={true}
+					transitionDuration={150}
+					// color="#1269A9"
+					visible={didMount}
+				>
+					<SpeedDial.Action
+						icon={{
+							type: "material-community",
+							name: "trophy-variant",
+							color: "#F7B247",
+							size: 20,
+						}}
+						iconContainerStyle={{
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+						title="Challenges"
+						titleStyle={styles.titleStyle}
+						onPress={openIncentiveScreen}
+						color="#1269A9"
+						// color="#F7B247"
+					/>
+					<SpeedDial.Action
+						icon={{
+							type: "material-community",
+							name: "calendar-month",
+							color: "#F7B247",
+							size: 20,
+						}}
+						iconContainerStyle={{
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+						title="Events"
+						titleStyle={styles.titleStyle}
+						onPress={openCalendarScreen}
+						color="#1269A9"
+						// color="#F7B247"
+					/>
+					<SpeedDial.Action
+						size="large"
+						icon={{
+							type: "material-community",
+							name: "star-shooting",
+							color: "#F7B247",
+							size: 20,
+						}}
+						iconContainerStyle={{
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+						title={"Resources"}
+						titleStyle={styles.titleStyle}
+						onPress={openResourcesScreen}
+						color="#1269A9"
+						// color="#F7B247"
+					/>
+					<SpeedDial.Action
+						size="large"
+						icon={{
+							type: "material-community",
+							name: "emoticon-cool",
+							color: "#F7B247",
+							size: 20,
+						}}
+						iconContainerStyle={{
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+						title={"Pedal Pals"}
+						titleStyle={styles.titleStyle}
+						onPress={openPedalPalsScreen}
+						color="#1269A9"
+						// color="#F7B247"
+					/>
+				</SpeedDial>
+			)}
 		</>
 	);
 }

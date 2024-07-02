@@ -39,6 +39,7 @@ export default function CustomSpeedDial() {
 	};
 	useEffect(()=>{
 		setDidMount(true)
+		setOpenSD(false)
 	},[])
 	const handleSDToggle = () =>{
 		setOpenSD(!openSD)

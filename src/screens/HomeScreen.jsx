@@ -237,7 +237,7 @@ export default function HomeScreen() {
 				refreshing={refreshing}
 			>
 				<View style={styles.sectionView}>
-					{/* <Dialog
+					<Dialog
 						isVisible={winner}
 						onBackdropPress={() => {
 							setWinner(false);
@@ -302,7 +302,7 @@ export default function HomeScreen() {
 								</View>
 							</View>
 						</View>
-					</Dialog> */}
+					</Dialog>
 
 					{/* {winner && (
 						<View style={styles.rewardSection}>

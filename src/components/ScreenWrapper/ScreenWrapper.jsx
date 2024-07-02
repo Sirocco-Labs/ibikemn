@@ -31,7 +31,7 @@ export default function ScreenWrapper({
 		<SafeAreaView style={[styles.safe, background]}>
 			<View style={[styles.noScroll, background]}>{children}</View>
 			{/* {underScroll} */}
-			<CustomSpeedDial />
+			{/* <CustomSpeedDial /> */}
 		</SafeAreaView>
 	) : (
 		<SafeAreaView style={styles.safe}>
@@ -49,7 +49,7 @@ export default function ScreenWrapper({
 				<View style={[styles.innerScroll, background]}>{children}</View>
 			</ScrollView>
 			{/* {underScroll} */}
-			<CustomSpeedDial />
+			{/* <CustomSpeedDial /> */}
 		</SafeAreaView>
 	);
 }

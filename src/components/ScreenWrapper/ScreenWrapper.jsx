@@ -8,6 +8,8 @@ import {
 	RefreshControl,
 } from "react-native";
 
+import CustomSpeedDial from "../CustomSpeedDial/CustomSpeedDial";
+
 export default function ScreenWrapper({
 	children,
 	underScroll,
@@ -28,7 +30,8 @@ export default function ScreenWrapper({
 	return noScroll ? (
 		<SafeAreaView style={[styles.safe, background]}>
 			<View style={[styles.noScroll, background]}>{children}</View>
-			{underScroll}
+			{/* {underScroll} */}
+			<CustomSpeedDial />
 		</SafeAreaView>
 	) : (
 		<SafeAreaView style={styles.safe}>
@@ -45,7 +48,8 @@ export default function ScreenWrapper({
 			>
 				<View style={[styles.innerScroll, background]}>{children}</View>
 			</ScrollView>
-			{underScroll}
+			{/* {underScroll} */}
+			<CustomSpeedDial />
 		</SafeAreaView>
 	);
 }

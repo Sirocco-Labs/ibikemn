@@ -228,7 +228,7 @@ export default function HomeScreen() {
 	if (user.username !== "finish_set_up") {
 		return (
 			<ScreenWrapper
-				underScroll={<CustomSpeedDial />}
+				// underScroll={<CustomSpeedDial />}
 				background={{ backgroundColor: "#fff" }}
 				onRefresh={onRefresh}
 				refreshing={refreshing}

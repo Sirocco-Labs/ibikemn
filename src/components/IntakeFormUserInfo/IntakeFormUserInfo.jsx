@@ -158,8 +158,7 @@ export default function IntakeFormUserInfo({ navigation, route }) {
 							icon={{ name: "arrow-right", color: "white" }}
 							iconRight
 							disabled={
-								validateSave() &&
-								proceed()
+								intake.userInfo.username === ''
 							}
 							onPress={handleJumpTo}
 							buttonStyle={styles.nextBtn}

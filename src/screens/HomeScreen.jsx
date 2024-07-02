@@ -303,6 +303,7 @@ export default function HomeScreen() {
 							</View>
 						</View>
 					</Dialog> */}
+
 					{/* {winner && (
 						<View style={styles.rewardSection}>
 							{rewardWinner.map((reward) => (
@@ -318,6 +319,7 @@ export default function HomeScreen() {
 							))}
 						</View>
 					)} */}
+
 					<View style={styles.leftColAr}>
 						<Text
 							style={[styles.sectionText, { marginBottom: 10 }]}
@@ -360,7 +362,7 @@ export default function HomeScreen() {
 						/>
 					</View>
 				</View>
-				{showFAB && <CustomSpeedDial />}
+				<CustomSpeedDial />
 			</ScreenWrapper>
 		);
 	} else {

@@ -362,7 +362,7 @@ export default function HomeScreen() {
 						/>
 					</View>
 				</View>
-				<CustomSpeedDial />
+				{showFAB && <CustomSpeedDial />}
 			</ScreenWrapper>
 		);
 	} else {

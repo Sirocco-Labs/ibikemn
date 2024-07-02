@@ -1,4 +1,3 @@
-import MCIcons from "../MCIcons/MCIcons";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 import CalendarScreen from "../../screens/CalendarScreen";
 
@@ -9,6 +8,7 @@ import { StyleSheet } from "react-native";
 
 export default function CustomSpeedDial() {
 	const [openSD, setOpenSD] = useState(false);
+	const [didMount, setDidMount] = useState(false);
 	const navigation = useNavigation();
 	const dialogSwitch = {
 		challenges: false,
@@ -38,11 +38,14 @@ export default function CustomSpeedDial() {
 		setOpenSD(false);
 	};
 	useEffect(()=>{
-		console.log('OPENSD', openSD);
-	},[openSD])
+		setDidMount(true)
+	},[])
+	const handleSDToggle = () =>{
+		setOpenSD(!openSD)
+
+	}
 	return (
 		<>
-
 			<ModalWrapper
 				visible={toggle.events}
 				action={setToggle}
@@ -54,19 +57,25 @@ export default function CustomSpeedDial() {
 				isOpen={openSD}
 				icon={{ name: "menu", color: "#1269A9" }}
 				openIcon={{ name: "close", color: "#F7B247" }}
-				onOpen={() => setOpenSD(true)}
-				onClose={() => setOpenSD(false)}
+				onOpen={handleSDToggle}
+				onClose={handleSDToggle}
 				color={openSD ? "#1269A9" : "#F7B247"}
 				labelPressable={true}
 				transitionDuration={150}
 				// color="#1269A9"
+				visible={didMount}
 			>
 				<SpeedDial.Action
-					icon={MCIcons({
+					icon={{
+						type: "material-community",
 						name: "trophy-variant",
 						color: "#F7B247",
 						size: 20,
-					})}
+					}}
+					iconContainerStyle={{
+						justifyContent: "center",
+						alignItems: "center",
+					}}
 					title="Challenges"
 					titleStyle={styles.titleStyle}
 					onPress={openIncentiveScreen}
@@ -74,11 +83,16 @@ export default function CustomSpeedDial() {
 					// color="#F7B247"
 				/>
 				<SpeedDial.Action
-					icon={MCIcons({
+					icon={{
+						type: "material-community",
 						name: "calendar-month",
 						color: "#F7B247",
 						size: 20,
-					})}
+					}}
+					iconContainerStyle={{
+						justifyContent: "center",
+						alignItems: "center",
+					}}
 					title="Events"
 					titleStyle={styles.titleStyle}
 					onPress={openCalendarScreen}
@@ -87,11 +101,16 @@ export default function CustomSpeedDial() {
 				/>
 				<SpeedDial.Action
 					size="large"
-					icon={MCIcons({
+					icon={{
+						type: "material-community",
 						name: "star-shooting",
 						color: "#F7B247",
 						size: 20,
-					})}
+					}}
+					iconContainerStyle={{
+						justifyContent: "center",
+						alignItems: "center",
+					}}
 					title={"Resources"}
 					titleStyle={styles.titleStyle}
 					onPress={openResourcesScreen}
@@ -100,11 +119,16 @@ export default function CustomSpeedDial() {
 				/>
 				<SpeedDial.Action
 					size="large"
-					icon={MCIcons({
+					icon={{
+						type: "material-community",
 						name: "emoticon-cool",
 						color: "#F7B247",
 						size: 20,
-					})}
+					}}
+					iconContainerStyle={{
+						justifyContent: "center",
+						alignItems: "center",
+					}}
 					title={"Pedal Pals"}
 					titleStyle={styles.titleStyle}
 					onPress={openPedalPalsScreen}

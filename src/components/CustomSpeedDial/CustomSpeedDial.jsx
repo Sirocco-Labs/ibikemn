@@ -23,54 +23,42 @@ export default function CustomSpeedDial() {
 
 	const openIncentiveScreen = () => {
 		navigation.navigate("Incentive");
-		// setToggle({ ...toggle, challenges: !toggle.challenges });
 		setOpenSD(false);
 	};
 	const openCalendarScreen = () => {
-		// navigation.navigate("Events");
 		setToggle({ ...toggle, events: !toggle.events });
 		setOpenSD(false);
 	};
 	const openResourcesScreen = () => {
 		navigation.navigate("Resources");
-		// setToggle({ ...toggle, resources: !toggle.resources });
 		setOpenSD(false);
 	};
 	const openPedalPalsScreen = () => {
 		navigation.navigate("Pedal Pals");
-		// setToggle({ ...toggle, resources: !toggle.resources })
 		setOpenSD(false);
 	};
+	useEffect(()=>{
+		console.log('OPENSD', openSD);
+	},[openSD])
 	return (
 		<>
-			{/* <ModalWrapper
-				visible={toggle.challenges}
-				action={setToggle}
-				screen={"Previous Challenges"}
-				component={IncentiveScreen}
-			/> */}
+
 			<ModalWrapper
 				visible={toggle.events}
 				action={setToggle}
 				screen={"Events"}
 				component={CalendarScreen}
 			/>
-			{/* <ModalWrapper
-				visible={toggle.resources}
-				action={setToggle}
-				screen={"BikeMN Resources"}
-				component={ResourcesScreen}
-			/> */}
 
 			<SpeedDial
 				isOpen={openSD}
 				icon={{ name: "menu", color: "#1269A9" }}
 				openIcon={{ name: "close", color: "#F7B247" }}
-				onOpen={() => setOpenSD(!openSD)}
-				onClose={() => setOpenSD(!openSD)}
+				onOpen={() => setOpenSD(true)}
+				onClose={() => setOpenSD(false)}
 				color={openSD ? "#1269A9" : "#F7B247"}
 				labelPressable={true}
-				transitionDuration={100}
+				transitionDuration={150}
 				// color="#1269A9"
 			>
 				<SpeedDial.Action

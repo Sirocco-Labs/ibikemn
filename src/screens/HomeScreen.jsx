@@ -228,11 +228,9 @@ export default function HomeScreen() {
 	if (user.username !== "finish_set_up") {
 		return (
 			<ScreenWrapper
-				// underScroll={<CustomSpeedDial />}
 				background={{ backgroundColor: "#fff" }}
 				onRefresh={onRefresh}
 				refreshing={refreshing}
-				// noScroll={true}
 			>
 				<View style={styles.sectionView}>
 					<Dialog

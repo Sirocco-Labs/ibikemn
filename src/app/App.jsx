@@ -13,6 +13,7 @@ import { getUserQuery } from "../redux/thunks/userThunk";
 import CreateProfileScreen from "../screens/CreateProfileScreen";
 import { backgroundLocationTask } from "../tasks/BackgroundLocationTaskManager";
 import { InitialLocationPermissionRequest } from "../tasks/RequestLocationPermission";
+import { StatusBar } from "react-native";
 
 function App() {
 	const dispatch = useDispatch();
@@ -20,7 +21,7 @@ function App() {
 	const [userSession, setUserSession] = useState("");
 	const [loading, setLoading] = useState(true);
 	const user = useSelector((store) => store.user);
-	const feedback = useSelector((store)=> store.feedback)
+	const feedback = useSelector((store) => store.feedback);
 
 	InitialLocationPermissionRequest();
 	useEffect(() => {
@@ -70,6 +71,10 @@ function App() {
 	// useEffect(()=>{
 
 	// },[feedback])
+
+	// return (
+	// 		<SplashScreen />
+	// );
 
 	if (loading && !authenticated) {
 		return <SplashScreen />;

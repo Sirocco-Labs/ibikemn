@@ -44,11 +44,7 @@
     "production": {
       "android": {
 			"serviceAccountKeyPath": "$(process.env.EXPO_PUBLIC_GOOGLE_SERVICE_ACCOUNT_KEY_PATH)",
-			"track": "production",
-			"env": {
-				"EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
-				"EXPO_PUBLIC_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
-			}
+			"track": "production"
 		},
       "ios": {
         "appleId": "$(process.env.EXPO_PUBLIC_APPLE_ID)",
@@ -57,14 +53,7 @@
         "companyName": "Sirocco Labs",
         "ascApiKeyPath": "$(process.env.EXPO_PUBLIC_ASC_KEY_PATH)",
         "ascApiKeyIssuerId": "$(process.env.EXPO_PUBLIC_ASC_ISSUER_ID)",
-        "ascApiKeyId": "$(process.env.EXPO_PUBLIC_ASC_KEY_ID)",
-
-
-
-			"env": {
-				"EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
-				"EXPO_PUBLIC_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
-			}
+        "ascApiKeyId": "$(process.env.EXPO_PUBLIC_ASC_KEY_ID)"
 		}
 
     }

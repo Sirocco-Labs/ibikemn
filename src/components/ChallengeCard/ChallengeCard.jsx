@@ -202,7 +202,7 @@ export default function ChallengeCard({ item, prog }) {
 				)}
 			</View>
 
-				<Dialog
+				{/* <Dialog
 					isVisible={open}
 					onBackdropPress={() => {
 						setOpen(!open);
@@ -213,10 +213,10 @@ export default function ChallengeCard({ item, prog }) {
 					overlayStyle={[
 						styles.dialog,
 					]}
-				>
+				> */}
 
-					<ChallengeRewardDialog chal={item} onMeasure={onMeasure} />
-				</Dialog>
+					<ChallengeRewardDialog chal={item} actions={{open, setOpen}} onMeasure={onMeasure} />
+				{/* </Dialog> */}
 		</>
 	) : (
 		<></>

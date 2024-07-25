@@ -7,7 +7,7 @@ import {
 	ScrollView,
 } from "react-native";
 
-import { Text, Image } from "@rneui/themed";
+import { Text, Image, Dialog} from "@rneui/themed";
 import ScaleButton from "../ScaleButton/ScaleButton";
 import { Video } from "expo-av";
 import { useState, useRef, useCallback, useEffect } from "react";
@@ -15,8 +15,9 @@ import * as ScreenOrientation from "expo-screen-orientation";
 
 import VideoMediaItem from "../VideoMediaItem/VideoMediaItem";
 
-export default function ChallengeRewardDialog({ chal }) {
+export default function ChallengeRewardDialog({ chal, actions }) {
 	const { promo_video, reward_photo, reward_description } = chal;
+	const {open, setOpen} = actions
 	const vidRef = useRef(null);
 	const imgRef = useRef(null);
 	const [status, setStatus] = useState({});
@@ -71,127 +72,139 @@ export default function ChallengeRewardDialog({ chal }) {
 	const vid = { media_url: chal.promo_video };
 
 	return (
-		<ScrollView
-			contentContainerStyle={[
-				{
-					justifyContent: "center",
-					alignItems: "center",
-				},
-			]}
+		<Dialog
+			isVisible={open}
+			onBackdropPress={() => {
+				setOpen(false);
+			}}
+			onDismiss={() => {
+				setOpen(false);
+			}}
+			overlayStyle={[styles.dialog]}
 		>
-			<View
-				style={{
-					flex: 1,
-					justifyContent: "center",
-					alignItems: "center",
-					width:'100%'
-				}}
+			<ScrollView
+				contentContainerStyle={[
+					{
+						justifyContent: "center",
+						alignItems: "center",
+					},
+				]}
 			>
-				<View>
-					{chal.promo_video && (
-						<View
-							style={{
-								justifyContent: "space-between",
-								alignItems: "center",
-								width: "100%",
-								marginVertical: 10,
-							}}
-						>
-							<Text
-								style={{
-									fontSize: 20,
-									fontWeight: "700",
-									marginBottom: 5,
-								}}
-							>
-								Get inspired
-							</Text>
-							<VideoMediaItem vid={vid} />
-						</View>
-					)}
-				</View>
-				<View>
-					{chal.reward_photo && (
-						<View
-							style={{
-								// flex: 1,
-								justifyContent: "space-between",
-								alignItems: "center",
-								// marginVertical: 15,
-								width: "100%",
-							}}
-						>
-							<Text
-								style={{
-									fontSize: 20,
-									fontWeight: "700",
-									marginBottom: 5,
-								}}
-							>
-								Reward details
-							</Text>
-
+				<View
+					style={{
+						flex: 1,
+						justifyContent: "center",
+						alignItems: "center",
+						width: "100%",
+					}}
+				>
+					<View>
+						{chal.promo_video && (
 							<View
-								style={[
-									styles.videoContainer,
-									{
-										aspectRatio:
-											vidInfo?.naturalSize
-												?.orientation === "portrait"
-												? 9 / 16
-												: 16 / 9,
-									},
-								]}
+								style={{
+									justifyContent: "space-between",
+									alignItems: "center",
+									width: "100%",
+									marginVertical: 10,
+								}}
 							>
-								<Image
-									source={{ uri: chal.reward_photo }}
-									// contentFit="cover"
-									resizeMode="contain"
-									containerStyle={{ flex: 1 }}
-									placeholderStyle={{
-										flex: 1,
-										backgroundColor: "#fff",
+								<Text
+									style={{
+										fontSize: 20,
+										fontWeight: "700",
+										marginBottom: 5,
 									}}
-									transition
-									transitionDuration={300}
-									PlaceholderContent={
-										<View
-											style={{
-												// display: "flex",
-												justifyContent: "center",
-												alignItems: "center",
-												width:
-													Dimensions.get("window")
-														.width - 50,
-												height: loadingH,
-											}}
-										>
-											<ActivityIndicator
+								>
+									Get inspired
+								</Text>
+								<VideoMediaItem vid={vid} actions={actions} />
+							</View>
+						)}
+					</View>
+					<View>
+						{chal.reward_photo && (
+							<View
+								style={{
+									// flex: 1,
+									justifyContent: "space-between",
+									alignItems: "center",
+									// marginVertical: 15,
+									width: "100%",
+								}}
+							>
+								<Text
+									style={{
+										fontSize: 20,
+										fontWeight: "700",
+										marginBottom: 5,
+									}}
+								>
+									Reward details
+								</Text>
+
+								<View
+									style={[
+										styles.videoContainer,
+										{
+											aspectRatio:
+												vidInfo?.naturalSize
+													?.orientation === "portrait"
+													? 9 / 16
+													: 16 / 9,
+										},
+									]}
+								>
+									<Image
+										source={{ uri: chal.reward_photo }}
+										// contentFit="cover"
+										resizeMode="contain"
+										containerStyle={{ flex: 1 }}
+										placeholderStyle={{
+											flex: 1,
+											backgroundColor: "#fff",
+										}}
+										transition
+										transitionDuration={300}
+										PlaceholderContent={
+											<View
 												style={{
-													// flex: 1,
+													// display: "flex",
 													justifyContent: "center",
 													alignItems: "center",
+													width:
+														Dimensions.get("window")
+															.width - 50,
+													height: loadingH,
 												}}
-												size="large"
-											/>
-										</View>
-									}
-								/>
+											>
+												<ActivityIndicator
+													style={{
+														// flex: 1,
+														justifyContent:
+															"center",
+														alignItems: "center",
+													}}
+													size="large"
+												/>
+											</View>
+										}
+									/>
+								</View>
+								<Text
+									style={{
+										fontSize: 13,
+										fontWeight: "700",
+										// alignSelf:'flex-start',
+									}}
+								>
+									{chal.reward_description}
+								</Text>
 							</View>
-							<Text
-								style={{
-									fontSize: 13,
-									fontWeight: "700",
-									// alignSelf:'flex-start',
-								}}
-							>
-								{chal.reward_description}
-							</Text>
-						</View>
-					)}
+						)}
+					</View>
 				</View>
-			</View>
-		</ScrollView>
+			</ScrollView>
+		</Dialog>
 	);
 }
 const styles = StyleSheet.create({
@@ -203,6 +216,15 @@ const styles = StyleSheet.create({
 	},
 	scroll: {
 		flexGrow: 1,
+	},
+	dialog: {
+		flex: 0.85,
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 5,
+		borderWidth: 2,
+		borderColor: "#F7B247",
+		width: "85%",
 	},
 	innerScroll: {
 		flex: 1,

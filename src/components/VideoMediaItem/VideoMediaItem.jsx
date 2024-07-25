@@ -11,7 +11,7 @@ import { Video } from "expo-av";
 import { Text, Icon, Slider } from "@rneui/themed";
 import * as ScreenOrientation from "expo-screen-orientation";
 
-export default function VideoMediaItem({ vid }) {
+export default function VideoMediaItem({ vid, actions }) {
 	const vidRef = useRef(null);
 	const [status, setStatus] = useState({});
 	const [loading, setLoading] = useState(true);
@@ -35,14 +35,22 @@ export default function VideoMediaItem({ vid }) {
 		is_displayed,
 		created_at,
 	} = vid;
+
+	const {open, setOpen} = actions
+
+
 	const handleFullscreenUpdate = async ({ fullscreenUpdate }) => {
 		console.log("@#$UPDATE", vidInfo);
+		if (open) {
+			setOpen(false);
+		}
 		if (vidInfo.naturalSize.orientation === "landscape") {
 			if (fullscreenUpdate < 2) {
 				await ScreenOrientation.lockAsync(
 					ScreenOrientation.OrientationLock.LANDSCAPE
 				);
 				setFullScreen(true);
+
 			} else if (fullscreenUpdate > 2) {
 				await ScreenOrientation.lockAsync(
 					ScreenOrientation.OrientationLock.PORTRAIT_UP
@@ -50,6 +58,7 @@ export default function VideoMediaItem({ vid }) {
 				setFullScreen(false);
 			}
 		}
+
 	};
 
 	const handleStatus = async (playStatus) => {

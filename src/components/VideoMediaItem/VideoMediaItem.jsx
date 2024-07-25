@@ -36,29 +36,30 @@ export default function VideoMediaItem({ vid, actions }) {
 		created_at,
 	} = vid;
 
-	const {open, setOpen} = actions
-
+	const { open, setOpen } = actions;
 
 	const handleFullscreenUpdate = async ({ fullscreenUpdate }) => {
 		console.log("@#$UPDATE", vidInfo);
-		if (open) {
-			setOpen(false);
-		}
+
 		if (vidInfo.naturalSize.orientation === "landscape") {
 			if (fullscreenUpdate < 2) {
 				await ScreenOrientation.lockAsync(
 					ScreenOrientation.OrientationLock.LANDSCAPE
 				);
 				setFullScreen(true);
-
+				if (open) {
+					setOpen(false);
+				}
 			} else if (fullscreenUpdate > 2) {
 				await ScreenOrientation.lockAsync(
 					ScreenOrientation.OrientationLock.PORTRAIT_UP
 				);
 				setFullScreen(false);
+				if (open) {
+					setOpen(false);
+				}
 			}
 		}
-
 	};
 
 	const handleStatus = async (playStatus) => {
@@ -121,16 +122,17 @@ export default function VideoMediaItem({ vid, actions }) {
 
 	return (
 		<>
-		{media_title &&
-			<Text
-				style={{
-					fontSize:17,
-					marginBottom: 10,
-					fontWeight: "700",
-				}}
-			>
-				{media_title}
-			</Text>}
+			{media_title && (
+				<Text
+					style={{
+						fontSize: 17,
+						marginBottom: 10,
+						fontWeight: "700",
+					}}
+				>
+					{media_title}
+				</Text>
+			)}
 			<View
 				style={[
 					styles.videoContainer,
@@ -255,10 +257,11 @@ export default function VideoMediaItem({ vid, actions }) {
 					</TouchableOpacity>
 				</View>
 			</View>
-			{media_caption &&
-			<Text style={{ alignSelf: "center", marginBottom: 20 }}>
-				{media_caption}
-			</Text>}
+			{media_caption && (
+				<Text style={{ alignSelf: "center", marginBottom: 20 }}>
+					{media_caption}
+				</Text>
+			)}
 		</>
 	);
 }
@@ -334,7 +337,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		backgroundColor: "rgba(0, 0, 0, 0.5)",
 		padding: 10,
-		borderRadius:12,
+		borderRadius: 12,
 		// borderBottomLeftRadius:12,
 		// borderBottomRightRadius:12
 	},

@@ -208,7 +208,7 @@ export default function ChallengeCard({ item, prog }) {
 						setOpen(!open);
 					}}
 					onDismiss={() => {
-						setDHeight(null);
+						setOpen(!open)
 					}}
 					overlayStyle={[
 						styles.dialog,

@@ -47,9 +47,6 @@ export default function VideoMediaItem({ vid, actions }) {
 					ScreenOrientation.OrientationLock.LANDSCAPE
 				);
 				setFullScreen(true);
-				if (open) {
-					setOpen(false);
-				}
 			} else if (fullscreenUpdate > 2) {
 				await ScreenOrientation.lockAsync(
 					ScreenOrientation.OrientationLock.PORTRAIT_UP

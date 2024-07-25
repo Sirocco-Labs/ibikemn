@@ -112,6 +112,7 @@ export default function VideoMediaItem({ vid }) {
 
 	return (
 		<>
+		{media_title &&
 			<Text
 				style={{
 					fontSize:17,
@@ -120,7 +121,7 @@ export default function VideoMediaItem({ vid }) {
 				}}
 			>
 				{media_title}
-			</Text>
+			</Text>}
 			<View
 				style={[
 					styles.videoContainer,
@@ -245,9 +246,10 @@ export default function VideoMediaItem({ vid }) {
 					</TouchableOpacity>
 				</View>
 			</View>
+			{media_caption &&
 			<Text style={{ alignSelf: "center", marginBottom: 20 }}>
 				{media_caption}
-			</Text>
+			</Text>}
 		</>
 	);
 }

@@ -1,4 +1,12 @@
-import { StyleSheet, View, Pressable, Dimensions } from "react-native";
+import {
+	StyleSheet,
+	View,
+	Pressable,
+	Dimensions,
+	ScrollView,
+	StatusBar,
+	SafeAreaView,
+} from "react-native";
 import { Text, Dialog, Avatar, Button } from "@rneui/themed";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +19,7 @@ export default function ChallengeCard({ item, prog }) {
 	const is_updated = useSelector((store) => store.incentives.updated);
 	// const [dHeight, setDHeight] = useState(Dimensions.get("window").height/1.25);
 	const [dHeight, setDHeight] = useState(
-		(Dimensions.get("window").height - 100) / 3
+		Dimensions.get("window").height - 200
 	);
 
 	const onMeasure = (height) => {
@@ -19,8 +27,7 @@ export default function ChallengeCard({ item, prog }) {
 	};
 
 	useEffect(() => {
-		console.log('$$$$ progressUpdated', is_updated);
-
+		console.log("$$$$ progressUpdated", is_updated);
 	}, [is_updated]);
 
 	useEffect(() => {
@@ -79,7 +86,7 @@ export default function ChallengeCard({ item, prog }) {
 							// fontWeight: "bold",
 							color: "#1269A9",
 							textAlign: "center",
-							marginTop:10,
+							marginTop: 10,
 						}}
 					>
 						{`Keep up the great work `}
@@ -194,18 +201,22 @@ export default function ChallengeCard({ item, prog }) {
 					</View>
 				)}
 			</View>
-			<Dialog
-				isVisible={open}
-				onBackdropPress={() => {
-					setOpen(!open);
-				}}
-				onDismiss={() => {
-					setDHeight(null);
-				}}
-				overlayStyle={[styles.dialog]}
-			>
-				<ChallengeRewardDialog chal={item} onMeasure={onMeasure} />
-			</Dialog>
+
+				<Dialog
+					isVisible={open}
+					onBackdropPress={() => {
+						setOpen(!open);
+					}}
+					onDismiss={() => {
+						setDHeight(null);
+					}}
+					overlayStyle={[
+						styles.dialog,
+					]}
+				>
+
+					<ChallengeRewardDialog chal={item} onMeasure={onMeasure} />
+				</Dialog>
 		</>
 	) : (
 		<></>
@@ -225,15 +236,13 @@ const styles = StyleSheet.create({
 		width: 320,
 	},
 	dialog: {
-		display: "flex",
-		justifyContent: "center",
-		alignItems: "center",
-		padding: 10,
+		flex:.85,
+		justifyContent:'center',
+		alignItems:'center',
 		borderRadius: 5,
 		borderWidth: 2,
-		borderColor: "#1269A9",
-		width: "95%",
-		// height: "max-content",
+		borderColor: "#F7B247",
+		width: "85%",
 	},
 	endDate: {
 		flexDirection: "row",

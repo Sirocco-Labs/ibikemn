@@ -32,7 +32,6 @@ import {
 	setShowRewardDialog,
 } from "../redux/slices/incentiveSlice";
 
-import ExpandChallenges from "../components/ExpandChallenges/ExpandChallenges";
 import UserStatsSection from "../components/UserStatsSection/UserStatsSection";
 import { getMyRideSurveys } from "../redux/thunks/rideSurveyThunk";
 
@@ -69,6 +68,7 @@ export default function HomeScreen() {
 	const [newChallenge, setNewChallenge] = useState({});
 	const [connected, setConnected] = useState(true);
 	const [winner, setWinner] = useState(false);
+	const [showFAB, setShowFAB] = useState(false);
 
 	const [rewardNotice, setRewardNotice] = useState(false);
 
@@ -128,7 +128,7 @@ export default function HomeScreen() {
 							value = "Fitness";
 						}
 						propCounts[value] = (propCounts[value] || 0) + 1;
-					} else if(property === 'route_type'){
+					} else if (property === "route_type") {
 						if (
 							value ===
 							"On road infrastructure (a bike lane, cycle track)"
@@ -145,7 +145,7 @@ export default function HomeScreen() {
 							value = "Unfriendly";
 						}
 						propCounts[value] = (propCounts[value] || 0) + 1;
-					}else {
+					} else {
 						propCounts[value] = (propCounts[value] || 0) + 1;
 					}
 					return propCounts;
@@ -225,15 +225,16 @@ export default function HomeScreen() {
 			setWinner(true);
 		}
 	}, []);
+	useEffect(() => {
+		setShowFAB(true);
+	}, []);
 
 	if (user.username !== "finish_set_up") {
 		return (
 			<ScreenWrapper
-				underScroll={<CustomSpeedDial />}
 				background={{ backgroundColor: "#fff" }}
 				onRefresh={onRefresh}
 				refreshing={refreshing}
-				// noScroll={true}
 			>
 				<View style={styles.sectionView}>
 					<Dialog
@@ -302,6 +303,7 @@ export default function HomeScreen() {
 							</View>
 						</View>
 					</Dialog>
+
 					{/* {winner && (
 						<View style={styles.rewardSection}>
 							{rewardWinner.map((reward) => (
@@ -317,8 +319,11 @@ export default function HomeScreen() {
 							))}
 						</View>
 					)} */}
+
 					<View style={styles.leftColAr}>
-						<Text style={[styles.sectionText, {marginBottom:10}]}>
+						<Text
+							style={[styles.sectionText, { marginBottom: 10 }]}
+						>
 							{user.username}'s Stats
 						</Text>
 						<UserStatsSection
@@ -329,7 +334,11 @@ export default function HomeScreen() {
 					<Text
 						style={[
 							styles.sectionText,
-							{ alignSelf: "flex-start", marginTop: 20,marginBottom:5 },
+							{
+								alignSelf: "flex-start",
+								marginTop: 20,
+								marginBottom: 5,
+							},
 						]}
 					>
 						Active Challenge Progress
@@ -353,6 +362,7 @@ export default function HomeScreen() {
 						/>
 					</View>
 				</View>
+				{showFAB && <CustomSpeedDial />}
 			</ScreenWrapper>
 		);
 	} else {
@@ -396,7 +406,7 @@ const styles = StyleSheet.create({
 	},
 	rewardSection: {
 		// flex: 1,
-		height:'auto',
+		height: "auto",
 		alignItems: "flex-start",
 		justifyContent: "space-between",
 		width: "100%",
@@ -513,51 +523,3 @@ const styles = StyleSheet.create({
 		padding: 2,
 	},
 });
-
-{
-	/* <Button
-						raised
-						onPress={() => {
-							dispatch(staffGetBikes(user.org_id));
-						}}
-						containerStyle={styles.mv10}
-					>
-						get org bikes
-					</Button>
-					<Button
-						raised
-						onPress={() => {
-							dispatch(getMyBike(user.user_id));
-						}}
-						containerStyle={styles.mv10}
-					>
-						get my bike
-					</Button>
-					<Button
-						raised
-						onPress={() => {
-							dispatch(clearMyBike());
-						}}
-						containerStyle={styles.mv10}
-					>
-						clear my bike
-					</Button>
-					<Button
-						raised
-						onPress={() => {
-							dispatch(clearOrgBikes());
-						}}
-						containerStyle={styles.mv10}
-					>
-						clear orgBikes
-					</Button>
-					<Button
-						raised
-						onPress={() => {
-							dispatch(clearDistance());
-						}}
-						containerStyle={styles.mv10}
-					>
-						clear distance
-					</Button> */
-}

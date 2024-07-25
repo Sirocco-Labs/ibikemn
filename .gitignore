@@ -43,3 +43,5 @@ yarn-error.*
 .vscode/
 ios/
 android/
+iBikeMN-googleServiceAccountKey.*
+iBikeMN-asc-key.*

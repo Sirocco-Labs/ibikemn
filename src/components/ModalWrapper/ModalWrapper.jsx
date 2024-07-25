@@ -9,7 +9,7 @@ import {
 	BackHandler,
 	ActivityIndicator,
 } from "react-native";
-import { Text, SpeedDial, Dialog, Button, FAB, Icon } from "@rneui/themed";
+import { Text, Dialog, Button, FAB, Icon } from "@rneui/themed";
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {

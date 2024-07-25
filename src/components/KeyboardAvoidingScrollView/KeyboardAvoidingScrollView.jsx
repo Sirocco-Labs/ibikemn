@@ -13,6 +13,7 @@ const KeyboardAvoidingScrollView = ({
 	children,
 	scrollContentContainerStyle = {},
 	scrollViewRef,
+	scrollRef
 }) => {
 	const headerHeight = useHeaderHeight();
 
@@ -37,6 +38,7 @@ const KeyboardAvoidingScrollView = ({
 			style={{ flex: 1 }}
 			behavior="padding"
 			keyboardVerticalOffset={headerHeight}
+			ref={scrollRef}
 		>
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				{renderScrollView}

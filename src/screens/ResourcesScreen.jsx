@@ -1,8 +1,8 @@
 import { SafeAreaView, View, StyleSheet, Alert } from "react-native";
-import { Text } from "@rneui/themed";
+import { Text, Icon } from "@rneui/themed";
 
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getResourceMedia } from "../redux/thunks/mediaThunk";
 import { useFocusEffect } from "@react-navigation/native";
@@ -15,10 +15,9 @@ import * as Linking from "expo-linking";
 export default function ResourcesScreen() {
 	const dispatch = useDispatch();
 	const resourceMedia = useSelector((store) => store.media.resources);
-	const user = useSelector((store) => store.user);
 
 	useFocusEffect(
-		React.useCallback(() => {
+		useCallback(() => {
 			dispatch(getResourceMedia());
 		}, [dispatch])
 	);
@@ -39,66 +38,22 @@ export default function ResourcesScreen() {
 		}
 	}, [resourceMedia]);
 
-	const handleEmail = () => {
-		const email = "example@gmail.com";
-		const subject = "I'd like to join Pedal Pals";
-		const body = `Hi! My name is ${user.first_name} ${user.last_name} and I'd like to join the Pedal Pals program.`;
-		const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
-		Linking.canOpenURL("mailto:")
-			.then((supported) => {
-				if (supported) {
-					Linking.openURL(mailtoLink);
-				}
-			})
-			.catch((error) => {
-				Alert.alert(
-					"No Default Email Client",
-					"Please set up a default email client or send your information directly to ____@bikemn.org.",
-					[
-						{
-							text: "OK",
-							onPress: () => console.log("OK Pressed"),
-						},
-					],
-					{ cancelable: false }
-				);
-				console.error(
-					"Error checking if email client is supported:",
-					error
-				);
-				// Handle the error as needed
-			});
-	};
-
 	return (
 		<ScreenWrapper
 			background={{ backgroundColor: "#fff" }}
 			noScroll={false}
 		>
 			<View style={styles.sectionView}>
-				<View style={styles.leftColAr}>
-					<Text>Become a Pedal Pal</Text>
-					<ScaleButton
-						looks={[
-							styles.solidButton,
-							{ width: 200, marginTop: 10, alignSelf: "center" },
-						]}
-						onPress={handleEmail}
-					>
-						<Text
-							style={{
-								fontWeight: "700",
-								color: "#fff",
-							}}
-						>
-							Join Pedal Pals
-						</Text>
-					</ScaleButton>
+				<View
+				style={[styles.leftColAr]}
+				>
+				<Text style={styles.sectionText}>Educational Resources</Text>
+
+					{vids.map((vid) => (
+						<VideoMediaItem vid={vid} key={vid.id} />
+					))}
 				</View>
 			</View>
-			{vids.map((vid) => (
-				<VideoMediaItem vid={vid} key={vid.id} />
-			))}
 		</ScreenWrapper>
 	);
 }
@@ -186,7 +141,24 @@ const styles = StyleSheet.create({
 	solidButton: {
 		backgroundColor: "#1269A9",
 		borderRadius: 12,
-		height: 45,
+		height: 55,
 		padding: 2,
+	},
+	sectionText: {
+		fontWeight: "700",
+		fontSize: 25,
+		color: "#1269A9",
+		marginBottom: 10,
+	},
+	subsectionText: {
+		fontWeight: "700",
+		fontSize: 20,
+		color: "#1269A9",
+		marginVertical: 5,
+	},
+	buttonText: {
+		fontWeight: "700",
+		fontSize: 25,
+		color: "#fff",
 	},
 });

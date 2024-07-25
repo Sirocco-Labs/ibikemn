@@ -56,6 +56,19 @@ export default function IntakeFormUserInfo({ navigation, route }) {
 		return true;
 	};
 
+	const proceed = () => {
+		if (
+			intake.userInfo.username !== "" &&
+			intake.userInfo.first_name !== "" &&
+			intake.userInfo.last_name !== "" &&
+			intake.userInfo.age === true
+		) {
+			return false;
+		}
+
+		return true;
+	};
+
 	const handleJumpTo = () => {
 		navigation.jumpTo("Address");
 	};
@@ -145,7 +158,7 @@ export default function IntakeFormUserInfo({ navigation, route }) {
 							icon={{ name: "arrow-right", color: "white" }}
 							iconRight
 							disabled={
-								validateSave() && !intake.userInfo.username
+								intake.userInfo.username === ''
 							}
 							onPress={handleJumpTo}
 							buttonStyle={styles.nextBtn}

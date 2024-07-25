@@ -1,34 +1,61 @@
 {
   "cli": {
     "version": ">= 7.8.2",
-	"appVersionSource": "remote"
+    "appVersionSource": "remote"
   },
   "build": {
-		"development": {
-			"developmentClient": true,
-			"distribution": "internal"
-		},
-		"preview": {
-			"distribution": "internal",
-			"android": {
-				"buildType": "apk"
-			}
-		},
-		"previewIOS": {
-			"distribution": "internal",
-			"ios": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development"
+    },
+    "android-prev": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "channel": "android-prev"
+    },
+    "ios-prev": {
+      "distribution": "internal",
+      "ios": {
         "enterpriseProvisioning": "adhoc"
-			}
-		},
-		"production": {
-			"autoIncrement": true,
-			"env":{
-				"EXPO_PUBLIC_SUPABASE_URL":"$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
-				"EXPO_PUBLIC_SUPABASE_ANON_KEY":"$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
-			}
-		}
+      },
+      "channel": "ios-prev"
+    },
+    "android-prod": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
+      },
+      "channel": "android-prod"
+    },
+    "ios-prod": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
+      },
+      "channel": "ios-prod"
+    }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+			"serviceAccountKeyPath": "$(process.env.EXPO_PUBLIC_GOOGLE_SERVICE_ACCOUNT_KEY_PATH)",
+			"track": "production"
+		},
+      "ios": {
+        "appleId": "$(process.env.EXPO_PUBLIC_APPLE_ID)",
+        "ascAppId": "$(process.env.EXPO_PUBLIC_ASC_APP_ID)",
+        "appleTeamId": "$(process.env.EXPO_PUBLIC_APPLE_TEAM_ID)",
+        "companyName": "Sirocco Labs",
+        "ascApiKeyPath": "$(process.env.EXPO_PUBLIC_ASC_KEY_PATH)",
+        "ascApiKeyIssuerId": "$(process.env.EXPO_PUBLIC_ASC_ISSUER_ID)",
+        "ascApiKeyId": "$(process.env.EXPO_PUBLIC_ASC_KEY_ID)"
+		}
+
+    }
   }
 }

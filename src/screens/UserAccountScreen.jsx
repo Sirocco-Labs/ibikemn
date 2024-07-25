@@ -101,7 +101,7 @@ export default function UserAccountScreen() {
 	};
 
 	const sendContactEmail = () => {
-		const email = "info@bikemn.org";
+		const email = "ibikemn@bikemn.org";
 		const mailtoLink = `mailto:${email}`;
 		Linking.canOpenURL("mailto:")
 			.then((supported) => {
@@ -112,7 +112,7 @@ export default function UserAccountScreen() {
 			.catch((error) => {
 				Alert.alert(
 					"No Default Email Client",
-					"Please set up a default email client for your device or send your email directly to info@bikemn.org.",
+					"Please set up a default email client for your device or send your email directly to ibikemn@bikemn.org.",
 					[
 						{
 							text: "OK",

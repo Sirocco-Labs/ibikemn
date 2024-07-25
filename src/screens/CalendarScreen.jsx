@@ -6,7 +6,6 @@ import {
 	BackHandler,
 } from "react-native";
 import { Text, SpeedDial, Dialog, Button, FAB, Icon } from "@rneui/themed";
-import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
 import { WebView } from "react-native-webview";
 import { useEffect, useState, useRef } from "react";
 import ScaleButton from "../components/ScaleButton/ScaleButton";

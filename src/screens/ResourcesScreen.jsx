@@ -25,6 +25,8 @@ export default function ResourcesScreen() {
 	const [vids, setVids] = useState([]);
 	const [photos, setPhotos] = useState([]);
 
+	const actions = {open:'', setOpen:''}
+
 	useEffect(() => {
 		if (resourceMedia.length > 0) {
 			const videos = resourceMedia.filter(
@@ -50,7 +52,7 @@ export default function ResourcesScreen() {
 				<Text style={styles.sectionText}>Educational Resources</Text>
 
 					{vids.map((vid) => (
-						<VideoMediaItem vid={vid} key={vid.id} />
+						<VideoMediaItem vid={vid} key={vid.id} actions={actions}/>
 					))}
 				</View>
 			</View>

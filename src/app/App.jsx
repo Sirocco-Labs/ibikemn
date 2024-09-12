@@ -84,7 +84,7 @@ function App() {
 		} else {
 			if (user.is_public && authenticated) {
 				return <PublicUserNavTabs />;
-			} else if (user.is_employee && authenticated) {
+			} else if (user.is_employee || user.is_admin && authenticated) {
 				return <StaffUserNavTabs />;
 			} else {
 				return <AuthNavTabs />;

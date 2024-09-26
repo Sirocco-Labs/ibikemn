@@ -28,6 +28,7 @@ import {
 } from "../redux/thunks/incentiveThunk";
 
 import {
+	setCompletedChallenges,
 	setIsProgressUpdated,
 	setShowRewardDialog,
 } from "../redux/slices/incentiveSlice";
@@ -43,6 +44,8 @@ import { InitialLocationPermissionRequest } from "../tasks/RequestLocationPermis
 import { getWinningInfo } from "../redux/thunks/rewardThunk";
 
 import ScaleButton from "../components/ScaleButton/ScaleButton";
+
+import CongratsDialog from "../components/CongratsDialog/CongratsDialog";
 
 export default function HomeScreen() {
 	const dispatch = useDispatch();
@@ -60,6 +63,9 @@ export default function HomeScreen() {
 	const showRewardDialog = useSelector(
 		(store) => store.incentives.showRewardDialog
 	);
+	const completedChallenges = useSelector(
+		(store) => store.incentives.completed
+	);
 
 	const surveyHistory = useSelector((store) => store.rideSurveys);
 
@@ -68,7 +74,8 @@ export default function HomeScreen() {
 	const [newChallenge, setNewChallenge] = useState({});
 	const [connected, setConnected] = useState(true);
 	const [winner, setWinner] = useState(false);
-	const [showFAB, setShowFAB] = useState(false);
+	const [completed, setCompleted] = useState(false);
+	const [completedMessage, setCompletedMessage] = useState({});
 
 	const [rewardNotice, setRewardNotice] = useState(false);
 
@@ -80,8 +87,10 @@ export default function HomeScreen() {
 			dispatch(getUserIncentiveHistory(user.user_id));
 			dispatch(getAllPreviousChallenges(user.is_public));
 			dispatch(getWinningInfo(user.id));
+			dispatch(getUserIncentiveProgress(user.user_id));
+			// dispatch(setCompletedChallenges(1));
 
-			// dispatch(getUserIncentiveProgress(user.user_id));
+			// setCompleted(true);
 		}, [dispatch])
 	);
 
@@ -95,6 +104,7 @@ export default function HomeScreen() {
 			dispatch(getUserIncentiveHistory(user.user_id));
 			dispatch(getAllPreviousChallenges(user.is_public));
 			dispatch(getUserIncentiveProgress(user.user_id));
+			// dispatch(setCompletedChallenges(0));
 		} catch (error) {
 		} finally {
 			setRefreshing(false);
@@ -203,13 +213,50 @@ export default function HomeScreen() {
 		setNewChallenge(findClosestTimestamp(activeChallenges));
 	}, [activeChallenges]);
 
-	const challengesMet = activeChallenges.filter((challenge) => {
-		const progress = challengeProgress.find(
-			(prog) => prog.active_incentive_id === challenge.id
-		);
-		return progress && progress.has_been_met;
-	});
 
+	// const challengesMet = activeChallenges.filter((challenge) => {
+	// 	const progress = challengeProgress.find(
+	// 		(prog) => {
+	// 			console.log('&&& PROG', prog);
+
+	// 			prog.active_incentive_id === challenge.id}
+	// 	);
+
+	// 	return progress && progress.has_been_met;
+	// });
+	const challengesMet = activeChallenges
+		.filter((challenge) => {
+			const progress = challengeProgress.find((prog) => {
+				console.log("&&& PROG", prog);
+				return prog.active_incentive_id === challenge.id; // Ensure to return the comparison
+			});
+
+			return progress && progress.has_been_met;
+		})
+		.sort((a, b) => {
+			// Find progress for each challenge to access date_completed
+			const progressA = challengeProgress.find(
+				(prog) => prog.active_incentive_id === a.id
+			);
+			const progressB = challengeProgress.find(
+				(prog) => prog.active_incentive_id === b.id
+			);
+
+			// Compare the date_completed of both progress entries
+			if (
+				progressA &&
+				progressA.date_completed &&
+				progressB &&
+				progressB.date_completed
+			) {
+				return (
+					new Date(progressB.date_completed) -
+					new Date(progressA.date_completed)
+				);
+			}
+			// If either progress is missing, handle as needed (e.g., keep original order)
+			return 0;
+		});
 	const challengesNotMet = activeChallenges.filter((challenge) => {
 		const progress = challengeProgress.find(
 			(prog) => prog.active_incentive_id === challenge.id
@@ -218,6 +265,56 @@ export default function HomeScreen() {
 	});
 
 	const sortedChallenges = [...challengesNotMet, ...challengesMet];
+	const completedAlert = (challengesMet) => {
+		let mostRecentCompletion = null;
+
+		// Loop through each challenge in challengesMet
+		for (const challenge of challengesMet) {
+			// Find the corresponding progress in challengeProgress
+			const progress = challengeProgress.find(
+				(prog) =>
+					prog.active_incentive_id === challenge.id &&
+					prog.has_been_met
+			);
+
+			// If there's no progress found for the challenge, skip to the next iteration
+			if (!progress) continue;
+
+			// If there's no current most recent completion or if the current progress is more recent
+			if (
+				!mostRecentCompletion ||
+				new Date(progress.date_completed) >
+					new Date(mostRecentCompletion.date_completed)
+			) {
+				// Replace the mostRecentCompletion with the current one
+				mostRecentCompletion = progress;
+			}
+		}
+
+		// If a most recent completion is found, set the completed message and trigger updates
+		if (mostRecentCompletion) {
+			setCompletedMessage({
+				...completed,
+				title: mostRecentCompletion.active_challenge.challenge_info
+					.title,
+				date: mostRecentCompletion.date_completed,
+			});
+			setCompleted(true);
+
+			// Dispatch updated challenge completion count
+			dispatch(
+				setCompletedChallenges(
+					activeChallenges.length - challengesNotMet.length
+				)
+			);
+		}
+
+		console.log(
+			"&&& Most recent completed challenge:",
+			mostRecentCompletion
+		);
+	};
+
 
 	useEffect(() => {
 		if (rewardWinner && rewardWinner.length > 0) {
@@ -225,9 +322,14 @@ export default function HomeScreen() {
 			setWinner(true);
 		}
 	}, []);
+
 	useEffect(() => {
-		setShowFAB(true);
-	}, []);
+		if (challengesMet.length > completedChallenges) {
+			completedAlert(challengesMet);
+		} else {
+			dispatch(setCompletedChallenges(challengesMet.length));
+		}
+	}, [challengesMet.length]);
 
 	if (user.username !== "finish_set_up") {
 		return (
@@ -257,20 +359,20 @@ export default function HomeScreen() {
 								</Text>
 							</View>
 							{rewardWinner &&
-							rewardWinner.map((reward) => (
-								<View
-									key={reward.id}
-									style={styles.dialogContent}
-								>
-									<Text style={styles.rewardText}>
-										You are the winner of the{" "}
-										{reward.incentive_info.title} challenge,
-										please check your email for instruction
-										on how to claim your reward.
-									</Text>
-								</View>
-							))
-							}
+								rewardWinner.map((reward) => (
+									<View
+										key={reward.id}
+										style={styles.dialogContent}
+									>
+										<Text style={styles.rewardText}>
+											You are the winner of the{" "}
+											{reward.incentive_info.title}{" "}
+											challenge, please check your email
+											for instruction on how to claim your
+											reward.
+										</Text>
+									</View>
+								))}
 							<View style={styles.cenColAr}>
 								<ScaleButton
 									looks={[styles.solidButton, { width: 150 }]}
@@ -326,6 +428,11 @@ export default function HomeScreen() {
 						>
 							{user.username}'s Stats
 						</Text>
+						<Text
+							style={[styles.sectionText, { marginBottom: 10 }]}
+						>
+							{/* {`Met: ${challengesMet.length}  >  Comp: ${completedChallenges} `} */}
+						</Text>
 						<UserStatsSection
 							travelStats={travelStats}
 							survey={mostCommon}
@@ -346,7 +453,7 @@ export default function HomeScreen() {
 
 					<View style={styles.cardSection}>
 						<FlatList
-							data={sortedChallenges}
+							data={challengesNotMet}
 							horizontal
 							renderItem={({ item }) => (
 								<ChallengeCard
@@ -361,8 +468,47 @@ export default function HomeScreen() {
 							keyExtractor={(item) => item.id}
 						/>
 					</View>
+
+					{challengesMet.length > 0 && (
+						<>
+							<Text
+								style={[
+									styles.sectionText,
+									{
+										alignSelf: "flex-start",
+										marginTop: 5,
+										marginBottom: 5,
+									},
+								]}
+							>
+								Completed Challenges
+							</Text>
+
+							<View style={styles.cardSection}>
+								<FlatList
+									data={challengesMet}
+									horizontal
+									renderItem={({ item }) => (
+										<ChallengeCard
+											item={item}
+											// prog={challengeProgress.find(
+											// 	(prog) =>
+											// 		prog.active_incentive_id === item.id
+											// )}
+											prog={challengeProgress}
+										/>
+									)}
+									keyExtractor={(item) => item.id}
+								/>
+							</View>
+						</>
+					)}
+					<CongratsDialog
+						actions={{ completed, setCompleted }}
+						challengesMet={challengesMet}
+						completedMessage={completedMessage}
+					/>
 				</View>
-				{showFAB && <CustomSpeedDial />}
 			</ScreenWrapper>
 		);
 	} else {
@@ -403,6 +549,15 @@ const styles = StyleSheet.create({
 		width: "100%",
 		padding: 5,
 		marginVertical: 10,
+	},
+	completedContent: {
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		justifyContent: "space-around",
+		width: "100%",
+		padding: 5,
+		marginVertical: 5,
 	},
 	rewardSection: {
 		// flex: 1,

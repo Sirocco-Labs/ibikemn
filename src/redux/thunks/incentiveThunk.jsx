@@ -249,8 +249,8 @@ export const getUserIncentiveProgress = (user_id) => async (dispatch) => {
 				"SUPABASE GET USER CHALLENGE PROGRESS SUCCESS! FILTERED PROGRESS: ",
 				filteredProgress
 			);
-			// dispatch(setIncentivesProgress(filteredProgress));
-			dispatch(setIncentivesProgress(getUserProgress.data));
+			dispatch(setIncentivesProgress(filteredProgress));
+			// dispatch(setIncentivesProgress(getUserProgress.data));
 			// (FIND ME)
 		}
 	} catch (error) {
@@ -480,6 +480,9 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
 		);
 
 		// Check if already tracking progress
+		// FIND ME!!!
+		// The first time through there shouldn't be any already tracked challenges.
+		// alreadyTracking should be an empty array
 		const alreadyTracking = await supabase
 			.from("user_incentive_tracking_junction")
 			.select(
@@ -516,13 +519,10 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
 			)
 			.in("active_incentive_id", verifyingChallengeIds)
 			.eq("user_id", user_id)
-			.eq("has_been_met", false)
+			// .eq("has_been_met", false)
+			// .lt("completion_progress", 1)
+			// FIND ME!!! ^^^^^
 			.eq("active_challenge.is_active", true)
-			// .match({
-			// 	user_id: user_id,
-			// 	has_been_met: false,
-			// 	"active_challenge.is_active": true,
-			// })
 			.order("id", { ascending: true });
 
 		if (alreadyTracking.error) {
@@ -554,16 +554,24 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
 		// ------------------------------ LET'S GET READY TO RUUUUUUUMMMMMMMBLE ---------------------------------------
 		// ------------------------------------------------------------------------------------------------------------
 		// ------------------------------------------------------------------------------------------------------------
-
+		// SHOULD BE SKIPPED ON THE FIRST PASS
 		if (alreadyTracking.data.length > 0) {
 			// Update existing tracking progress for tracked challenges
 			console.log(
-				"******** CREATING UPDATE RECORDS FOR THESE TRACKED CHALLENGES",
+				"******** ALREADY TRACKED CHALLENGES",
 				alreadyTracking.data
 			);
 			try {
+				// FILTERING FOR ALREADY TRACKED BUT NOT COMPLETE
+				const nonCompletedChallenges = alreadyTracking.data.filter(
+					(challenge) => challenge.has_been_met === false
+				);
+				console.log(
+					"******** CREATING UPDATE RECORDS FOR ALREADY TRACKED BUT NOT YET COMPLETED CHALLENGES",
+					nonCompletedChallenges
+				);
 				const updateLogData = await updateTrackingProgress(
-					alreadyTracking.data,
+					nonCompletedChallenges,
 					user_id,
 					users_table_id,
 					recentRide
@@ -593,14 +601,17 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
 						(trackedChallenge) =>
 							trackedChallenge.active_incentive_id ===
 							challenge.id
+						// FIND ME!!!!!!!!!
 					)
 			);
 			console.log(
-				"HERE ARE THE UNTRACKED CHALLENGES",
+				"******** UNTRACKED CHALLENGES",
 				untrackedChallenges
 			);
 
 			// Create tracking progress for untracked challenges
+			// SHOULD BE HELPING TO COVER FOR PROGRESS ON...
+			// UNTRACKED BUT NOT COMPLETE CHALLENGES DURING AN UPDATE CYCLE
 			if (untrackedChallenges.length > 0) {
 				const insertLogData = await insertTrackingProgress(
 					untrackedChallenges,

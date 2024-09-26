@@ -8,7 +8,8 @@ const initialState = {
     updated:true,
     last_updated:'',
 	reward:[],
-	showRewardDialog:true
+	showRewardDialog:true,
+	completed:0
 }
 
 const incentiveSlice = createSlice({
@@ -38,6 +39,9 @@ const incentiveSlice = createSlice({
 		},
 		setShowRewardDialog(state, action) {
 			return { ...state, showRewardDialog: action.payload };
+		},
+		setCompletedChallenges(state, action){
+			return{...state, completed:action.payload}
 		},
 		clearIncentiveSlice(state) {
 			return initialState;
@@ -75,6 +79,7 @@ export const {
 	setTimeOfProgressUpdate,
 	setRewardStatus,
 	setShowRewardDialog,
+	setCompletedChallenges,
 	clearIncentiveSlice,
 } = incentiveSlice.actions;
 

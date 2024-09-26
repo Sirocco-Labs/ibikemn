@@ -14,6 +14,7 @@ import CreateProfileScreen from "../screens/CreateProfileScreen";
 import { backgroundLocationTask } from "../tasks/BackgroundLocationTaskManager";
 import { InitialLocationPermissionRequest } from "../tasks/RequestLocationPermission";
 import { StatusBar } from "react-native";
+import CustomSpeedDial from "../components/CustomSpeedDial/CustomSpeedDial";
 
 function App() {
 	const dispatch = useDispatch();
@@ -84,7 +85,7 @@ function App() {
 		} else {
 			if (user.is_public && authenticated) {
 				return <PublicUserNavTabs />;
-			} else if (user.is_employee || user.is_admin && authenticated) {
+			} else if ((user.is_employee || user.is_admin) && authenticated) {
 				return <StaffUserNavTabs />;
 			} else {
 				return <AuthNavTabs />;

@@ -279,7 +279,7 @@ export const checkChallengeCompletion = (userInfo) => async (dispatch) => {
 			.from("all_rides")
 			.select("*")
 			.match({ user_id: user_id })
-			.order("ride_end_time", { ascending: false })
+			.order("id", { ascending: false })
 			.limit(1)
 			.single();
 

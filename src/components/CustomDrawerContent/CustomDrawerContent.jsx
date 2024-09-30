@@ -38,11 +38,11 @@ export default function CustomDrawerContent({ route, active, drawer }) {
 					name: "Home",
 					action: () => () => openHomeScreen,
 				};
-			} else if (route === "Incentive") {
+			} else if (route === "AddRide") {
 				edit[i] = {
 					route: route,
-					name: "Previous Challenges",
-					action: () => openIncentiveScreen,
+					name: "Add a Ride",
+					action: () => openAddRideScreen,
 				};
 			} else if (route === "Resources") {
 				edit[i] = {
@@ -70,8 +70,8 @@ export default function CustomDrawerContent({ route, active, drawer }) {
 		navigation.navigate("HomeScreen");
 		// setOpenSD(false);
 	};
-	const openIncentiveScreen = () => {
-		navigation.navigate("Incentive");
+	const openAddRideScreen = () => {
+		navigation.navigate("AddRide");
 		// setOpenSD(false);
 	};
 	const openCalendarScreen = () => {

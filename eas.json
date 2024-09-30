@@ -9,6 +9,14 @@
       "distribution": "internal",
       "channel": "development"
     },
+    "ios-simulator":{
+		"developmentClient": true,
+		"distribution": "internal",
+    "channel": "ios-simulator",
+		"ios": {
+			"simulator": true
+		}
+	},
     "android-prev": {
       "distribution": "internal",
       "android": {

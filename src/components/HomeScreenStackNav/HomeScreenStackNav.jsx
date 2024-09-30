@@ -9,6 +9,7 @@ import CalendarScreen from "../../screens/CalendarScreen";
 import IncentiveScreen from "../../screens/IncentiveScreen";
 import ResourcesScreen from "../../screens/ResourcesScreen";
 import PedalPalsScreen from "../../screens/PedalPalsScreen";
+import AddRideScreen from "../../screens/AddRideScreen";
 import { Button, Dialog, Text } from "@rneui/themed";
 import {
 	createDrawerNavigator,
@@ -81,10 +82,15 @@ function DrawerMenu({ action }) {
 					title: "Home",
 				}}
 			/>
-			<Drawer.Screen
+			{/* <Drawer.Screen
 				name="Incentive"
 				component={IncentiveScreen}
 				options={{ ...styleOptions, title: "Previous Challenges" }}
+			/> */}
+			<Drawer.Screen
+				name="AddRide"
+				component={AddRideScreen}
+				options={{ ...styleOptions, title: "Add Ride" }}
 			/>
 			<Drawer.Screen
 				name="Resources"

@@ -213,22 +213,10 @@ export default function HomeScreen() {
 		setNewChallenge(findClosestTimestamp(activeChallenges));
 	}, [activeChallenges]);
 
-
-	// const challengesMet = activeChallenges.filter((challenge) => {
-	// 	const progress = challengeProgress.find(
-	// 		(prog) => {
-	// 			console.log('&&& PROG', prog);
-
-	// 			prog.active_incentive_id === challenge.id}
-	// 	);
-
-	// 	return progress && progress.has_been_met;
-	// });
 	const challengesMet = activeChallenges
 		.filter((challenge) => {
 			const progress = challengeProgress.find((prog) => {
-				console.log("&&& PROG", prog);
-				return prog.active_incentive_id === challenge.id; // Ensure to return the comparison
+				return prog.active_incentive_id === challenge.id;
 			});
 
 			return progress && progress.has_been_met;
@@ -264,7 +252,6 @@ export default function HomeScreen() {
 		return !progress || !progress.has_been_met;
 	});
 
-	const sortedChallenges = [...challengesNotMet, ...challengesMet];
 	const completedAlert = (challengesMet) => {
 		let mostRecentCompletion = null;
 
@@ -308,17 +295,11 @@ export default function HomeScreen() {
 				)
 			);
 		}
-
-		console.log(
-			"&&& Most recent completed challenge:",
-			mostRecentCompletion
-		);
 	};
 
 
 	useEffect(() => {
 		if (rewardWinner && rewardWinner.length > 0) {
-			console.log("setting winner true");
 			setWinner(true);
 		}
 	}, []);
@@ -399,39 +380,18 @@ export default function HomeScreen() {
 									>
 										If you have any questions, or need
 										assistance please contact
-										_____@bikemn.org.
+										ibikemn@bikemn.org.
 									</Text>
 								</View>
 							</View>
 						</View>
 					</Dialog>
 
-					{/* {winner && (
-						<View style={styles.rewardSection}>
-							{rewardWinner.map((reward) => (
-								<View key={reward.id}>
-									<Text style={styles.rewardTitle}>
-										Congrats {user.username}!
-									</Text>
-									<Text style={styles.rewardTitle}>
-										You are the winner of the{" "}
-										{reward.incentive_info.title} challenge
-									</Text>
-								</View>
-							))}
-						</View>
-					)} */}
-
 					<View style={styles.leftColAr}>
 						<Text
-							style={[styles.sectionText, { marginBottom: 10 }]}
+							style={[styles.sectionText, { marginBottom: 0}]}
 						>
-							{user.username}'s Stats
-						</Text>
-						<Text
-							style={[styles.sectionText, { marginBottom: 10 }]}
-						>
-							{/* {`Met: ${challengesMet.length}  >  Comp: ${completedChallenges} `} */}
+							{user.username}'s Ride Stats
 						</Text>
 						<UserStatsSection
 							travelStats={travelStats}
@@ -443,7 +403,7 @@ export default function HomeScreen() {
 							styles.sectionText,
 							{
 								alignSelf: "flex-start",
-								marginTop: 20,
+								marginTop: 10,
 								marginBottom: 5,
 							},
 						]}
@@ -476,7 +436,6 @@ export default function HomeScreen() {
 									styles.sectionText,
 									{
 										alignSelf: "flex-start",
-										marginTop: 5,
 										marginBottom: 5,
 									},
 								]}
@@ -593,7 +552,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		padding: 5,
 		// borderRadius: 16,
-		marginBottom: 5,
+		marginBottom: 1,
 	},
 	leftColAr: {
 		justifyContent: "space-around",

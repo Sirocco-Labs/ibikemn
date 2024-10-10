@@ -1,60 +1,58 @@
 {
-  "cli": {
-    "version": ">= 7.8.2",
-    "appVersionSource": "remote"
-  },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "channel": "development"
-    },
-    "ios-simulator":{
-		"developmentClient": true,
-		"distribution": "internal",
-    "channel": "ios-simulator",
-		"ios": {
-			"simulator": true
+	"cli": {
+		"version": ">= 7.8.2",
+		"appVersionSource": "remote"
+	},
+	"build": {
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal",
+			"channel": "development"
+		},
+		"ios-simulator": {
+			"developmentClient": true,
+			"distribution": "internal",
+			"channel": "ios-simulator",
+			"ios": {
+				"simulator": true
+			}
+		},
+		"android-prev": {
+			"distribution": "internal",
+			"android": {
+				"buildType": "apk"
+			},
+			"channel": "android-prev"
+		},
+		"ios-prev": {
+			"distribution": "internal",
+			"ios": {
+				"enterpriseProvisioning": "adhoc"
+			},
+			"channel": "ios-prev"
+		},
+		"android-prod": {
+			"autoIncrement": true,
+			"env": {
+				"EXPO_PUBLIC_PROD_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_PROD_SUPABASE_URL)",
+				"EXPO_PUBLIC_PROD_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_PROD_SUPABASE_ANON_KEY)"
+			},
+			"channel": "android-prod"
+		},
+		"ios-prod": {
+			"autoIncrement": true,
+			"env": {
+				"EXPO_PUBLIC_PROD_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_PROD_SUPABASE_URL)",
+				"EXPO_PUBLIC_PROD_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_PROD_SUPABASE_ANON_KEY)"
+			},
+			"channel": "ios-prod"
 		}
 	},
-    "android-prev": {
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      },
-      "channel": "android-prev"
-    },
-    "ios-prev": {
-      "distribution": "internal",
-      "ios": {
-        "enterpriseProvisioning": "adhoc"
-      },
-      "channel": "ios-prev"
-    },
-    "android-prod": {
-      "autoIncrement": true,
-      "env": {
-        "EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
-      },
-      "channel": "android-prod"
-    },
-    "ios-prod": {
-      "autoIncrement": true,
-      "env": {
-        "EXPO_PUBLIC_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_SUPABASE_URL)",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)"
-      },
-      "channel": "ios-prod"
-    }
-  },
-  "submit": {
-    "production": {
-      "android": {
-			// "serviceAccountKeyPath": "$(process.env.EXPO_PUBLIC_GOOGLE_SERVICE_ACCOUNT_KEY_PATH)",
-			"track": "production"
+	"submit": {
+		"production": {
+			"android": {
+				"track": "production"
+			}
 		}
-
-    }
-  }
+	}
 }

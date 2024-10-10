@@ -1,14 +1,10 @@
 import { useState, useRef, useCallback } from "react";
-import {
-	View,
-	StyleSheet,
-	KeyboardAvoidingView,
-	Platform,
-} from "react-native";
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { Text, Icon, Input, CheckBox } from "@rneui/themed";
 import ScaleButton from "../components/ScaleButton/ScaleButton";
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import DatePicker from "react-native-date-picker";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addToAllRides } from "../redux/thunks/userRidesThunk";
@@ -37,11 +33,11 @@ export default function AddRideScreen({}) {
 		ride_end_time: "",
 	};
 	const [form, setForm] = useState(data);
-    useFocusEffect(
+	useFocusEffect(
 		useCallback(() => {
-            setDateTime(new Date())
-        },[dispatch]))
-
+			setDateTime(new Date());
+		}, [dispatch])
+	);
 
 	const handleAddRide = () => {
 		let payload = { ...form, ride_start_time: dateTime.toISOString() };
@@ -143,6 +139,11 @@ export default function AddRideScreen({}) {
 	};
 	const [survey, setSurvey] = useState(surveyData);
 	const [dateTime, setDateTime] = useState(new Date());
+	const [date, setDate] = useState(new Date());
+	const [time, setTime] = useState(new Date());
+	const toggle = { date: false, time: false };
+	const [show, setShow] = useState(toggle);
+	const [open, setOpen] = useState(false);
 
 	const changeDateTime = (event, selectedDateTime) => {
 		const currentDateTime = selectedDateTime;
@@ -150,12 +151,24 @@ export default function AddRideScreen({}) {
 
 		setDateTime(currentDateTime);
 	};
+	const changeDate = (event, selectedDate) => {
+		const currentDate = selectedDate;
+		console.log("&&& SELECTED DATETIME", selectedDate);
+
+		setDate(currentDate);
+	};
+	const changeTime = (event, selectedTime) => {
+		const currentTime = selectedTime;
+		console.log("&&& SELECTED TIME", selectedTime);
+
+		setTime(currentTime);
+	};
 
 	const finalCleanUp = () => {
 		dispatch(checkChallengeCompletion(userInfo));
 		setSurvey(surveyData);
 		setForm(data);
-        setDateTime(new Date())
+		setDateTime(new Date());
 		dispatch(clearCommuteSlice());
 		navigation.navigate("HomeScreen");
 	};
@@ -169,7 +182,57 @@ export default function AddRideScreen({}) {
 			<ScreenWrapper>
 				<View style={styles.sectionView}>
 					<View style={styles.leftColAr}>
+						<Text style={styles.fieldTitle}>
+							When was your ride?
+						</Text>
+						<View style={{ justifyContent:'center', alignItems:'center', width:'100%'}}>
+							<Text style={{ textAlign: "center", fontSize: 13 }}>
+								{dateTime.toLocaleTimeString("en-US", {
+									weekday: "long",
+									year: "numeric",
+									month: "long",
+									day: "numeric",
+									hour: "2-digit",
+									minute: "2-digit",
+								})}
+							</Text>
+                            <ScaleButton>
+                                <Text>
+                                    Choose Date
+
+                                </Text>
+                            </ScaleButton>
+						</View>
 						<View
+							style={{
+								overflow: "hidden",
+								height: 125,
+								// borderWidth: 2,
+								// borderRadius: 5,
+								justifyContent: "center",
+								marginVertical: 10,
+								alignSelf: "left",
+							}}
+						>
+							<DatePicker
+								// locale="en-us"
+								is24hourSource={"device"}
+								onDateChange={setDateTime}
+								maximumDate={new Date()}
+								date={dateTime}
+								minuteInterval={5}
+								// modal
+								// open={open}
+								// onConfirm={(date) => {
+								// 	setOpen(false);
+								// 	setDateTime(date);
+								// }}
+								// onCancel={() => {
+								// 	setOpen(false);
+								// }}
+							/>
+						</View>
+						{/* <View
 							style={{
 								// flex: 1,
 								flexDirection: "row",
@@ -178,20 +241,69 @@ export default function AddRideScreen({}) {
 								// width: "100%",
 							}}
 						>
-							<Text style={styles.fieldTitle}>
-								When was your ride?
-							</Text>
-
-							<DateTimePicker
-								timeZoneName={"America/Chicago"}
-								minuteInterval={15}
-								maximumDate={new Date()}
-								value={dateTime}
-								mode={"datetime"}
-								is24Hour={false}
-								onChange={changeDateTime}
-							/>
-						</View>
+							{Platform.OS === "ios" ? (
+								<DateTimePicker
+									timeZoneName={"America/Chicago"}
+									minuteInterval={15}
+									maximumDate={new Date()}
+									value={dateTime}
+									mode={"datetime"}
+									is24Hour={false}
+									onChange={changeDateTime}
+								/>
+							) : (
+								<View
+									style={{
+										flexDirection: "row",
+										justifyContent: "space-between",
+										alignItems: "center",
+									}}
+								>
+									{show.date && (
+										<DateTimePicker
+											timeZoneName={"America/Chicago"}
+											minuteInterval={15}
+											maximumDate={new Date()}
+											value={date}
+											mode={"date"}
+											is24Hour={false}
+											onChange={changeDate}
+										/>
+									)}
+									{show.time && (
+										<DateTimePicker
+											timeZoneName={"America/Chicago"}
+											minuteInterval={15}
+											maximumDate={new Date()}
+											value={time}
+											mode={"time"}
+											is24Hour={false}
+											onChange={changeTime}
+										/>
+									)}
+									<Text
+										style={{ marginHorizontal: 5 }}
+										onPress={() => {
+											setOpen(true);
+										}}
+									>
+										Choose
+									</Text>
+									<Text
+										style={{ marginHorizontal: 5 }}
+										onPress={() => {
+											setShow({ ...show, date: true });
+										}}
+									>
+										{" "}
+										MM/DD/YYYY
+									</Text>
+									<Text style={{ marginHorizontal: 5 }}>
+										__:__ AM/PM
+									</Text>
+								</View>
+							)}
+						</View> */}
 						<View
 							style={{
 								marginVertical: 5,

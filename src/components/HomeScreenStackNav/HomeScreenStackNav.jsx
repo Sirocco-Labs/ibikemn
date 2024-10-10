@@ -3,19 +3,14 @@ import {
 	TransitionPresets,
 } from "@react-navigation/stack";
 
-import { Platform, Easing, View } from "react-native";
+import {Easing} from "react-native";
 import HomeScreen from "../../screens/HomeScreen";
-import CalendarScreen from "../../screens/CalendarScreen";
 import IncentiveScreen from "../../screens/IncentiveScreen";
 import ResourcesScreen from "../../screens/ResourcesScreen";
 import PedalPalsScreen from "../../screens/PedalPalsScreen";
 import AddRideScreen from "../../screens/AddRideScreen";
-import { Button, Dialog, Text } from "@rneui/themed";
 import {
 	createDrawerNavigator,
-	DrawerContentScrollView,
-	DrawerItemList,
-	DrawerItem,
 } from "@react-navigation/drawer";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useEffect, useState } from "react";
@@ -25,9 +20,8 @@ const Stack = createStackNavigator();
 
 const Drawer = createDrawerNavigator();
 
-
 function DrawerMenu({ action }) {
-	const headerHeight = useHeaderHeight();
+
 	const styleOptions = {
 		headerStyle: { backgroundColor: "#1269A9" },
 		headerTintColor: "#FFFAF2",
@@ -36,19 +30,18 @@ function DrawerMenu({ action }) {
 	const { hide, setHide } = action;
 
 	const [active, setActive] = useState("");
+	const [header, setHeader] = useState(0);
 
 	return (
 		<Drawer.Navigator
 			screenOptions={{
 				drawerStyle: {
-					// backgroundColor: "white",
 					backgroundColor: "#F7b247",
 					height: "35%",
 					width: "45%",
-					marginTop: 98,
+					marginTop: header,
 					borderTopRightRadius: 35,
 					borderBottomLeftRadius: 35,
-					// borderBottomRightRadius: 35,
 					borderColor: "#F7b247",
 					borderWidth: 1,
 				},
@@ -76,17 +69,12 @@ function DrawerMenu({ action }) {
 		>
 			<Drawer.Screen
 				name={"HomeScreen"}
-				children={() => <HomeScreenStack action={action} />}
+				children={() => <HomeScreenStack action={action} dynamicHeader={{header,setHeader}} />}
 				options={{
 					...styleOptions,
 					title: "Home",
 				}}
 			/>
-			{/* <Drawer.Screen
-				name="Incentive"
-				component={IncentiveScreen}
-				options={{ ...styleOptions, title: "Previous Challenges" }}
-			/> */}
 			<Drawer.Screen
 				name="AddRide"
 				component={AddRideScreen}
@@ -106,7 +94,13 @@ function DrawerMenu({ action }) {
 	);
 }
 
-function HomeScreenStack({ action }) {
+function HomeScreenStack({ action, dynamicHeader }) {
+	const {header, setHeader}= dynamicHeader
+	const headerHeight = useHeaderHeight();
+	useEffect(() => {
+		setHeader(headerHeight);
+	}, [headerHeight]);
+	
 	const styleOptions = {
 		headerStyle: { backgroundColor: "#1269A9" },
 		headerTintColor: "#FFFAF2",
@@ -188,12 +182,6 @@ function HomeScreenStack({ action }) {
 	);
 }
 export default function HomeScreenStackNav({ action }) {
-	const styleOptions = {
-		headerStyle: { backgroundColor: "#1269A9" },
-		headerTintColor: "#FFFAF2",
-	};
-	const { hide, setHide } = action;
-
 	return (
 		<DrawerMenu action={action} />
 		// <Stack.Navigator

@@ -1,13 +1,12 @@
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 import CalendarScreen from "../../screens/CalendarScreen";
 
-import { Text, SpeedDial, Button, Icon } from "@rneui/themed";
+import { Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 
 export default function CustomDrawerContent({ route, active, drawer }) {
-	console.log("*&-->>>> Route", route);
 
 	const navigation = useNavigation();
 	const dialogSwitch = {
@@ -61,10 +60,10 @@ export default function CustomDrawerContent({ route, active, drawer }) {
 		setRoutes([...edit]);
 	}, [route]);
 
-	useEffect(() => {
-		console.log("*&-----routes", routes);
-		console.log("*&----- ACTIVE", active);
-	}, [routes]);
+	// useEffect(() => {
+	// 	console.log("*&-----routes", routes);
+	// 	console.log("*&----- ACTIVE", active);
+	// }, [routes]);
 
 	const openHomeScreen = () => {
 		navigation.navigate("HomeScreen");
@@ -123,6 +122,7 @@ export default function CustomDrawerContent({ route, active, drawer }) {
 								: "",
 							borderBottomWidth: validator(route) ? 2 : 0,
 							width: "75%",
+							marginBottom: 25,
 						}}
 						onPress={() => {
 							route.route === "Events"
@@ -132,7 +132,7 @@ export default function CustomDrawerContent({ route, active, drawer }) {
 					>
 						<Text
 							style={{
-								marginVertical: 5,
+								// marginVertical: 5,
 								fontSize: 18,
 								color: validator(route) ? "#1269A9" : "#fff",
 								fontWeight: 700,

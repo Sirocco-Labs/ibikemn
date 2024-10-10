@@ -13,6 +13,7 @@ import rideSurveys from './slices/rideSurveySlice'
 import incentives from './slices/incentiveSlice'
 import allUserRides from './slices/allUserRidesSlice'
 import media from './slices/resourceMediaSlice'
+import orgList from './slices/private/orgListSlice'
 
 
 
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
     incentives,
     allUserRides,
     media,
-    feedback
+    feedback,
+    orgList
 
 });
 

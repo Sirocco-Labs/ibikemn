@@ -13,12 +13,15 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { SafeAreaView, View, StyleSheet, Platform } from "react-native";
 import Toast from "react-native-toast-message";
+import { useEffect } from "react";
+import { getOrganizations } from "../redux/thunks/private/organizationThunk";
+import { useDispatch } from "react-redux";
 // import { useDispatch } from "react-redux";
 // import { clearAllFeedback, clearFeedback } from "../redux/slices/feedbackSlice";
 
 
 export default function CreateProfileScreen() {
-	// const dispatch = useDispatch()
+	const dispatch = useDispatch()
 	const Tab = createBottomTabNavigator();
 	const styleOptions = {
 		headerStyle: { backgroundColor: "#1269A9" },
@@ -36,6 +39,9 @@ export default function CreateProfileScreen() {
 					padding: 2,
 					backgroundColor: "#1269A9",
 			  };
+			  useEffect(()=>{
+				dispatch(getOrganizations())
+			  },[])
 
 	return (
 		<>

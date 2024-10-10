@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 export default function UserStatsSection({ survey, travelStats }) {
 	return (
 		<>
-			<Text style={styles.sectionText}>Commuting To Work</Text>
+			<Text style={styles.sectionText}>Rides To Work</Text>
 
 			<ListItem
 				containerStyle={{
@@ -65,7 +65,7 @@ export default function UserStatsSection({ survey, travelStats }) {
 				style={{ width: "100%", marginTop: 5}}
 				insetType="middle"
 			/>
-			<Text style={styles.sectionText}>Leisure Riding</Text>
+			<Text style={styles.sectionText}>Other Rides</Text>
 			<ListItem
 				containerStyle={{
 					width: "100%",
@@ -172,7 +172,7 @@ export default function UserStatsSection({ survey, travelStats }) {
 					</ListItem.Subtitle>
 				</ListItem.Content>
 			</ListItem>
-			<Divider
+			{/* <Divider
 				width={2}
 				color="#F7B247"
 				style={{ width: "100%", marginTop: 5 }}
@@ -230,7 +230,7 @@ export default function UserStatsSection({ survey, travelStats }) {
 						{survey.route_type ? survey.route_type.value : 'N/A'}
 					</ListItem.Subtitle>
 				</ListItem.Content>
-			</ListItem>
+			</ListItem> */}
 		</>
 	);
 }
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
 	sectionText: {
 		fontSize: 16,
 		color: "#1269A9",
-		marginTop: 1,
+		marginTop: 5,
 		marginBottom: 3,
 	},
 });

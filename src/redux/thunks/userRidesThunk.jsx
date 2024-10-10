@@ -75,6 +75,7 @@ export const addToAllRides = (rideData) => async (dispatch) => {
 			.single();
 		if (insertRide.error) {
 			console.log("SUPABASE INSERT RIDE ERROR! : ", insertRide.error);
+			return Promise.reject(insertRide.error);
 		} else {
 			console.log(
 				"SUPABASE INSERT RIDE SUCCESS! : ",
@@ -91,6 +92,7 @@ export const addToAllRides = (rideData) => async (dispatch) => {
 			"COMMUTE THUNK ERROR ----> addToAllRides(rideData): ",
 			error
 		);
+		return Promise.reject(insertRide.error);
 	}
 };
 

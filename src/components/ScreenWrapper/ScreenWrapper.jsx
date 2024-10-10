@@ -28,8 +28,6 @@ export default function ScreenWrapper({
 	return noScroll ? (
 		<SafeAreaView style={[styles.safe, background]}>
 			<View style={[styles.noScroll, background]}>{children}</View>
-			{/* {underScroll} */}
-			{/* <CustomSpeedDial /> */}
 		</SafeAreaView>
 	) : (
 		<SafeAreaView style={styles.safe}>

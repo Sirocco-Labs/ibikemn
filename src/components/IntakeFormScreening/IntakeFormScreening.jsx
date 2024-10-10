@@ -43,6 +43,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 	const intake = useSelector((store) => store.intake);
 	const feedback = useSelector((store) => store.feedback);
 	const [screening, setScreening] = useState(intake.screening);
+	const orgs = useSelector((store) => store.orgList);
 
 	// const discovery = [
 	// 	{
@@ -172,6 +173,36 @@ export default function IntakeFormScreening({ navigation, route }) {
 			value: 4,
 		},
 	];
+	useEffect(() => {
+		console.log('orgs',orgs);
+
+		let edit = [];
+		for(let i=0;i<orgs.length;i++){
+			let org = orgs[i]
+			edit.push({
+				level: "staff",
+				choice: false,
+				title: org.name,
+				value: org.id,
+			})
+
+
+		}
+
+		const final = [
+			{
+				level: "admin",
+				choice: false,
+				title: "BikeMN",
+				value: 0,
+			},
+			...edit,
+		];
+
+		console.log('final',final);
+		setEmployment(final)
+		setOrgList(final)
+	}, [orgs]);
 
 	const orgData = [
 		{
@@ -193,8 +224,13 @@ export default function IntakeFormScreening({ navigation, route }) {
 	];
 	const [discovery, setDiscovery] = useState(discoveryData);
 	const [frequency, setFrequency] = useState(frequencyData);
-	const [employment, setEmployment] = useState(employmentData);
+	const [employment, setEmployment] = useState([]);
+	const [orgList, setOrgList] = useState([]);
 	const [advance, setAdvance] = useState(false);
+	useEffect(()=>{
+		console.log('employment',employment);
+
+	},[employment.length])
 
 	const showVerifyError = (message) => {
 		Toast.show({
@@ -206,7 +242,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 				dispatch(
 					clearFeedback({ sliceName: "registration", type: "error" })
 				);
-				setSecret('')
+				setSecret("");
 			},
 		});
 	};
@@ -244,7 +280,11 @@ export default function IntakeFormScreening({ navigation, route }) {
 						? intake.screening.bike_confidence
 						: 1
 				);
-				setAdvance(false)
+				if(intake.screening.staff_identity || intake.screening.admin_identity){
+					setAdvance(true);
+				}else{
+					setAdvance(false);
+				}
 			};
 		}, [intake])
 	);
@@ -287,8 +327,6 @@ export default function IntakeFormScreening({ navigation, route }) {
 		}
 	}, [intake]);
 
-
-
 	useEffect(() => {
 		console.log("$# VALUE CHANGED");
 		setScreening({ ...screening, bike_confidence: value });
@@ -319,6 +357,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 
 	const handleSave = () => {
 		dispatch(setIntakeScreening(screening));
+
 
 		setLoading(!loading);
 	};
@@ -470,7 +509,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 	};
 
 	const handleNext = () => {
-		console.log('ADVANCE', advance);
+		console.log("ADVANCE", advance);
 		if (
 			!intake.screening.how_did_you_hear &&
 			!intake.screening.commute_frequency &&
@@ -478,17 +517,16 @@ export default function IntakeFormScreening({ navigation, route }) {
 		) {
 			return true;
 		} else if (advance === true && intake.screening.secret) {
-				if (
-					intake.screening.how_did_you_hear &&
-					intake.screening.commute_frequency &&
-					intake.screening.bike_confidence
-				) {
-					return false;
-				} else {
-					return true;
-				}
+			if (
+				intake.screening.how_did_you_hear &&
+				intake.screening.commute_frequency &&
+				intake.screening.bike_confidence
+			) {
+				return false;
+			} else {
+				return true;
 			}
-
+		}
 	};
 
 	return (
@@ -771,11 +809,11 @@ export default function IntakeFormScreening({ navigation, route }) {
 											Who's your employer?
 										</Text>
 										<View style={styles.gridCB}>
-											{employmentData.map((box, i) => (
+											{orgList.map((box, i) => (
 												<View
 													style={
 														checkForLast(
-															employmentData,
+															orgList,
 															i
 														)
 															? styles.lastGridItemCB
@@ -847,53 +885,52 @@ export default function IntakeFormScreening({ navigation, route }) {
 							</View>
 						)}
 					</View>
-
 				</View>
 			</View>
-					<View style={styles.btnSection}>
-						<View style={styles.grid}>
-							<Button
-								title={"Back"}
-								icon={{
-									name: "arrow-left",
-									color: "white",
-								}}
-								onPress={() => {
-									navigation.jumpTo("Address");
-								}}
-								buttonStyle={styles.backBtn}
-								titleStyle={{
-									marginRight: 15,
-								}}
-							/>
-							<Button
-								title={"Save"}
-								icon={{ name: "save", color: "white" }}
-								iconRight
-								loading={loading}
-								disabled={validateSave()}
-								onPress={handleSave}
-								buttonStyle={styles.nextBtn}
-								// titleStyle={styles.ml15}
-							/>
-							<Button
-								title={"Next"}
-								icon={{
-									name: "arrow-right",
-									color: "white",
-								}}
-								iconRight={true}
-								disabled={handleNext()}
-								onPress={() => {
-									navigation.jumpTo("Demographics");
-								}}
-								buttonStyle={styles.nextBtn}
-								titleStyle={{
-									marginLeft: 15,
-								}}
-							/>
-						</View>
-					</View>
+			<View style={styles.btnSection}>
+				<View style={styles.grid}>
+					<Button
+						title={"Back"}
+						icon={{
+							name: "arrow-left",
+							color: "white",
+						}}
+						onPress={() => {
+							navigation.jumpTo("Address");
+						}}
+						buttonStyle={styles.backBtn}
+						titleStyle={{
+							marginRight: 15,
+						}}
+					/>
+					<Button
+						title={"Save"}
+						icon={{ name: "save", color: "white" }}
+						iconRight
+						loading={loading}
+						disabled={validateSave()}
+						onPress={handleSave}
+						buttonStyle={styles.nextBtn}
+						// titleStyle={styles.ml15}
+					/>
+					<Button
+						title={"Next"}
+						icon={{
+							name: "arrow-right",
+							color: "white",
+						}}
+						iconRight={true}
+						disabled={handleNext()}
+						onPress={() => {
+							navigation.jumpTo("Demographics");
+						}}
+						buttonStyle={styles.nextBtn}
+						titleStyle={{
+							marginLeft: 15,
+						}}
+					/>
+				</View>
+			</View>
 		</ScreenWrapper>
 		// {/* </KeyboardAvoidingScrollView> */}
 	);
@@ -984,7 +1021,7 @@ const styles = StyleSheet.create({
 		marginTop: 15,
 	},
 	btnSection: {
-		width:'100%',
+		width: "100%",
 		marginBottom: 5,
 	},
 	section: {

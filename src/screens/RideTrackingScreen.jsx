@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
 		color: "#fff",
 	},
 	timeText: {
-		fontSize: 75,
+		fontSize: 60,
 		color: "#fff",
 		letterSpacing:4
 	},

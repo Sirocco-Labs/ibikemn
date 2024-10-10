@@ -11,7 +11,7 @@ import { Video } from "expo-av";
 import { Text, Icon, Slider } from "@rneui/themed";
 import * as ScreenOrientation from "expo-screen-orientation";
 
-export default function VideoMediaItem({ vid }) {
+export default function VideoMediaItem({ vid, actions }) {
 	const vidRef = useRef(null);
 	const [status, setStatus] = useState({});
 	const [loading, setLoading] = useState(true);
@@ -35,8 +35,12 @@ export default function VideoMediaItem({ vid }) {
 		is_displayed,
 		created_at,
 	} = vid;
+
+	const { open, setOpen } = actions;
+
 	const handleFullscreenUpdate = async ({ fullscreenUpdate }) => {
 		console.log("@#$UPDATE", vidInfo);
+
 		if (vidInfo.naturalSize.orientation === "landscape") {
 			if (fullscreenUpdate < 2) {
 				await ScreenOrientation.lockAsync(
@@ -48,6 +52,9 @@ export default function VideoMediaItem({ vid }) {
 					ScreenOrientation.OrientationLock.PORTRAIT_UP
 				);
 				setFullScreen(false);
+				if (open) {
+					setOpen(false);
+				}
 			}
 		}
 	};
@@ -112,15 +119,17 @@ export default function VideoMediaItem({ vid }) {
 
 	return (
 		<>
-			<Text
-				style={{
-					fontSize:17,
-					marginBottom: 10,
-					fontWeight: "700",
-				}}
-			>
-				{media_title}
-			</Text>
+			{media_title && (
+				<Text
+					style={{
+						fontSize: 17,
+						marginBottom: 10,
+						fontWeight: "700",
+					}}
+				>
+					{media_title}
+				</Text>
+			)}
 			<View
 				style={[
 					styles.videoContainer,
@@ -245,9 +254,11 @@ export default function VideoMediaItem({ vid }) {
 					</TouchableOpacity>
 				</View>
 			</View>
-			<Text style={{ alignSelf: "center", marginBottom: 20 }}>
-				{media_caption}
-			</Text>
+			{media_caption && (
+				<Text style={{ alignSelf: "center", marginBottom: 20 }}>
+					{media_caption}
+				</Text>
+			)}
 		</>
 	);
 }
@@ -323,7 +334,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		backgroundColor: "rgba(0, 0, 0, 0.5)",
 		padding: 10,
-		borderRadius:12,
+		borderRadius: 12,
 		// borderBottomLeftRadius:12,
 		// borderBottomRightRadius:12
 	},

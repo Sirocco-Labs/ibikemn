@@ -5,62 +5,7 @@ import { StyleSheet } from "react-native";
 export default function UserStatsSection({ survey, travelStats }) {
 	return (
 		<>
-			<ListItem
-				containerStyle={{
-					width: "100%",
-					padding: 0,
-				}}
-			>
-				<Avatar
-					rounded
-					icon={{
-						type: "material-community",
-						name: "bike",
-						size: 20,
-						color: "#1269A9",
-					}}
-					containerStyle={{
-						backgroundColor: "#F7B247",
-						borderColor: "#1269A9",
-						borderWidth: 1.5,
-					}}
-				/>
-				<ListItem.Content style={{ alignItems: "flex-start" }}>
-					<ListItem.Title>Total Rides</ListItem.Title>
-					<ListItem.Subtitle>
-						{travelStats.rides_total}
-					</ListItem.Subtitle>
-				</ListItem.Content>
-				<Avatar
-					rounded
-					icon={{
-						type: "material",
-						name: "mode-of-travel",
-						size: 20,
-						color: "#1269A9",
-					}}
-					containerStyle={{
-						backgroundColor: "#F7B247",
-						borderColor: "#1269A9",
-						borderWidth: 1.5,
-					}}
-				/>
-				<ListItem.Content style={{ alignItems: "flex-start" }}>
-					<ListItem.Title>Total Miles</ListItem.Title>
-					<ListItem.Subtitle>
-						{travelStats.miles_total
-							? parseFloat(travelStats.miles_total?.toFixed(2))
-							: 0}{" "}
-						mi
-					</ListItem.Subtitle>
-				</ListItem.Content>
-			</ListItem>
-			<Divider
-				width={2}
-				color="#F7B247"
-				style={{ width: "100%", marginVertical: 5 }}
-				insetType="middle"
-			/>
+			<Text style={styles.sectionText}>Rides To Work</Text>
 
 			<ListItem
 				containerStyle={{
@@ -83,7 +28,7 @@ export default function UserStatsSection({ survey, travelStats }) {
 					}}
 				/>
 				<ListItem.Content style={{ alignItems: "flex-start" }}>
-					<ListItem.Title>Work Rides</ListItem.Title>
+					<ListItem.Title>Rides</ListItem.Title>
 					<ListItem.Subtitle>
 						{travelStats.commute_rides_total}
 					</ListItem.Subtitle>
@@ -103,7 +48,7 @@ export default function UserStatsSection({ survey, travelStats }) {
 					}}
 				/>
 				<ListItem.Content style={{ alignItems: "flex-start" }}>
-					<ListItem.Title>Miles to Work</ListItem.Title>
+					<ListItem.Title>Miles</ListItem.Title>
 					<ListItem.Subtitle>
 						{travelStats.commute_miles_total
 							? parseFloat(
@@ -117,7 +62,66 @@ export default function UserStatsSection({ survey, travelStats }) {
 			<Divider
 				width={2}
 				color="#F7B247"
-				style={{ width: "100%", marginVertical: 5 }}
+				style={{ width: "100%", marginTop: 5}}
+				insetType="middle"
+			/>
+			<Text style={styles.sectionText}>Other Rides</Text>
+			<ListItem
+				containerStyle={{
+					width: "100%",
+					padding: 0,
+				}}
+			>
+				<Avatar
+					rounded
+					icon={{
+						type: "material-community",
+						name: "bike",
+						size: 20,
+						color: "#1269A9",
+					}}
+					containerStyle={{
+						backgroundColor: "#F7B247",
+						borderColor: "#1269A9",
+						borderWidth: 1.5,
+					}}
+				/>
+				<ListItem.Content style={{ alignItems: "flex-start" }}>
+					<ListItem.Title>Rides</ListItem.Title>
+					<ListItem.Subtitle>
+						{travelStats.rides_total -
+							travelStats.commute_rides_total}
+					</ListItem.Subtitle>
+				</ListItem.Content>
+				<Avatar
+					rounded
+					icon={{
+						type: "material",
+						name: "mode-of-travel",
+						size: 20,
+						color: "#1269A9",
+					}}
+					containerStyle={{
+						backgroundColor: "#F7B247",
+						borderColor: "#1269A9",
+						borderWidth: 1.5,
+					}}
+				/>
+				<ListItem.Content style={{ alignItems: "flex-start" }}>
+					<ListItem.Title>Miles</ListItem.Title>
+					<ListItem.Subtitle>
+						{travelStats.miles_total
+							? parseFloat(travelStats.miles_total?.toFixed(2))
+							: 0}{" "}
+						mi
+					</ListItem.Subtitle>
+				</ListItem.Content>
+			</ListItem>
+
+			<Divider
+				width={2}
+				color="#F7B247"
+				style={{ width: "100%", marginVertical: 5}}
 				insetType="middle"
 			/>
 
@@ -144,7 +148,7 @@ export default function UserStatsSection({ survey, travelStats }) {
 				<ListItem.Content style={{ alignItems: "flex-start" }}>
 					<ListItem.Title>Solo Rides</ListItem.Title>
 					<ListItem.Subtitle>
-						{survey.is_solo ? survey.is_solo.solo : null}
+						{survey.is_solo ? survey.is_solo.solo : 'N/A'}
 					</ListItem.Subtitle>
 				</ListItem.Content>
 				<Avatar
@@ -164,16 +168,19 @@ export default function UserStatsSection({ survey, travelStats }) {
 				<ListItem.Content style={{ alignItems: "flex-start" }}>
 					<ListItem.Title>Group Rides</ListItem.Title>
 					<ListItem.Subtitle>
-						{survey.is_solo ? survey.is_solo.group : null}
+						{survey.is_solo ? survey.is_solo.group : 'N/A'}
 					</ListItem.Subtitle>
 				</ListItem.Content>
 			</ListItem>
-			<Divider
+			{/* <Divider
 				width={2}
 				color="#F7B247"
-				style={{ width: "100%", marginVertical: 5 }}
+				style={{ width: "100%", marginTop: 5 }}
 				insetType="middle"
 			/>
+			<Text style={styles.sectionText}>
+				Most Common Destination & Route
+			</Text>
 
 			<ListItem
 				containerStyle={{
@@ -200,7 +207,7 @@ export default function UserStatsSection({ survey, travelStats }) {
 					<ListItem.Subtitle>
 						{survey.destination_type
 							? survey.destination_type.value
-							: null}
+							: 'N/A'}
 					</ListItem.Subtitle>
 				</ListItem.Content>
 				<Avatar
@@ -220,10 +227,10 @@ export default function UserStatsSection({ survey, travelStats }) {
 				<ListItem.Content style={{ alignItems: "flex-start" }}>
 					<ListItem.Title>Route Type</ListItem.Title>
 					<ListItem.Subtitle>
-						{survey.route_type ? survey.route_type.value : null}
+						{survey.route_type ? survey.route_type.value : 'N/A'}
 					</ListItem.Subtitle>
 				</ListItem.Content>
-			</ListItem>
+			</ListItem> */}
 		</>
 	);
 }
@@ -317,5 +324,11 @@ const styles = StyleSheet.create({
 	},
 	mv10: {
 		marginVertical: 10,
+	},
+	sectionText: {
+		fontSize: 16,
+		color: "#1269A9",
+		marginTop: 5,
+		marginBottom: 3,
 	},
 });

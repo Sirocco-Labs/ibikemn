@@ -5,8 +5,10 @@ import BikeListScreen from "../../screens/private/BikeListScreen";
 import HomeScreenStackNav from "../HomeScreenStackNav/HomeScreenStackNav";
 import RideScreenStackNav from "../RideScreenStackNav/RideScreenStackNav";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
+import {
+	createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Platform, StatusBar } from "react-native";
 import { useState } from "react";
 
@@ -38,6 +40,7 @@ export default function StaffUserNavTabs() {
 		<>
 			<NavigationContainer>
 				<StatusBar barStyle="light-content" backgroundColor="#1269A9" />
+				{/* <DrawerMenu /> */}
 				<Tab.Navigator
 					initialRouteName="Home"
 					screenOptions={({ route }) => ({

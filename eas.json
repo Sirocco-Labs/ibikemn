@@ -17,6 +17,17 @@
 				"simulator": true
 			}
 		},
+		"env-test-android": {
+			"distribution": "internal",
+			"android": {
+				"buildType": "apk"
+			},
+			"env": {
+				"EXPO_PUBLIC_PROD_SUPABASE_URL": "$(process.env.EXPO_PUBLIC_PROD_SUPABASE_URL)",
+				"EXPO_PUBLIC_PROD_SUPABASE_ANON_KEY": "$(process.env.EXPO_PUBLIC_PROD_SUPABASE_ANON_KEY)"
+			},
+			"channel": "env-test-android"
+		},
 		"android-prev": {
 			"distribution": "internal",
 			"android": {

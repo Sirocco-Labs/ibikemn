@@ -6,6 +6,7 @@ import {
 	TouchableWithoutFeedback,
 	Keyboard,
 	Platform,
+	ActivityIndicator,
 } from "react-native";
 import { Button, Input, Text } from "@rneui/themed";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,7 +32,8 @@ export default function LoginScreen() {
 	// };
 	const [loginData, setLoginData] = useState(loginFormData);
 	const feedback = useSelector((store) => store.feedback);
-	const [hidden, setHidden]= useState(true)
+	const [hidden, setHidden] = useState(true);
+	const [loading, setLoading] = useState(false);
 
 	const showLoginError = (message) => {
 		Toast.show({
@@ -42,6 +44,7 @@ export default function LoginScreen() {
 			onHide: () => {
 				dispatch(clearFeedback({ sliceName: "login", type: "error" }));
 				setLoginData(loginFormData);
+				setLoading(false);
 			},
 		});
 	};
@@ -59,6 +62,10 @@ export default function LoginScreen() {
 		} catch (error) {
 			console.error("Error clearing AsyncStorage:", error);
 		}
+	};
+	const handleLogin = () => {
+		dispatch(loginUser(loginData));
+		setLoading(true);
 	};
 
 	return (
@@ -88,7 +95,7 @@ export default function LoginScreen() {
 								label="Password"
 								rightIcon={{
 									type: "font-awesome",
-									name: hidden ?  "eye-slash" : "eye",
+									name: hidden ? "eye-slash" : "eye",
 									onPress: () => {
 										setHidden(!hidden);
 									},
@@ -111,8 +118,9 @@ export default function LoginScreen() {
 
 					<View style={[styles.verticallySpaced, styles.mb20]}>
 						<ScaleButton
-							onPress={() => dispatch(loginUser(loginData))}
+							onPress={handleLogin}
 							looks={[styles.solidButton, { width: "auto" }]}
+							loading={loading}
 						>
 							<Text
 								style={{
@@ -188,7 +196,7 @@ const styles = StyleSheet.create({
 	},
 	labelStyle: {
 		fontSize: 18,
-		color:'#000'
+		color: "#000",
 	},
 	errorStyle: {
 		fontSize: 12,

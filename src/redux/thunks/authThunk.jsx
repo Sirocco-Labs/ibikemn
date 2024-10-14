@@ -12,6 +12,15 @@ export const emailSignUp = (regData) => async (dispatch) => {
 		const response = await supabase.auth.signUp(credentials);
 		if (response.error) {
 			console.log("SUPABASE REGISTER ERROR!: ", response.error);
+			const feedback = {
+				sliceName: "registration",
+				type: "error",
+				details: {
+					value: true,
+					message: "Something went wrong.",
+				},
+			};
+			dispatch(setFeedback(feedback));
 		} else {
 			console.log("SUPABASE REGISTER SUCCESS!: ", response.data);
 			const user_id = response.data.user.id;

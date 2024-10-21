@@ -11,6 +11,11 @@ const initialState = {
 		success: { value: null, message: "" },
 		loading: { value: null, message: "" },
 	},
+	reset: {
+		error: { value: null, message: "" },
+		success: { value: null, message: "" },
+		loading: { value: null, message: "" },
+	},
 	user: {
 		error: { value: null, message: "" },
 		success: { value: null, message: "" },

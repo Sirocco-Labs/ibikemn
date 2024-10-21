@@ -165,6 +165,7 @@ export const getActiveIncentives = (userInfo) => async (dispatch) => {
 			)
 			// .lte("start_date", new Date().toISOString())
 			.match(condition)
+			// .eq('is_active', true)
 			.order("end_date", { ascending: true });
 
 		if (getChallenges.error) {

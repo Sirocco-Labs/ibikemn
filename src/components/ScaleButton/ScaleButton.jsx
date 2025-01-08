@@ -1,5 +1,5 @@
 import TouchableScale from "react-native-touchable-scale";
-import { View, Pressable, StyleSheet, Animated } from "react-native";
+import { View, Pressable, StyleSheet, Animated, ActivityIndicator } from "react-native";
 import { Easing } from "react-native-reanimated";
 import { useRef, useState } from "react";
 
@@ -9,6 +9,7 @@ export default function ScaleButton({
 	children,
 	disabled,
 	offLooks,
+	loading
 }) {
 	const scale = useRef(new Animated.Value(0)).current;
 
@@ -76,7 +77,7 @@ export default function ScaleButton({
 					rippleStyle,
 				]}
 			/>
-			{children}
+			{loading ? <ActivityIndicator/> : children  }
 		</TouchableScale>
 	);
 }

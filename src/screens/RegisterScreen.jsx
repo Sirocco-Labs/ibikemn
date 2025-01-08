@@ -13,12 +13,12 @@ import { Button, Input, Text, Icon } from "@rneui/themed";
 
 import { emailSignUp } from "../redux/thunks/authThunk";
 import { useDispatch, useSelector } from "react-redux";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ScaleButton from "../components/ScaleButton/ScaleButton";
+import Toast from "react-native-toast-message";
 
 function RegisterScreen() {
 	const dispatch = useDispatch();
-	// const feedback = useSelector((store) => store.feedback.registration);
 
 	const [loading, setLoading] = useState(false);
 	const verify = { main: false, check: false };
@@ -36,10 +36,42 @@ function RegisterScreen() {
 	// 	email: process.env.EXPO_PUBLIC_TEST_EMAIL,
 	// 	password: process.env.EXPO_PUBLIC_TEST_PASSWORD,
 	// };
+	const feedback = useSelector((store) => store.feedback);
+
 
 	const [show, setShow] = useState(verify);
 	const [error, setError] = useState(noError);
 	const [regData, setRegData] = useState(formData);
+
+	const handleSignUp = () => {
+		setLoading(true);
+		dispatch(emailSignUp(regData));
+		setRegData(formData);
+		setError(noError);
+	};
+	const showRegistrationError = (message) => {
+		Toast.show({
+			type: "error",
+			text1: `${message}`,
+			text2: "Please try again",
+			text2Style: { fontSize: 11, color: "#000" },
+			onHide: () => {
+				dispatch(
+					clearFeedback({ sliceName: "registration", type: "error" })
+				);
+				setRegData(formData);
+				setError(noError);
+				setLoading(false);
+			},
+		});
+	};
+
+	useEffect(() => {
+		if (feedback.registration.error.value) {
+			showRegistrationError(feedback.registration.error.message);
+		}
+	}, [feedback.registration]);
+
 
 	return (
 		<KeyboardAvoidingView
@@ -146,12 +178,9 @@ function RegisterScreen() {
 					</View>
 					<View style={[styles.verticallySpaced]}>
 						<ScaleButton
-							onPress={() => {
-								dispatch(emailSignUp(regData));
-								setRegData(formData);
-								setError(noError);
-							}}
+							onPress={handleSignUp}
 							looks={[styles.solidButton, { width: "auto" }]}
+							loading={loading}
 						>
 							<Text
 								style={{
@@ -226,7 +255,7 @@ const styles = StyleSheet.create({
 	},
 	labelStyle: {
 		fontSize: 18,
-		color:'#000'
+		color: "#000",
 	},
 	errorStyle: {
 		fontSize: 12,

@@ -12,6 +12,15 @@ export const emailSignUp = (regData) => async (dispatch) => {
 		const response = await supabase.auth.signUp(credentials);
 		if (response.error) {
 			console.log("SUPABASE REGISTER ERROR!: ", response.error);
+			const feedback = {
+				sliceName: "registration",
+				type: "error",
+				details: {
+					value: true,
+					message: "Something went wrong.",
+				},
+			};
+			dispatch(setFeedback(feedback));
 		} else {
 			console.log("SUPABASE REGISTER SUCCESS!: ", response.data);
 			const user_id = response.data.user.id;
@@ -99,4 +108,50 @@ export const confirmSecret = (secretCode) => async (dispatch) => {
 			}
 		}
 	} catch (error) {}
+};
+
+export const magicLink = (email, redirectTo) => async (dispatch) => {
+	console.log("$&$ IN MAGIC LINK THUNK ------> magicLink(email, redirectTo)", "email: ", email, "redirectTo: ", redirectTo);
+	try {
+		const signIn = await supabase.auth.signInWithOtp({
+			email: email,
+			options: {
+				emailRedirectTo: redirectTo,
+			},
+		});
+
+		if (signIn.error) {
+			console.error("$&$ SUPABASE MAGIC LINK  ERROR", signIn.error);
+
+			const feedback = {
+				sliceName: "reset",
+				type: "error",
+				details: {
+					value: true,
+					message: "Something went wrong",
+				},
+			};
+			dispatch(setFeedback(feedback));
+
+		} else {
+			console.log(
+				"$&$ SUPABASE MAGIC LINK SUCCESS",
+				signIn.status,
+				signIn.data,
+				"signIn",
+				signIn
+			);
+			const feedback = {
+				sliceName: "reset",
+				type: "success",
+				details: {
+					value: true,
+					message: "Email has been sent!",
+				},
+			};
+			dispatch(setFeedback(feedback));
+		}
+	} catch (error) {
+		console.error("$&$ THUNK ERROR magicLink(email):", error);
+	}
 };

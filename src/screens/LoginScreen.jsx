@@ -6,8 +6,10 @@ import {
 	TouchableWithoutFeedback,
 	Keyboard,
 	Platform,
+	ActivityIndicator,
+	Linking,
 } from "react-native";
-import { Button, Input, Text } from "@rneui/themed";
+import { Button, Input, Text, Dialog } from "@rneui/themed";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 
@@ -16,11 +18,17 @@ import ScaleButton from "../components/ScaleButton/ScaleButton";
 
 import { clearFeedback } from "../redux/slices/feedbackSlice";
 
-import { loginUser } from "../redux/thunks/authThunk";
+import { loginUser, magicLink, resetPassword } from "../redux/thunks/authThunk";
 import Toast from "react-native-toast-message";
+import { setFeedback } from "../redux/slices/feedbackSlice";
+import { useNavigation } from "@react-navigation/native";
+import { makeRedirectUri } from "expo-auth-session";
 
 export default function LoginScreen() {
+	const redirectTo = makeRedirectUri();
+
 	const dispatch = useDispatch();
+	const navigation = useNavigation();
 	const loginFormData = {
 		email: "",
 		password: "",
@@ -31,7 +39,11 @@ export default function LoginScreen() {
 	// };
 	const [loginData, setLoginData] = useState(loginFormData);
 	const feedback = useSelector((store) => store.feedback);
-	const [hidden, setHidden]= useState(true)
+	const [hidden, setHidden] = useState(true);
+	const [loading, setLoading] = useState(false);
+	const [resetLoading, setResetLoading] = useState(false);
+	const [open, setOpen] = useState(false);
+	const [email, setEmail] = useState("");
 
 	const showLoginError = (message) => {
 		Toast.show({
@@ -42,6 +54,7 @@ export default function LoginScreen() {
 			onHide: () => {
 				dispatch(clearFeedback({ sliceName: "login", type: "error" }));
 				setLoginData(loginFormData);
+				setLoading(false);
 			},
 		});
 	};
@@ -52,6 +65,31 @@ export default function LoginScreen() {
 		}
 	}, [feedback.login]);
 
+	const showResetFeedback = (type, message) => {
+		Toast.show({
+			type: type,
+			text1: `${message}`,
+			text2:
+				type === "error"
+					? "Please try again"
+					: "Please check your email",
+			text2Style: { fontSize: 11, color: "#000" },
+			onHide: () => {
+				dispatch(clearFeedback({ sliceName: "reset", type: type }));
+				setResetLoading(false);
+			},
+		});
+	};
+
+	useEffect(() => {
+		closeDialog();
+		if (feedback.reset.error.value) {
+			showResetFeedback("error", feedback.reset.error.message);
+		} else if (feedback.reset.success.value) {
+			showResetFeedback("success", feedback.reset.success.message);
+		}
+	}, [feedback.reset]);
+
 	const clearAsyncStorage = async () => {
 		try {
 			await AsyncStorage.clear();
@@ -59,6 +97,20 @@ export default function LoginScreen() {
 		} catch (error) {
 			console.error("Error clearing AsyncStorage:", error);
 		}
+	};
+	const handleLogin = () => {
+		dispatch(loginUser(loginData));
+		setLoading(true);
+	};
+
+	const closeDialog = () => {
+		setEmail("");
+		setOpen(false);
+	};
+	const handleReset = () => {
+		setResetLoading(true);
+		dispatch(magicLink(email, redirectTo));
+		// closeDialog();
 	};
 
 	return (
@@ -88,7 +140,7 @@ export default function LoginScreen() {
 								label="Password"
 								rightIcon={{
 									type: "font-awesome",
-									name: hidden ?  "eye-slash" : "eye",
+									name: hidden ? "eye-slash" : "eye",
 									onPress: () => {
 										setHidden(!hidden);
 									},
@@ -107,23 +159,42 @@ export default function LoginScreen() {
 								labelStyle={styles.labelStyle}
 							/>
 						</View>
-					</View>
 
-					<View style={[styles.verticallySpaced, styles.mb20]}>
-						<ScaleButton
-							onPress={() => dispatch(loginUser(loginData))}
-							looks={[styles.solidButton, { width: "auto" }]}
-						>
-							<Text
-								style={{
-									fontWeight: "700",
-									color: "#fff",
-									fontSize: 20,
+						<View style={[styles.verticallySpaced, styles.mb20]}>
+							<ScaleButton
+								onPress={handleLogin}
+								looks={[styles.solidButton, { width: "auto" }]}
+								loading={loading}
+							>
+								<Text
+									style={{
+										fontWeight: "700",
+										color: "#fff",
+										fontSize: 20,
+									}}
+								>
+									Sign In
+								</Text>
+							</ScaleButton>
+						</View>
+						<View style={styles.verticallySpaced}>
+							<ScaleButton
+								looks={[styles.solidButton, { width: "auto" }]}
+								onPress={() => {
+									setOpen(true);
 								}}
 							>
-								Sign In
-							</Text>
-						</ScaleButton>
+								<Text
+									style={{
+										fontWeight: "700",
+										color: "#fff",
+										fontSize: 20,
+									}}
+								>
+									Forgot Password
+								</Text>
+							</ScaleButton>
+						</View>
 					</View>
 					{/* <View style={[styles.verticallySpaced, styles.mt20]}>
 								<Button
@@ -133,6 +204,68 @@ export default function LoginScreen() {
 							</View> */}
 				</View>
 			</TouchableWithoutFeedback>
+			<Dialog
+				isVisible={open}
+				onBackdropPress={closeDialog}
+				overlayStyle={{
+					flex: 0.4,
+					justifyContent: "center",
+					alignItems: "center",
+					marginBottom: 150,
+				}}
+				// fullScreen={true}
+			>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<View
+						style={{
+							flex: 1,
+							justifyContent: "space-around",
+							alignItems: "center",
+							width: "100%",
+						}}
+					>
+						<Text
+							style={{
+								fontSize: 25,
+								fontWeight: "700",
+								color: "#1269A9",
+							}}
+						>
+							Account Recovery
+						</Text>
+						<Text>
+							Enter the email address associated with your account,
+							and we'll send you an email with instructions on how
+							to proceed.
+						</Text>
+						<Input
+							autoFocus={true}
+							label="Email"
+							onChangeText={(text) => setEmail(text)}
+							value={email}
+							placeholder="email@address.com"
+							autoCapitalize={"none"}
+							errorStyle={styles.errorStyle}
+							labelStyle={styles.labelStyle}
+						/>
+						<ScaleButton
+							onPress={handleReset}
+							looks={[styles.solidButton, { width: 200 }]}
+							loading={resetLoading}
+						>
+							<Text
+								style={{
+									fontWeight: "700",
+									color: "#fff",
+									fontSize: 20,
+								}}
+							>
+								Send
+							</Text>
+						</ScaleButton>
+					</View>
+				</TouchableWithoutFeedback>
+			</Dialog>
 		</KeyboardAvoidingView>
 	);
 }
@@ -188,7 +321,7 @@ const styles = StyleSheet.create({
 	},
 	labelStyle: {
 		fontSize: 18,
-		color:'#000'
+		color: "#000",
 	},
 	errorStyle: {
 		fontSize: 12,

@@ -40,18 +40,18 @@ function App() {
 				setLoading(false);
 				// handle initial session
 			} else if (event === "SIGNED_IN") {
-				console.log('$&$ -------------> SIGNED IN!');
+				console.log("$&$ -------------> SIGNED IN!");
 				dispatch(getUserQuery(session.user.id));
 				setAuthenticated(session.user.aud);
 				setLoading(false);
 				// handle sign in event
 			} else if (event === "SIGNED_OUT") {
-				console.log('$&$ -------------> SIGNED OUT!');
+				console.log("$&$ -------------> SIGNED OUT!");
 				setLoading(false);
 				setAuthenticated(session?.user.aud);
 				// handle sign out event
 			} else if (event === "PASSWORD_RECOVERY") {
-				console.log('$&$ -------------> PASSWORD RECOVERY!');
+				console.log("$&$ -------------> PASSWORD RECOVERY!");
 				dispatch(getUserQuery(session?.user.id));
 
 				setLoading(false);
@@ -60,12 +60,12 @@ function App() {
 
 				// handle password recovery event
 			} else if (event === "TOKEN_REFRESHED") {
-				console.log('$&$ -------------> TOKEN REFRESHED!');
+				console.log("$&$ -------------> TOKEN REFRESHED!");
 				setLoading(false);
 				setAuthenticated(session.user.aud);
 				// handle token refreshed event
 			} else if (event === "USER_UPDATED") {
-				console.log('$&$ -------------> USER UPDATED!');
+				console.log("$&$ -------------> USER UPDATED!");
 				setLoading(false);
 				setAuthenticated(session.user.aud);
 				// handle user updated event
@@ -76,26 +76,26 @@ function App() {
 		};
 	}, []);
 
-const url = ExpLinking.useURL();
-const createSessionFromUrl = async (url) => {
-	const { params, errorCode } = QueryParams.getQueryParams(url);
+	const url = ExpLinking.useURL();
+	const createSessionFromUrl = async (url) => {
+		const { params, errorCode } = QueryParams.getQueryParams(url);
 
-	if (errorCode) throw new Error(errorCode);
-	const { access_token, refresh_token } = params;
+		if (errorCode) throw new Error(errorCode);
+		const { access_token, refresh_token } = params;
 
-	if (!access_token) return;
+		if (!access_token) return;
 
-	const { data, error } = await supabase.auth.setSession({
-		access_token,
-		refresh_token,
-	});
-	if (error) throw error;
-	return data.session;
-};
+		const { data, error } = await supabase.auth.setSession({
+			access_token,
+			refresh_token,
+		});
+		if (error) throw error;
+		return data.session;
+	};
 
-if (url) createSessionFromUrl(url);
+	if (url) createSessionFromUrl(url);
 
-
+	
 	if (loading && !authenticated) {
 		return <SplashScreen />;
 	} else {

@@ -172,6 +172,13 @@ export default function AddRideScreen({}) {
 		dispatch(clearCommuteSlice());
 		navigation.navigate("HomeScreen");
 	};
+	const handleOnlyNumbers = (text) => {
+		const number = text.replace(/[^0-9]/g, "");
+		setForm({
+			...form,
+			distance_traveled: number,
+		});
+	};
 
 	return (
 		<KeyboardAvoidingView
@@ -185,7 +192,13 @@ export default function AddRideScreen({}) {
 						<Text style={styles.fieldTitle}>
 							When was your ride?
 						</Text>
-						<View style={{ justifyContent:'center', alignItems:'center', width:'100%'}}>
+						<View
+							style={{
+								justifyContent: "center",
+								alignItems: "center",
+								width: "100%",
+							}}
+						>
 							<Text style={{ textAlign: "center", fontSize: 13 }}>
 								{dateTime.toLocaleTimeString("en-US", {
 									weekday: "long",
@@ -196,12 +209,9 @@ export default function AddRideScreen({}) {
 									minute: "2-digit",
 								})}
 							</Text>
-                            <ScaleButton>
-                                <Text>
-                                    Choose Date
-
-                                </Text>
-                            </ScaleButton>
+							<ScaleButton>
+								<Text>Choose Date</Text>
+							</ScaleButton>
 						</View>
 						<View
 							style={{
@@ -345,12 +355,7 @@ export default function AddRideScreen({}) {
 									}}
 									value={form.distance_traveled}
 									keyboardType="numeric"
-									onChangeText={(value) => {
-										setForm({
-											...form,
-											distance_traveled: value,
-										});
-									}}
+									onChangeText={handleOnlyNumbers}
 								/>
 
 								<Text

@@ -65,11 +65,24 @@ export const finishProfile = (userData) => async (dispatch) => {
 		how_did_you_hear,
 		commute_frequency,
 		bike_confidence,
+		bike_route_confidence,
+		bike_maintenance_confidence,
+		bike_to_work_physical,
+		bike_to_work_mental,
+		bike_to_work_environmental,
+		bike_to_work_enjoyable,
+		bike_to_work_limitations,
+		anything_else,
 	} = screening;
 
 	const { age, gender_identity, race, income_level } = demographics;
 
 	const raceString = race
+		.toString()
+		.replaceAll(" ,", ",")
+		.replaceAll(",", ", ");
+
+	const limitString = bike_to_work_limitations
 		.toString()
 		.replaceAll(" ,", ",")
 		.replaceAll(",", ", ");
@@ -85,6 +98,14 @@ export const finishProfile = (userData) => async (dispatch) => {
 		how_did_you_hear,
 		commute_frequency,
 		bike_confidence,
+		bike_route_confidence,
+		bike_maintenance_confidence,
+		bike_to_work_physical,
+		bike_to_work_mental,
+		bike_to_work_environmental,
+		bike_to_work_enjoyable,
+		bike_to_work_limitations:limitString,
+		anything_else
 	};
 	const demographicData = {
 		user_id,

@@ -14,6 +14,8 @@ const initialState = {
 		bike_to_work_mental:0,
 		bike_to_work_environmental:0,
 		bike_to_work_enjoyable:0,
+		bike_to_work_limitations:[],
+		anything_else:'',
 		staff_identity: null,
 		org_identity: 'N/A',
 		admin_identity: null,

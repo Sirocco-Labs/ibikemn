@@ -107,7 +107,10 @@ export const confirmSecret = (secretCode) => async (dispatch) => {
 				dispatch(setFeedback(feedback));
 			}
 		}
-	} catch (error) {}
+	} catch (error) {
+		console.error('AUTH THUNK ERROR --> confirmSecret(): ', error);
+
+	}
 };
 
 export const magicLink = (email, redirectTo) => async (dispatch) => {

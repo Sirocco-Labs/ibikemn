@@ -1,10 +1,5 @@
-import {
-	View,
-	StyleSheet,
-} from "react-native";
-import {
-	Dialog,
-} from "@rneui/themed";
+import { View, StyleSheet } from "react-native";
+import { Dialog, Text } from "@rneui/themed";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import {
@@ -14,15 +9,14 @@ import {
 
 import { HumanDateTime } from "../../util/HumanDateTime/HumanDateTime";
 
-
 import BikeCheckoutDialogContent from "../../components/BikeCheckoutDialogContent/BikeCheckoutDialogContent";
 
 import BikeCheckoutItem from "../../components/BikeCheckoutItem/BikeCheckoutItem";
 
-export default function AvailableBikeList({orgBikes, user, myBike}) {
-    const dispatch = useDispatch()
+export default function AvailableBikeList({ orgBikes, user, myBike }) {
+	const dispatch = useDispatch();
 
-    const [todayISO, setTodayISO] = useState("");
+	const [todayISO, setTodayISO] = useState("");
 	const [today, setToday] = useState("");
 
 	const [open, setOpen] = useState(false);
@@ -30,7 +24,7 @@ export default function AvailableBikeList({orgBikes, user, myBike}) {
 	const [checkout, setCheckout] = useState({});
 	const [supaReturnDate, setSupaReturnDate] = useState("");
 
-    useEffect(() => {
+	useEffect(() => {
 		const now = HumanDateTime();
 		const date = new Date();
 		const supaDate = date.toISOString();
@@ -39,7 +33,7 @@ export default function AvailableBikeList({orgBikes, user, myBike}) {
 
 		// const isoDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString();
 	}, []);
-    useEffect(() => {
+	useEffect(() => {
 		futureISO();
 	}, [howLong]);
 	useEffect(() => {
@@ -95,26 +89,64 @@ export default function AvailableBikeList({orgBikes, user, myBike}) {
 		dispatch(returnBike(myBike));
 	};
 
-
 	return (
 		<>
 			<View style={styles.checkoutSection}>
-				{orgBikes.map((bike) => (
-					<BikeCheckoutItem
-						key={bike.id}
-						topBike={bike}
-						appUser={user}
-						giveBack={giveBack}
-						checkoutAction={{ checkout, setCheckout }}
-						openAction={{ open, setOpen }}
-						formatForHumans={formatForHumans}
-						supaReturnDate={supaReturnDate}
-						myBike={myBike}
-						bikeUser={
-							bike.user ? bike.user : { checked_out_by: null }
-						}
-					/>
-				))}
+				{user.is_admin
+					? orgBikes.map((org, i) => (
+							<>
+								<Text
+									style={{
+										fontSize: 22,
+										alignSelf: "flex-start",
+										fontWeight: "700",
+										color: "#1269A9",
+										marginVertical:5
+									}}
+								>
+									{org.name}
+								</Text>
+								{org.data.map((bike) => (
+									<BikeCheckoutItem
+										key={bike.id}
+										topBike={bike}
+										appUser={user}
+										giveBack={giveBack}
+										checkoutAction={{
+											checkout,
+											setCheckout,
+										}}
+										openAction={{ open, setOpen }}
+										formatForHumans={formatForHumans}
+										supaReturnDate={supaReturnDate}
+										myBike={myBike}
+										bikeUser={
+											bike.user
+												? bike.user
+												: { checked_out_by: null }
+										}
+									/>
+								))}
+							</>
+					  ))
+					: orgBikes.map((bike) => (
+							<BikeCheckoutItem
+								key={bike.id}
+								topBike={bike}
+								appUser={user}
+								giveBack={giveBack}
+								checkoutAction={{ checkout, setCheckout }}
+								openAction={{ open, setOpen }}
+								formatForHumans={formatForHumans}
+								supaReturnDate={supaReturnDate}
+								myBike={myBike}
+								bikeUser={
+									bike.user
+										? bike.user
+										: { checked_out_by: null }
+								}
+							/>
+					  ))}
 			</View>
 
 			<Dialog

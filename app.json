@@ -2,7 +2,7 @@
   "expo": {
     "scheme": "ibikemn",
     "name": "iBikeMN",
-    "slug": "ibikemn-app",
+    "slug": "ibikemn",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
@@ -81,11 +81,12 @@
         "origin": false
       },
       "eas": {
-        "projectId": "9bd6697c-29e1-44b4-a3b5-735d9f7b2ff6"
+        "projectId": "e4bf6782-a569-4cd7-b955-f369901ce8e3"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
-    }
+    },
+    "owner": "bikemn"
   }
 }

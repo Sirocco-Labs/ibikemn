@@ -28,7 +28,7 @@ export default function AddRideScreen({}) {
 	const data = {
 		user_id: user.user_id,
 		is_work_commute: true,
-		distance_traveled: "",
+		distance_traveled: 0,
 		ride_start_time: "",
 		ride_end_time: "",
 	};
@@ -44,6 +44,7 @@ export default function AddRideScreen({}) {
 		const end = new Date(dateTime);
 		const ride_end_time = new Date(end.getTime() + 30 * 60000);
 		payload.ride_end_time = ride_end_time.toISOString();
+		payload.distance_traveled = payload.distance_traveled * 1 
 
 		if (form.is_work_commute) {
 			dispatch(addToAllRides(payload)).then(() => {

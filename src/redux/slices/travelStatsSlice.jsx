@@ -14,7 +14,7 @@ const travelStats = createSlice({
 	initialState,
 	reducers: {
 		setUserTravelStats(state, action) {
-			return { ...state, ...action.payload };
+			return state = action.payload;
 
 			// Object.assign(state, action.payload);
 		},

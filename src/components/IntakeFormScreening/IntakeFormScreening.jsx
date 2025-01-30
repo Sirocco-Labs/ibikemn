@@ -694,12 +694,6 @@ export default function IntakeFormScreening({ navigation, route }) {
 
 				</Button> */}
 				<View style={styles.section}>
-					<Button
-						onPress={() => {
-							dispatch(setIntakeScreening(inputData));
-							dispatch(setIntakeSecret(false));
-						}}
-					/>
 					<View>
 						<View>
 							<Text

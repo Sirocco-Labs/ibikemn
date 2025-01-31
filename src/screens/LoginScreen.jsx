@@ -60,7 +60,7 @@ export default function LoginScreen() {
 	};
 
 	useEffect(() => {
-		if (feedback.login.error.value) {
+		if (feedback.login?.error.value) {
 			showLoginError(feedback.login.error.message);
 		}
 	}, [feedback.login]);
@@ -83,9 +83,9 @@ export default function LoginScreen() {
 
 	useEffect(() => {
 		closeDialog();
-		if (feedback.reset.error.value) {
+		if (feedback.reset?.error.value) {
 			showResetFeedback("error", feedback.reset.error.message);
-		} else if (feedback.reset.success.value) {
+		} else if (feedback.reset?.success.value) {
 			showResetFeedback("success", feedback.reset.success.message);
 		}
 	}, [feedback.reset]);

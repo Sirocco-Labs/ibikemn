@@ -11,7 +11,7 @@ import {
 	Alert,
 } from "react-native";
 import { Text, Icon, Input } from "@rneui/themed";
-import { logoutUser } from "../redux/thunks/authThunk";
+import { deleteAccount, logoutUser } from "../redux/thunks/authThunk";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUserData } from "../redux/slices/userSlice";
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
@@ -30,9 +30,7 @@ export default function UserAccountScreen() {
 		dispatch(clearUserData());
 		dispatch(logoutUser());
 	};
-	const user = useSelector((store) => {
-		store.user;
-	});
+	const user = useSelector((store) => store.user);
 
 	const scrollView = useRef(null);
 	const target = useRef(null);
@@ -125,6 +123,11 @@ export default function UserAccountScreen() {
 					error
 				);
 			});
+	};
+
+	const handleDeleteAccount = () => {
+		// console.log(user);
+		dispatch(deleteAccount(user.user_id))
 	};
 
 	return (
@@ -344,6 +347,46 @@ export default function UserAccountScreen() {
 							)}
 						</View>
 					</TouchableWithoutFeedback>
+					<View style={styles.contentSection}>
+						<ScaleButton
+							looks={[styles.deleteButton, { width: 250 }]}
+							onPress={() =>
+								Alert.alert(
+									"Delete Account",
+									`\nAre you sure you want to delete your account? Deleting your account will permanently delete all data and information associated with your account, it can't be restored.`,
+									[
+										{
+											text: "Delete My Account",
+											onPress: () =>
+												handleDeleteAccount(),
+										},
+										{
+											text: "No",
+											style: "cancel",
+										},
+									],
+									{ cancelable: true }
+								)
+							}
+						>
+							<Icon
+								name="delete"
+								type="material-community"
+								size={25}
+								style={{ marginRight: 5 }}
+								color="#fff"
+							/>
+							<Text
+								style={{
+									fontSize: 20,
+									fontWeight: "700",
+									color: "#fff",
+								}}
+							>
+								Delete Account
+							</Text>
+						</ScaleButton>
+					</View>
 					<ScaleButton
 						looks={[styles.solidButton, { width: 250 }]}
 						onPress={clearUserThenLogout}
@@ -353,7 +396,6 @@ export default function UserAccountScreen() {
 							type="material-community"
 							size={25}
 							style={{ marginRight: 5 }}
-							// onPress={() => alert("This is a button!")}
 							color="#fff"
 						/>
 						<Text
@@ -447,6 +489,14 @@ const styles = StyleSheet.create({
 	},
 	mv10: {
 		marginVertical: 10,
+	},
+	deleteButton: {
+		display: "flex",
+		flexDirection: "row",
+		backgroundColor: "#AC0000",
+		borderRadius: 12,
+		height: 45,
+		padding: 2,
 	},
 	solidButton: {
 		display: "flex",

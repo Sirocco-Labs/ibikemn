@@ -297,7 +297,7 @@ export default function HomeScreen() {
 		}
 	};
 
-
+	
 	useEffect(() => {
 		if (rewardWinner && rewardWinner.length > 0) {
 			setWinner(true);
@@ -388,9 +388,7 @@ export default function HomeScreen() {
 					</Dialog>
 
 					<View style={styles.leftColAr}>
-						<Text
-							style={[styles.sectionText, { marginBottom: 0}]}
-						>
+						<Text style={[styles.sectionText, { marginBottom: 0 }]}>
 							{user.username}'s Ride Stats
 						</Text>
 						<UserStatsSection

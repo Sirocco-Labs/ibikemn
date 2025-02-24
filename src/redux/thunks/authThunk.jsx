@@ -158,3 +158,24 @@ export const magicLink = (email, redirectTo) => async (dispatch) => {
 		console.error("$&$ THUNK ERROR magicLink(email):", error);
 	}
 };
+
+export const deleteAccount = (user_id) => async (dispatch) =>{
+	console.log('IN AUTH THUNK ---> deleteAccount(user_id)', user_id);
+
+	try {
+		const remove = await supabase.rpc('delete_user_account')
+		if(remove.error){
+			console.error('SUPABASE DELETE ACCOUNT ERROR', remove.error);
+
+		}else{
+			console.log('SUPABASE DELETE ACCOUNT SUCCESS:', remove.data);
+			// dispatch(logoutUser())
+			dispatch(clearUserData())
+		}
+
+	} catch (error) {
+		console.error('AUTH THUNK ERROR ---> deleteAccount(user_id)', error);
+
+	}
+
+}

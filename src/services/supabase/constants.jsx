@@ -7,7 +7,6 @@
 
 if(process.env.NODE_ENV === "development"){
 	console.warn(process.env.NODE_ENV);
-
 }
 
 export const SUPABASE_URL =

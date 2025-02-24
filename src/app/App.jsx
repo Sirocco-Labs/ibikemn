@@ -22,9 +22,7 @@ function App() {
 	const [loading, setLoading] = useState(true);
 	const user = useSelector((store) => store.user);
 
-	InitialLocationPermissionRequest();
 	useEffect(() => {
-		backgroundLocationTask(dispatch);
 		console.log("APP LOADED");
 		const { data } = supabase.auth.onAuthStateChange((event, session) => {
 			console.log(
@@ -95,7 +93,7 @@ function App() {
 
 	if (url) createSessionFromUrl(url);
 
-	
+
 	if (loading && !authenticated) {
 		return <SplashScreen />;
 	} else {

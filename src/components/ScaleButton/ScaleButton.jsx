@@ -12,9 +12,6 @@ export default function ScaleButton({
 	loading
 }) {
 	const scale = useRef(new Animated.Value(0)).current;
-	console.log("LOOKS",looks);
-
-
 	const handlePressIn = () => {
 		scale.setValue(0);
 		Animated.timing(scale, {

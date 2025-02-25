@@ -10,6 +10,7 @@ import {
 } from "../redux/slices/distanceSlice";
 
 import {
+	backgroundLocationTask,
 	startLocationTracking,
 	stopLocationTracking,
 } from "../tasks/BackgroundLocationTaskManager";
@@ -43,7 +44,9 @@ export default function RideScreen() {
 
 	useFocusEffect(useCallback(()=>{
 		InitialLocationPermissionRequest()
+		backgroundLocationTask(dispatch);
 	}))
+
 
 	const handleStartTracking = async () => {
 		try {

@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import ScaleButton from "../components/ScaleButton/ScaleButton";
 import Toast from "react-native-toast-message";
-
+import { clearFeedback } from "../redux/slices/feedbackSlice";
 function RegisterScreen() {
 	const dispatch = useDispatch();
 
@@ -32,10 +32,6 @@ function RegisterScreen() {
 		password: "",
 		checkPassword: "",
 	};
-	// const testData = {
-	// 	email: process.env.EXPO_PUBLIC_TEST_EMAIL,
-	// 	password: process.env.EXPO_PUBLIC_TEST_PASSWORD,
-	// };
 	const feedback = useSelector((store) => store.feedback);
 
 
@@ -119,6 +115,10 @@ function RegisterScreen() {
 								secureTextEntry={!show.main}
 								placeholder="Password"
 								autoCapitalize={"none"}
+								autoCorrect={false}
+								spellCheck={false}
+								autoComplete="off"
+								textContentType="none"
 								onBlur={() => {
 									regData.password !== regData.checkPassword
 										? setError({ ...error, password: true })

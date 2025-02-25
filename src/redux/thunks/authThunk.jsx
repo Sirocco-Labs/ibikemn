@@ -3,6 +3,8 @@ import { getUserQuery, addUser } from "./userThunk";
 import { clearUserData } from "../slices/userSlice";
 import { setIntakeSecret } from "../slices/intakeFormSlice";
 import { setFeedback } from "../slices/feedbackSlice";
+import { clearOrgBikes } from "../slices/private/orgBikeSlice";
+import { clearOrgList } from "../slices/private/orgListSlice";
 
 export const emailSignUp = (regData) => async (dispatch) => {
 	console.log("IN AUTH THUNK ----> emailSignUp(regData): ", regData);
@@ -64,12 +66,13 @@ export const loginUser = (credentials) => async (dispatch) => {
 export const logoutUser = () => async (dispatch) => {
 	console.log("IN AUTH THUNK ----> logoutUser()");
 	try {
-		await dispatch(clearUserData());
 		const response = await supabase.auth.signOut();
 		if (response.error) {
 			console.log("SUPABASE LOGOUT ERROR!: ", response.error.message);
 		} else {
-			await dispatch(clearUserData());
+			dispatch(clearUserData());
+			dispatch(clearOrgBikes())
+			dispatch(clearOrgList())
 			console.log("SUPABASE LOGOUT SUCCESS!: ", response.status);
 		}
 	} catch (error) {
@@ -107,7 +110,10 @@ export const confirmSecret = (secretCode) => async (dispatch) => {
 				dispatch(setFeedback(feedback));
 			}
 		}
-	} catch (error) {}
+	} catch (error) {
+		console.error('AUTH THUNK ERROR --> confirmSecret(): ', error);
+
+	}
 };
 
 export const magicLink = (email, redirectTo) => async (dispatch) => {
@@ -155,3 +161,24 @@ export const magicLink = (email, redirectTo) => async (dispatch) => {
 		console.error("$&$ THUNK ERROR magicLink(email):", error);
 	}
 };
+
+export const deleteAccount = (user_id) => async (dispatch) =>{
+	console.log('IN AUTH THUNK ---> deleteAccount(user_id)', user_id);
+
+	try {
+		const remove = await supabase.rpc('delete_user_account')
+		if(remove.error){
+			console.error('SUPABASE DELETE ACCOUNT ERROR', remove.error);
+
+		}else{
+			console.log('SUPABASE DELETE ACCOUNT SUCCESS:', remove.data);
+			// dispatch(logoutUser())
+			dispatch(clearUserData())
+		}
+
+	} catch (error) {
+		console.error('AUTH THUNK ERROR ---> deleteAccount(user_id)', error);
+
+	}
+
+}

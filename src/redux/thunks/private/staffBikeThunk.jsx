@@ -1,4 +1,5 @@
 import { supabase } from "../../../services/supabase/supabase";
+import { setAllBikes } from "../../slices/private/allBikesSlice";
 import { setOrgBikes } from "../../slices/private/orgBikeSlice";
 import { clearMyBike, setMyBike } from "../../slices/private/staffBikeSlice";
 
@@ -52,7 +53,8 @@ export const staffGetBikes = (org_id) => async (dispatch) => {
 	try {
 		const staffGetFreeBikes = await supabase
 			.from("bike_registration_junction")
-			.select(`
+			.select(
+				`
 			id,
 			bike:bike_id(
 				id,
@@ -65,7 +67,8 @@ export const staffGetBikes = (org_id) => async (dispatch) => {
 				first_name,
 				last_name
 			)
-			`)
+			`
+			)
 			.eq("org_id", org_id)
 			.order("in_use", { descending: true })
 			.order("id", { ascending: true });
@@ -86,13 +89,78 @@ export const staffGetBikes = (org_id) => async (dispatch) => {
 		console.log("BIKE THUNK ERROR --> staffGetFreeBikes(org_id): ", error);
 	}
 };
+export const adminGetAllBikes = () => async (dispatch) => {
+	console.log("IN STAFF BIKE THUNK ----> adminGetAllBikes(): ");
+	try {
+		const getAdminBikes = await supabase
+			.from("bike_registration_junction")
+			.select(
+				`
+			id,
+			bike:bike_id(
+				id,
+				nickname
+			),
+			org:org_id(
+			id,
+			name
+			)
+			in_use,
+			check_out_date,
+			return_by,
+			user:checked_out_by(
+				first_name,
+				last_name
+			)
+			`
+			)
+			.order("org_id", { descending: false })
+			.order("in_use", { descending: true })
+			.order("id", { ascending: true });
+		if (getAdminBikes.error) {
+			console.log(
+				"SUPABASE ADMIN GET ORG BIKES ERROR!: ",
+				getAdminBikes.error
+			);
+		} else {
+			console.log(
+				"SUPABASE ADMIN GET ORG BIKES SUCCESS!: ",
+				getAdminBikes.data
+			);
+			const adminBikes = getAdminBikes.data;
+			const organized = (data) => {
+				let holder = [];
+				for (let entry of data) {
+					const name = entry.org.name;
+					let existing = holder.find((obj) => obj.name === name);
+					if (!existing) {
+						holder.push({ name: name, data: [entry] });
+					} else {
+						// If it exists, check if the entry is already in the data array
+						if (!existing.data.some((item) => item === entry)) {
+							existing.data.push(entry);
+						}
+					}
+				}
+				return holder;
+			};
+
+			const fullList = organized(adminBikes);
+
+			dispatch(setAllBikes(fullList));
+		}
+	} catch (error) {
+		console.log("BIKE THUNK ERROR --> adminGetAllBikes(): ", error);
+	}
+};
 
 export const getMyBike = (user_id) => async (dispatch) => {
 	console.log("IN STAFF BIKE THUNK ----> getMyBike(user_id): ", user_id);
 	try {
 		const selectMyBike = await supabase
 			.from("bike_registration_junction")
-			.select(`
+			.select(
+				`
 			id,
 			bike_id,
 			bike_info:bike_id(
@@ -108,12 +176,13 @@ export const getMyBike = (user_id) => async (dispatch) => {
 			check_out_date,
 			return_by,
 			checked_out_by
-			`)
+			`
+			)
 			.eq("checked_out_by", user_id)
 			.single();
 		if (selectMyBike.error) {
 			console.log("SUPABASE SELECT MY BIKE ERROR!: ", selectMyBike.error);
-            dispatch(clearMyBike())
+			dispatch(clearMyBike());
 		} else {
 			console.log(
 				"SUPABASE SELECT MY BIKE SUCCESS!: ",
@@ -175,7 +244,7 @@ export const checkoutBike = (bikeData) => async (dispatch) => {
 
 export const returnBike = (bikeData) => async (dispatch) => {
 	console.log("IN STAFF BIKE THUNK ----> returnBike(bikeData): ", bikeData);
-    const{bike_id, org_id} = bikeData
+	const { bike_id, org_id } = bikeData;
 	try {
 		const returnBike = await supabase
 			.from("bike_registration_junction")
@@ -191,8 +260,8 @@ export const returnBike = (bikeData) => async (dispatch) => {
 			console.log("SUPABASE RETURN BIKE ERROR!: ", returnBike.error);
 		} else {
 			console.log("SUPABASE RETURN BIKE SUCCESS!: ", returnBike.data);
-            dispatch(clearMyBike());
-            dispatch(staffGetBikes(org_id))
+			dispatch(clearMyBike());
+			dispatch(staffGetBikes(org_id));
 		}
 	} catch (error) {
 		console.log("BIKE THUNK ERROR --> returnBike(bikeData): ", error);

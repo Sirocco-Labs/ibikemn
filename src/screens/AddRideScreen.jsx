@@ -28,7 +28,7 @@ export default function AddRideScreen({}) {
 	const data = {
 		user_id: user.user_id,
 		is_work_commute: true,
-		distance_traveled: "",
+		distance_traveled: 0,
 		ride_start_time: "",
 		ride_end_time: "",
 	};
@@ -44,6 +44,7 @@ export default function AddRideScreen({}) {
 		const end = new Date(dateTime);
 		const ride_end_time = new Date(end.getTime() + 30 * 60000);
 		payload.ride_end_time = ride_end_time.toISOString();
+		payload.distance_traveled = payload.distance_traveled * 1 
 
 		if (form.is_work_commute) {
 			dispatch(addToAllRides(payload)).then(() => {
@@ -172,6 +173,13 @@ export default function AddRideScreen({}) {
 		dispatch(clearCommuteSlice());
 		navigation.navigate("HomeScreen");
 	};
+	const handleOnlyNumbers = (text) => {
+		const number = text.replace(/[^0-9]/g, "");
+		setForm({
+			...form,
+			distance_traveled: number,
+		});
+	};
 
 	return (
 		<KeyboardAvoidingView
@@ -185,7 +193,13 @@ export default function AddRideScreen({}) {
 						<Text style={styles.fieldTitle}>
 							When was your ride?
 						</Text>
-						<View style={{ justifyContent:'center', alignItems:'center', width:'100%'}}>
+						<View
+							style={{
+								justifyContent: "center",
+								alignItems: "center",
+								width: "100%",
+							}}
+						>
 							<Text style={{ textAlign: "center", fontSize: 13 }}>
 								{dateTime.toLocaleTimeString("en-US", {
 									weekday: "long",
@@ -196,12 +210,9 @@ export default function AddRideScreen({}) {
 									minute: "2-digit",
 								})}
 							</Text>
-                            <ScaleButton>
-                                <Text>
-                                    Choose Date
-
-                                </Text>
-                            </ScaleButton>
+							<ScaleButton>
+								<Text>Choose Date</Text>
+							</ScaleButton>
 						</View>
 						<View
 							style={{
@@ -345,12 +356,7 @@ export default function AddRideScreen({}) {
 									}}
 									value={form.distance_traveled}
 									keyboardType="numeric"
-									onChangeText={(value) => {
-										setForm({
-											...form,
-											distance_traveled: value,
-										});
-									}}
+									onChangeText={handleOnlyNumbers}
 								/>
 
 								<Text

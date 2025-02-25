@@ -70,6 +70,17 @@ export default function IntakeFormAddress({ navigation, route }) {
 		return true;
 	};
 
+	const setHomeZip = (text) =>{
+		const validZip = text.replace(/[^0-9]/g, '')
+		setHomeAddress({...homeAddress, zip:validZip})
+
+	}
+	const setWorkZip = (text) =>{
+		const validZip = text.replace(/[^0-9]/g, '')
+		setWorkAddress({...workAddress, zip:validZip})
+
+	}
+
 	return (
 		// <KeyboardAvoidingScrollView>
 		<ScreenWrapper
@@ -130,12 +141,8 @@ export default function IntakeFormAddress({ navigation, route }) {
 									inputStyle={styles.input}
 									labelStyle={styles.label}
 									value={homeAddress.zip}
-									onChangeText={(text) =>
-										setHomeAddress({
-											...homeAddress,
-											zip: text,
-										})
-									}
+									onChangeText={setHomeZip}
+									maxLength={5}
 								/>
 							</View>
 						</View>
@@ -195,12 +202,8 @@ export default function IntakeFormAddress({ navigation, route }) {
 									inputStyle={styles.input}
 									labelStyle={styles.label}
 									value={workAddress.zip}
-									onChangeText={(text) =>
-										setWorkAddress({
-											...workAddress,
-											zip: text,
-										})
-									}
+									maxLength={5}
+									onChangeText={setWorkZip}
 								/>
 							</View>
 						</View>

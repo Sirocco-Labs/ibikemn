@@ -1,5 +1,4 @@
 import ScreenWrapper from "../components/ScreenWrapper/ScreenWrapper";
-import CustomSpeedDial from "../components/CustomSpeedDial/CustomSpeedDial";
 import {
 	StyleSheet,
 	View,
@@ -9,16 +8,7 @@ import {
 } from "react-native";
 import { Text, Divider, Dialog } from "@rneui/themed";
 import { useEffect, useState, useCallback } from "react";
-
 import { useDispatch, useSelector } from "react-redux";
-import {
-	staffGetBikes,
-	getMyBike,
-} from "../redux/thunks/private/staffBikeThunk";
-import { clearOrgBikes } from "../redux/slices/private/orgBikeSlice";
-import { clearMyBike } from "../redux/slices/private/staffBikeSlice";
-import { clearDistance } from "../redux/slices/distanceSlice";
-
 import { getUserTravelStats } from "../redux/thunks/userRidesThunk";
 import {
 	getActiveIncentives,
@@ -26,26 +16,20 @@ import {
 	getUserIncentiveHistory,
 	getAllPreviousChallenges,
 } from "../redux/thunks/incentiveThunk";
-
 import {
 	setCompletedChallenges,
 	setIsProgressUpdated,
 	setShowRewardDialog,
 } from "../redux/slices/incentiveSlice";
-
 import UserStatsSection from "../components/UserStatsSection/UserStatsSection";
 import { getMyRideSurveys } from "../redux/thunks/rideSurveyThunk";
-
 import ChallengeCard from "../components/ChallengeCard/ChallengeCard";
 import { useFocusEffect } from "@react-navigation/native";
-
-import * as Network from "expo-network";
-import { InitialLocationPermissionRequest } from "../tasks/RequestLocationPermission";
 import { getWinningInfo } from "../redux/thunks/rewardThunk";
-
 import ScaleButton from "../components/ScaleButton/ScaleButton";
-
 import CongratsDialog from "../components/CongratsDialog/CongratsDialog";
+import StatsAndChallengesSection from "../components/StatsAndChallengesSection/StatsAndChallengesSection";
+import CreateAccountPrompt from "../components/CreateAccountPrompt/CreateAccountPrompt";
 
 export default function HomeScreen() {
 	const dispatch = useDispatch();
@@ -81,13 +65,15 @@ export default function HomeScreen() {
 
 	useFocusEffect(
 		useCallback(() => {
-			dispatch(getUserTravelStats(user.user_id));
-			dispatch(getActiveIncentives(userInfo));
-			dispatch(getMyRideSurveys(user.user_id));
-			dispatch(getUserIncentiveHistory(user.user_id));
-			dispatch(getAllPreviousChallenges(user.is_public));
-			dispatch(getWinningInfo(user.id));
-			dispatch(getUserIncentiveProgress(user.user_id));
+			if (user.user_id) {
+				dispatch(getUserTravelStats(user.user_id));
+				dispatch(getActiveIncentives(userInfo));
+				dispatch(getMyRideSurveys(user.user_id));
+				dispatch(getUserIncentiveHistory(user.user_id));
+				dispatch(getAllPreviousChallenges(user.is_public));
+				dispatch(getWinningInfo(user.id));
+				dispatch(getUserIncentiveProgress(user.user_id));
+			}
 			// dispatch(setCompletedChallenges(1));
 
 			// setCompleted(true);
@@ -297,7 +283,6 @@ export default function HomeScreen() {
 		}
 	};
 
-
 	useEffect(() => {
 		if (rewardWinner && rewardWinner.length > 0) {
 			setWinner(true);
@@ -387,80 +372,17 @@ export default function HomeScreen() {
 						</View>
 					</Dialog>
 
-					<View style={styles.leftColAr}>
-						<Text
-							style={[styles.sectionText, { marginBottom: 0}]}
-						>
-							{user.username}'s Ride Stats
-						</Text>
-						<UserStatsSection
+					{user.user_id ? (
+						<StatsAndChallengesSection
+							mostCommon={mostCommon}
 							travelStats={travelStats}
-							survey={mostCommon}
+							challengesNotMet={challengesNotMet}
+							challengesMet={challengesMet}
+							challengeProgress={challengeProgress}
+							user={user}
 						/>
-					</View>
-					<Text
-						style={[
-							styles.sectionText,
-							{
-								alignSelf: "flex-start",
-								marginTop: 10,
-								marginBottom: 5,
-							},
-						]}
-					>
-						Active Challenge Progress
-					</Text>
-
-					<View style={styles.cardSection}>
-						<FlatList
-							data={challengesNotMet}
-							horizontal
-							renderItem={({ item }) => (
-								<ChallengeCard
-									item={item}
-									// prog={challengeProgress.find(
-									// 	(prog) =>
-									// 		prog.active_incentive_id === item.id
-									// )}
-									prog={challengeProgress}
-								/>
-							)}
-							keyExtractor={(item) => item.id}
-						/>
-					</View>
-
-					{challengesMet.length > 0 && (
-						<>
-							<Text
-								style={[
-									styles.sectionText,
-									{
-										alignSelf: "flex-start",
-										marginBottom: 5,
-									},
-								]}
-							>
-								Completed Challenges
-							</Text>
-
-							<View style={styles.cardSection}>
-								<FlatList
-									data={challengesMet}
-									horizontal
-									renderItem={({ item }) => (
-										<ChallengeCard
-											item={item}
-											// prog={challengeProgress.find(
-											// 	(prog) =>
-											// 		prog.active_incentive_id === item.id
-											// )}
-											prog={challengeProgress}
-										/>
-									)}
-									keyExtractor={(item) => item.id}
-								/>
-							</View>
-						</>
+					) : (
+						<CreateAccountPrompt />
 					)}
 					<CongratsDialog
 						actions={{ completed, setCompleted }}

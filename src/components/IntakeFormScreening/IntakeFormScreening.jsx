@@ -21,6 +21,7 @@ import Toast from "react-native-toast-message";
 import { clearFeedback, setFeedback } from "../../redux/slices/feedbackSlice";
 
 import { setIntakeSecret, setOrg } from "../../redux/slices/intakeFormSlice";
+
 export default function IntakeFormScreening({ navigation, route }) {
 	const dispatch = useDispatch();
 
@@ -31,6 +32,14 @@ export default function IntakeFormScreening({ navigation, route }) {
 		how_did_you_hear: 0,
 		commute_frequency: 0,
 		bike_confidence: 0,
+		bike_route_confidence: 0,
+		bike_maintenance_confidence: 0,
+		bike_to_work_physical: 0,
+		bike_to_work_mental: 0,
+		bike_to_work_environmental: 0,
+		bike_to_work_enjoyable: 0,
+		bike_to_work_limitations: [],
+		anything_else: "",
 		staff_identity: null,
 		org_identity: 0,
 		admin_identity: null,
@@ -43,6 +52,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 	const intake = useSelector((store) => store.intake);
 	const feedback = useSelector((store) => store.feedback);
 	const [screening, setScreening] = useState(intake.screening);
+	// const [screening, setScreening] = useState(inputData);
 	const orgs = useSelector((store) => store.orgList);
 
 	// const discovery = [
@@ -173,20 +183,118 @@ export default function IntakeFormScreening({ navigation, route }) {
 			value: 4,
 		},
 	];
+	const likert = [
+		{
+			choice: false,
+			title: "Strongly Disagree",
+			value: 1,
+		},
+		{
+			choice: false,
+			title: "Disagree",
+			value: 2,
+		},
+		{
+			choice: false,
+			title: "Neutral",
+			value: 3,
+		},
+		{
+			choice: false,
+			title: "Agree",
+			value: 4,
+		},
+		{
+			choice: false,
+			title: "Strongly Agree",
+			value: 5,
+		},
+	];
+
+	const commuteLimitations = [
+		{
+			choice: false,
+			title: "Lack of time",
+			value: 1,
+			flavor: "",
+		},
+		{
+			choice: false,
+			title: "Lack of adequate bike",
+			value: 2,
+			flavor: "",
+		},
+		{
+			choice: false,
+			title: "Caregiving responsibilities",
+			value: 3,
+			flavor: "",
+		},
+		{
+			choice: false,
+			title: "Work is too far",
+			value: 4,
+			flavor: "",
+		},
+		{
+			choice: false,
+			title: "Concerns about traffic safety",
+			value: 5,
+			flavor: "",
+		},
+		{
+			choice: false,
+			title: "I don’t know what route to take",
+			value: 6,
+			flavor: "",
+		},
+		{
+			choice: false,
+			title: "Lack of bike lanes or separate paths",
+			value: 7,
+			flavor: "",
+		},
+		{
+			choice: false,
+			title: "Prefer not to answer",
+			value: 8,
+			flavor: "",
+		},
+		{
+			choice: false,
+			title: "Other:",
+			value: 9,
+			flavor: "",
+		},
+	];
+
+	const [bikeConfidence, setBikeConfidence] = useState(likert);
+	const [routeConfidence, setRouteConfidence] = useState(likert);
+	const [maintConfidence, setMaintConfidence] = useState(likert);
+	const [commutePhysical, setCommutePhysical] = useState(likert);
+	const [commuteMental, setCommuteMental] = useState(likert);
+	const [commuteEnv, setCommuteEnv] = useState(likert);
+	const [commuteEnjoy, setCommuteEnjoy] = useState(likert);
+	const [limitations, setLimitations] = useState([]);
+	const [otherLimitation, setOtherLimitations] = useState("");
+	const [anythingElse, setAnythingElse] = useState("");
+	const [stopper, setStopper] = useState(
+		screening.bike_to_work_limitations.includes("Prefer not to answer")
+			? true
+			: false
+	);
 	useEffect(() => {
-		console.log('orgs',orgs);
+		console.log("orgs", orgs);
 
 		let edit = [];
-		for(let i=0;i<orgs.length;i++){
-			let org = orgs[i]
+		for (let i = 0; i < orgs.length; i++) {
+			let org = orgs[i];
 			edit.push({
 				level: "staff",
 				choice: false,
 				title: org.name,
 				value: org.id,
-			})
-
-
+			});
 		}
 
 		const final = [
@@ -199,9 +307,9 @@ export default function IntakeFormScreening({ navigation, route }) {
 			...edit,
 		];
 
-		console.log('final',final);
-		setEmployment(final)
-		setOrgList(final)
+		console.log("final", final);
+		setEmployment(final);
+		setOrgList(final);
 	}, [orgs]);
 
 	const orgData = [
@@ -227,10 +335,9 @@ export default function IntakeFormScreening({ navigation, route }) {
 	const [employment, setEmployment] = useState([]);
 	const [orgList, setOrgList] = useState([]);
 	const [advance, setAdvance] = useState(false);
-	useEffect(()=>{
-		console.log('employment',employment);
-
-	},[employment.length])
+	useEffect(() => {
+		console.log("employment", employment);
+	}, [employment.length]);
 
 	const showVerifyError = (message) => {
 		Toast.show({
@@ -266,23 +373,26 @@ export default function IntakeFormScreening({ navigation, route }) {
 		useCallback(() => {
 			console.log("$# UCB SCREENING", screening);
 			console.log("$# UCB INTAKE", intake.screening);
-			setValue(
-				intake.screening.bike_confidence === 0
-					? 1
-					: intake.screening.bike_confidence
-			);
+
 			validateSave();
 			return () => {
 				console.log("$# UCB RETURN");
 				setScreening(intake.screening);
-				setValue(
-					intake.screening.bike_confidence !== 0
-						? intake.screening.bike_confidence
-						: 1
+				setStopper(
+					screening.bike_to_work_limitations.includes(
+						"Prefer not to answer"
+					)
+						? true
+						: false
 				);
-				if(intake.screening.staff_identity || intake.screening.admin_identity){
+
+				if (
+					intake.screening.staff_identity ||
+					intake.screening.admin_identity ||
+					intake.secret
+				) {
 					setAdvance(true);
-				}else{
+				} else {
 					setAdvance(false);
 				}
 			};
@@ -310,6 +420,11 @@ export default function IntakeFormScreening({ navigation, route }) {
 		console.log("$# UE2 INTAKE", intake.screening);
 
 		setScreening(intake.screening);
+		setStopper(
+			screening.bike_to_work_limitations.includes("Prefer not to answer")
+				? true
+				: false
+		);
 		// setValue(
 		// 	intake.screening.bike_confidence !== 0
 		// 		? intake.screening.bike_confidence
@@ -327,11 +442,11 @@ export default function IntakeFormScreening({ navigation, route }) {
 		}
 	}, [intake]);
 
-	useEffect(() => {
-		console.log("$# VALUE CHANGED");
-		setScreening({ ...screening, bike_confidence: value });
-		validateSave();
-	}, [value]);
+	// useEffect(() => {
+	// 	console.log("$# VALUE CHANGED");
+	// 	setScreening({ ...screening, bike_confidence: value });
+	// 	validateSave();
+	// }, [value]);
 
 	// useEffect(() => {
 	// 	// console.log(screening);
@@ -356,8 +471,16 @@ export default function IntakeFormScreening({ navigation, route }) {
 	// }, [screening.org_identity]);
 
 	const handleSave = () => {
-		dispatch(setIntakeScreening(screening));
+		let payload = {...screening}
+		let placeHolder = [...payload.bike_to_work_limitations]
+		if(otherLimitation){
+			placeHolder.push(otherLimitation)
+			payload.bike_to_work_limitations = placeHolder
+		}
 
+		dispatch(setIntakeScreening(payload));
+		setOtherLimitations('')
+		setAnythingElse('')
 
 		setLoading(!loading);
 	};
@@ -376,7 +499,13 @@ export default function IntakeFormScreening({ navigation, route }) {
 		if (
 			screening.how_did_you_hear &&
 			screening.commute_frequency &&
-			screening.bike_confidence >= 1
+			screening.bike_confidence > 0 &&
+			screening.bike_route_confidence > 0 &&
+			screening.bike_maintenance_confidence > 0 &&
+			screening.bike_to_work_physical > 0 &&
+			screening.bike_to_work_mental > 0 &&
+			screening.bike_to_work_environmental > 0 &&
+			screening.bike_to_work_enjoyable > 0
 		) {
 			if (
 				screening.admin_identity === true &&
@@ -403,6 +532,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 	};
 
 	const updatePayload = (target, updateValue) => {
+		let holder = [...screening.bike_to_work_limitations];
 		if (target === "admin_identity") {
 			console.log(
 				"$# UPDATE PAYLOAD ADMIN: screening, target, value",
@@ -416,7 +546,6 @@ export default function IntakeFormScreening({ navigation, route }) {
 					org_identity: "N/A",
 					admin_identity: false,
 					staff_identity: false,
-					bike_confidence: value,
 				});
 			} else {
 				setScreening({
@@ -424,7 +553,6 @@ export default function IntakeFormScreening({ navigation, route }) {
 					admin_identity: updateValue,
 					staff_identity: !updateValue,
 					org_identity: 0,
-					bike_confidence: value,
 				});
 			}
 		} else if (target === "org_identity") {
@@ -440,7 +568,6 @@ export default function IntakeFormScreening({ navigation, route }) {
 					[`${target}`]: "N/A",
 					admin_identity: false,
 					staff_identity: false,
-					bike_confidence: value,
 				});
 			} else {
 				setScreening({
@@ -448,7 +575,34 @@ export default function IntakeFormScreening({ navigation, route }) {
 					admin_identity: false,
 					staff_identity: true,
 					org_identity: updateValue,
-					bike_confidence: value,
+				});
+			}
+		} else if (target === "bike_to_work_limitations") {
+			if (updateValue === "Prefer not to answer") {
+				if (screening.bike_to_work_limitations.includes(updateValue)) {
+					setStopper(false);
+					holder = [];
+				} else {
+					setStopper(true);
+					holder = [updateValue];
+				}
+				setScreening({
+					...screening,
+					bike_to_work_limitations: holder,
+				});
+			} else {
+				if (!screening.bike_to_work_limitations.includes(updateValue)) {
+					holder.push(updateValue);
+				} else {
+					console.log("Value was in holder", holder);
+					holder = holder.filter((key) => key !== updateValue);
+					console.log("filter holder", holder);
+				}
+				console.log("HOLDER AFTER:", holder);
+
+				setScreening({
+					...screening,
+					bike_to_work_limitations: holder,
 				});
 			}
 		} else {
@@ -462,13 +616,11 @@ export default function IntakeFormScreening({ navigation, route }) {
 				setScreening({
 					...screening,
 					[`${target}`]: 0,
-					bike_confidence: value,
 				});
 			} else {
 				setScreening({
 					...screening,
 					[`${target}`]: updateValue,
-					bike_confidence: value,
 				});
 			}
 		}
@@ -505,7 +657,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 	const checkSecret = () => {
 		dispatch(confirmSecret(secret));
 
-		// handleSave();
+		handleSave();
 	};
 
 	const handleNext = () => {
@@ -528,6 +680,8 @@ export default function IntakeFormScreening({ navigation, route }) {
 			}
 		}
 	};
+
+	const handleOtherLimits = () => {};
 
 	return (
 		// <KeyboardAvoidingScrollView>
@@ -622,6 +776,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 									key={i}
 								>
 									<CheckBox
+										required
 										iconRight={false}
 										title={box.title}
 										checked={
@@ -667,11 +822,546 @@ export default function IntakeFormScreening({ navigation, route }) {
 					</View>
 
 					<View style={styles.section}>
+						<View>
+							<Text
+								style={[styles.fieldTitle, { marginLeft: 5 }]}
+							>
+								What makes it hard for you to commute by bike?
+							</Text>
+							<Text style={[{ marginLeft: 8, marginBottom: 10 }]}>
+								(choose all that apply)
+							</Text>
+						</View>
+						<View style={styles.gridCB}>
+							{commuteLimitations.map((box, i) => (
+								<View
+									style={
+										checkForLast(commuteLimitations, i)
+											? styles.lastGridItemCB
+											: styles.gridItemCB
+									}
+									key={i}
+								>
+									<CheckBox
+										iconRight={false}
+										title={box.title}
+										disabled={
+											!screening.bike_to_work_limitations.includes(
+												box.title
+											) && stopper
+										}
+										checked={screening.bike_to_work_limitations?.includes(
+											box.title
+										)}
+										onPress={() => {
+											// loop through previous state
+											// if the index of the previous state is the same as the index passed in
+											// then return that object with the change in choice value
+
+											// setLimitations((last) =>
+											// 	last.map((object, index) =>
+											// 		index === i
+											// 			? {
+											// 					...object,
+											// 					choice: !object.choice,
+											// 			  }
+											// 			: object
+											// 	)
+											// );
+
+											updatePayload(
+												"bike_to_work_limitations",
+												box.title
+											);
+
+											validateSave();
+										}}
+										textStyle={{
+											fontSize: 12,
+											fontWeight: "bold",
+										}}
+										containerStyle={{
+											height: "auto",
+											paddingVertical: 0,
+											paddingLeft: 0,
+											margin: 0,
+											// borderColor: "magenta",
+											// borderWidth: 1,
+										}}
+									/>
+								</View>
+							))}
+							{screening.bike_to_work_limitations.includes(
+								"Other:"
+							) && (
+								<View
+									style={{ width: "100%", marginBottom: -25 }}
+								>
+									<Input
+										value={otherLimitation}
+										placeholder="Please specify"
+										onChangeText={(text) => {
+											// setScreening({...screening, bike_to_work_limitations:'Other:',text})
+											setOtherLimitations(text);
+											// updatePayload(
+											// 	"bike_to_work_limitations",
+											// otherLimitation
+											// );
+										}}
+										inputStyle={{
+											fontSize: 13,
+										}}
+										inputContainerStyle={
+											{
+												// width: "50%",
+												// marginVertical: 5,
+											}
+										}
+									/>
+								</View>
+							)}
+						</View>
+					</View>
+					<View style={{ marginTop: 10 }}>
 						<Text style={[styles.fieldTitle, { marginLeft: 5 }]}>
-							On a scale from 1 to 10, how would you rate your
-							knowledge of bikes?
+							Please select how much you agree with the following
+							statements:
 						</Text>
-						<Slider
+					</View>
+					<View>
+						<Text style={[styles.likertTitle, { marginLeft: 5 }]}>
+							I am confident riding a bike to work.
+						</Text>
+						<View style={styles.gridCB}>
+							{bikeConfidence.map((box, i) => (
+								<View
+									style={
+										checkForLast(bikeConfidence, i)
+											? styles.lastGridItemCB
+											: styles.gridItemCB
+									}
+									key={i}
+								>
+									<CheckBox
+										iconRight={false}
+										title={box.title}
+										checked={
+											screening.bike_confidence ===
+											box.value
+										}
+										onPress={() => {
+											// loop through previous state
+											// if the index of the previous state is the same as the index passed in
+											// then return that object with the change in choice value
+
+											// setBikeConfidence((last) =>
+											// 	last.map(
+											// 		(object, index) =>
+											// 			index === i && {
+											// 				...object,
+											// 				choice: !object.choice,
+											// 			}
+											// 	)
+											// );
+
+											updatePayload(
+												"bike_confidence",
+												box.value
+											);
+
+											validateSave();
+										}}
+										textStyle={{
+											fontSize: 12,
+											fontWeight: "bold",
+										}}
+										containerStyle={{
+											height: "auto",
+											paddingVertical: 0,
+											paddingLeft: 0,
+											margin: 0,
+											// borderColor: "magenta",
+											// borderWidth: 1,
+										}}
+									/>
+								</View>
+							))}
+						</View>
+						<Text style={[styles.likertTitle, { marginLeft: 5 }]}>
+							I know a safe and comfortable route to ride a bike
+							to work.
+						</Text>
+						<View style={styles.gridCB}>
+							{routeConfidence.map((box, i) => (
+								<View
+									style={
+										checkForLast(routeConfidence, i)
+											? styles.lastGridItemCB
+											: styles.gridItemCB
+									}
+									key={i}
+								>
+									<CheckBox
+										iconRight={false}
+										title={box.title}
+										checked={
+											screening.bike_route_confidence ===
+											box.value
+										}
+										onPress={() => {
+											// loop through previous state
+											// if the index of the previous state is the same as the index passed in
+											// then return that object with the change in choice value
+
+											// setBikeConfidence((last) =>
+											// 	last.map(
+											// 		(object, index) =>
+											// 			index === i && {
+											// 				...object,
+											// 				choice: !object.choice,
+											// 			}
+											// 	)
+											// );
+
+											updatePayload(
+												"bike_route_confidence",
+												box.value
+											);
+
+											validateSave();
+										}}
+										textStyle={{
+											fontSize: 12,
+											fontWeight: "bold",
+										}}
+										containerStyle={{
+											height: "auto",
+											paddingVertical: 0,
+											paddingLeft: 0,
+											margin: 0,
+											// borderColor: "magenta",
+											// borderWidth: 1,
+										}}
+									/>
+								</View>
+							))}
+						</View>
+						<Text style={[styles.likertTitle, { marginLeft: 5 }]}>
+							I feel comfortable going into a bike shop for
+							maintenance on my bike.
+						</Text>
+						<View style={styles.gridCB}>
+							{maintConfidence.map((box, i) => (
+								<View
+									style={
+										checkForLast(maintConfidence, i)
+											? styles.lastGridItemCB
+											: styles.gridItemCB
+									}
+									key={i}
+								>
+									<CheckBox
+										iconRight={false}
+										title={box.title}
+										checked={
+											screening.bike_maintenance_confidence ===
+											box.value
+										}
+										onPress={() => {
+											// loop through previous state
+											// if the index of the previous state is the same as the index passed in
+											// then return that object with the change in choice value
+
+											// setBikeConfidence((last) =>
+											// 	last.map(
+											// 		(object, index) =>
+											// 			index === i && {
+											// 				...object,
+											// 				choice: !object.choice,
+											// 			}
+											// 	)
+											// );
+
+											updatePayload(
+												"bike_maintenance_confidence",
+												box.value
+											);
+
+											validateSave();
+										}}
+										textStyle={{
+											fontSize: 12,
+											fontWeight: "bold",
+										}}
+										containerStyle={{
+											height: "auto",
+											paddingVertical: 0,
+											paddingLeft: 0,
+											margin: 0,
+											// borderColor: "magenta",
+											// borderWidth: 1,
+										}}
+									/>
+								</View>
+							))}
+						</View>
+						<Text style={[styles.likertTitle, { marginLeft: 5 }]}>
+							Riding to work by bike provides benefits to my
+							physical health.
+						</Text>
+						<View style={styles.gridCB}>
+							{commutePhysical.map((box, i) => (
+								<View
+									style={
+										checkForLast(commutePhysical, i)
+											? styles.lastGridItemCB
+											: styles.gridItemCB
+									}
+									key={i}
+								>
+									<CheckBox
+										iconRight={false}
+										title={box.title}
+										checked={
+											screening.bike_to_work_physical ===
+											box.value
+										}
+										onPress={() => {
+											// loop through previous state
+											// if the index of the previous state is the same as the index passed in
+											// then return that object with the change in choice value
+
+											// setBikeConfidence((last) =>
+											// 	last.map(
+											// 		(object, index) =>
+											// 			index === i && {
+											// 				...object,
+											// 				choice: !object.choice,
+											// 			}
+											// 	)
+											// );
+
+											updatePayload(
+												"bike_to_work_physical",
+												box.value
+											);
+
+											validateSave();
+										}}
+										textStyle={{
+											fontSize: 12,
+											fontWeight: "bold",
+										}}
+										containerStyle={{
+											height: "auto",
+											paddingVertical: 0,
+											paddingLeft: 0,
+											margin: 0,
+											// borderColor: "magenta",
+											// borderWidth: 1,
+										}}
+									/>
+								</View>
+							))}
+						</View>
+						<Text style={[styles.likertTitle, { marginLeft: 5 }]}>
+							Riding to work by bike provides benefits to my
+							mental health.
+						</Text>
+						<View style={styles.gridCB}>
+							{commuteMental.map((box, i) => (
+								<View
+									style={
+										checkForLast(commuteMental, i)
+											? styles.lastGridItemCB
+											: styles.gridItemCB
+									}
+									key={i}
+								>
+									<CheckBox
+										iconRight={false}
+										title={box.title}
+										checked={
+											screening.bike_to_work_mental ===
+											box.value
+										}
+										onPress={() => {
+											// loop through previous state
+											// if the index of the previous state is the same as the index passed in
+											// then return that object with the change in choice value
+
+											// setBikeConfidence((last) =>
+											// 	last.map(
+											// 		(object, index) =>
+											// 			index === i && {
+											// 				...object,
+											// 				choice: !object.choice,
+											// 			}
+											// 	)
+											// );
+
+											updatePayload(
+												"bike_to_work_mental",
+												box.value
+											);
+
+											validateSave();
+										}}
+										textStyle={{
+											fontSize: 12,
+											fontWeight: "bold",
+										}}
+										containerStyle={{
+											height: "auto",
+											paddingVertical: 0,
+											paddingLeft: 0,
+											margin: 0,
+											// borderColor: "magenta",
+											// borderWidth: 1,
+										}}
+									/>
+								</View>
+							))}
+						</View>
+						<Text style={[styles.likertTitle, { marginLeft: 5 }]}>
+							Riding to work by bike provides benefits to the
+							environment.
+						</Text>
+						<View style={styles.gridCB}>
+							{commuteEnv.map((box, i) => (
+								<View
+									style={
+										checkForLast(commuteEnv, i)
+											? styles.lastGridItemCB
+											: styles.gridItemCB
+									}
+									key={i}
+								>
+									<CheckBox
+										iconRight={false}
+										title={box.title}
+										checked={
+											screening.bike_to_work_environmental ===
+											box.value
+										}
+										onPress={() => {
+											// loop through previous state
+											// if the index of the previous state is the same as the index passed in
+											// then return that object with the change in choice value
+
+											// setBikeConfidence((last) =>
+											// 	last.map(
+											// 		(object, index) =>
+											// 			index === i && {
+											// 				...object,
+											// 				choice: !object.choice,
+											// 			}
+											// 	)
+											// );
+
+											updatePayload(
+												"bike_to_work_environmental",
+												box.value
+											);
+
+											validateSave();
+										}}
+										textStyle={{
+											fontSize: 12,
+											fontWeight: "bold",
+										}}
+										containerStyle={{
+											height: "auto",
+											paddingVertical: 0,
+											paddingLeft: 0,
+											margin: 0,
+											// borderColor: "magenta",
+											// borderWidth: 1,
+										}}
+									/>
+								</View>
+							))}
+						</View>
+						<Text style={[styles.likertTitle, { marginLeft: 5 }]}>
+							Riding to work by bike is a pleasant experience.
+						</Text>
+						<View style={styles.gridCB}>
+							{commuteEnjoy.map((box, i) => (
+								<View
+									style={
+										checkForLast(commuteEnjoy, i)
+											? styles.lastGridItemCB
+											: styles.gridItemCB
+									}
+									key={i}
+								>
+									<CheckBox
+										iconRight={false}
+										title={box.title}
+										checked={
+											screening.bike_to_work_enjoyable ===
+											box.value
+										}
+										onPress={() => {
+											// loop through previous state
+											// if the index of the previous state is the same as the index passed in
+											// then return that object with the change in choice value
+
+											// setBikeConfidence((last) =>
+											// 	last.map(
+											// 		(object, index) =>
+											// 			index === i && {
+											// 				...object,
+											// 				choice: !object.choice,
+											// 			}
+											// 	)
+											// );
+
+											updatePayload(
+												"bike_to_work_enjoyable",
+												box.value
+											);
+
+											validateSave();
+										}}
+										textStyle={{
+											fontSize: 12,
+											fontWeight: "bold",
+										}}
+										containerStyle={{
+											height: "auto",
+											paddingVertical: 0,
+											paddingLeft: 0,
+											margin: 0,
+											// borderColor: "magenta",
+											// borderWidth: 1,
+										}}
+									/>
+								</View>
+							))}
+						</View>
+					</View>
+
+					<View style={styles.section}>
+						<Text style={[styles.fieldTitle, { marginLeft: 5 }]}>
+							Is there anything else you would like to share about
+							your experience riding to work by bike?
+						</Text>
+						<Input
+							value={screening.anything_else}
+							placeholder="Please let us know here"
+							onChangeText={(text) => {
+								setScreening({
+									...screening,
+									anything_else: text,
+								});
+							}}
+							onBlur={() => {
+								validateSave();
+								// updatePayload('anything_else', anythingElse)
+							}}
+						/>
+						{/* <Slider
 							value={value}
 							onValueChange={setValue}
 							maximumValue={10}
@@ -709,7 +1399,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 									</View>
 								),
 							}}
-						/>
+						/> */}
 					</View>
 
 					<View style={styles.section}>
@@ -720,7 +1410,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 									"I am employed by BikeMN or one of its partner organizations"
 								}
 								checked={
-									intake.screening.staff_identity ||
+									intake.screening.admin_identity ||
 									intake.screening.staff_identity ||
 									advance
 								}
@@ -738,7 +1428,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 									paddingVertical: 0,
 									paddingLeft: 0,
 									marginBottom:
-										intake.screening.staff_identity ||
+										intake.screening.admin_identity ||
 										intake.screening.staff_identity ||
 										advance
 											? 0
@@ -748,7 +1438,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 								}}
 							/>
 						</View>
-						{(intake.screening.staff_identity ||
+						{(intake.screening.admin_identity ||
 							intake.screening.staff_identity ||
 							advance) && (
 							<View
@@ -812,10 +1502,7 @@ export default function IntakeFormScreening({ navigation, route }) {
 											{orgList.map((box, i) => (
 												<View
 													style={
-														checkForLast(
-															orgList,
-															i
-														)
+														checkForLast(orgList, i)
 															? styles.lastGridItemCB
 															: styles.gridItemCB
 													}
@@ -1042,6 +1729,12 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 		fontWeight: "bold",
 		marginVertical: 5,
+	},
+	likertTitle: {
+		fontSize: 13,
+		fontWeight: "bold",
+		marginTop: 10,
+		marginBottom: 5,
 	},
 	dropdownContainer: {
 		position: "relative",

@@ -15,16 +15,13 @@ import { InitialLocationPermissionRequest } from "../tasks/RequestLocationPermis
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as ExpLinking from "expo-linking";
 
-
 function App() {
 	const dispatch = useDispatch();
 	const [authenticated, setAuthenticated] = useState("");
 	const [loading, setLoading] = useState(true);
 	const user = useSelector((store) => store.user);
 
-	InitialLocationPermissionRequest();
 	useEffect(() => {
-		backgroundLocationTask(dispatch);
 		console.log("APP LOADED");
 		const { data } = supabase.auth.onAuthStateChange((event, session) => {
 			console.log(
@@ -95,21 +92,14 @@ function App() {
 
 	if (url) createSessionFromUrl(url);
 
-	
 	if (loading && !authenticated) {
 		return <SplashScreen />;
+	} else if (user.username === "finish_set_up" && authenticated) {
+		return <CreateProfileScreen />;
+	} else if ((user.is_employee || user.is_admin) && authenticated) {
+		return <StaffUserNavTabs />;
 	} else {
-		if (user.username === "finish_set_up" && authenticated) {
-			return <CreateProfileScreen />;
-		} else {
-			if (user.is_public && authenticated) {
-				return <PublicUserNavTabs />;
-			} else if ((user.is_employee || user.is_admin) && authenticated) {
-				return <StaffUserNavTabs />;
-			} else {
-				return <AuthNavTabs />;
-			}
-		}
+		return <PublicUserNavTabs />;
 	}
 }
 

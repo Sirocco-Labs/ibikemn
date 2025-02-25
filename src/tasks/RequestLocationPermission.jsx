@@ -20,8 +20,13 @@ export const InitialLocationPermissionRequest = async (dispatch) => {
 
 		if (combinedStatus !== "granted") {
 			return Alert.alert(
-				"Location Permission Required",
-				`iBikeMN needs to access your location in both the foreground and background, please change your settings to "Allow all the time" or "Always".`,
+				"Location Permission",
+				`iBikeMN needs to access your location in both the foreground and background.
+				\nThis app uses the change in distance between GPS coordinates captured while riding to calculate your distance traveled.
+				\nThe process starts in the foreground when you press the "Start Riding" button, and ends when you press the "Finish Riding" button.
+				\nIf you switch apps or lock your screen the app switches to using location in the background.
+
+				\nIn order to ensure your travel is accurately calculated, please change your settings to "Allow all the time" or "Always" so that the app can switch between foreground and background location access seamlessly.`,
 				[
 					{
 						text: "Go to Settings",
@@ -64,7 +69,7 @@ export const InitialLocationPermissionRequest = async (dispatch) => {
 						// Optionally, show a message on how to navigate to location settings
 						Alert.alert(
 							"Navigate to Location Settings",
-							`1. Go to your device's Settings 1. Tap on 'Privacy' or 'Security & Privacy'.\n\n2. Scroll down and tap on 'Location'.\n\n3. Ensure 'Location Services' is turned on.
+							`1. Go to your device's Settings 2. Tap on 'Privacy' or 'Security & Privacy'.\n\n3. Scroll down and tap on 'Location'.\n\n4. Ensure 'Location Services' is turned on.
 									`,
 
 							[

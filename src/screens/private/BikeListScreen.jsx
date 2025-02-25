@@ -5,6 +5,7 @@ import { useEffect, useCallback } from "react";
 import {
 	staffGetBikes,
 	getMyBike,
+	adminGetAllBikes
 } from "../../redux/thunks/private/staffBikeThunk";
 
 import ScreenWrapper from "../../components/ScreenWrapper/ScreenWrapper";
@@ -16,39 +17,69 @@ export default function BikeListScreen() {
 	const dispatch = useDispatch();
 	const myBike = useSelector((store) => store.myBike);
 	const orgBikes = useSelector((store) => store.orgBikes);
+	const adminBikes = useSelector((store)=>store.allBikes)
 	const user = useSelector((store) => store.user);
 	useFocusEffect(
 		useCallback(() => {
-			dispatch(staffGetBikes(user.org_id));
+			if(user.is_admin){
+				dispatch(adminGetAllBikes());
+			}else{
+				dispatch(staffGetBikes(user.org_id));
+			}
 			dispatch(getMyBike(user.user_id));
 		}, [dispatch])
 	);
-
-	return (
-		<ScreenWrapper background={{ backgroundColor: "#fff" }}>
-			<Text
-				style={{
-					fontSize: 25,
-					alignSelf: "flex-start",
-					fontWeight: "700",
-					color: "#1269A9",
-				}}
-			>
-				{myBike.bike_id === 0 ? `Reserve a Bike` : `Your Bike`}
-			</Text>
-			<View style={styles.sectionView}>
-			{myBike.bike_id !== 0 && <ManageMyBike myBike={myBike} />}
-				{myBike.bike_id === 0 && (
-					<AvailableBikeList
-						orgBikes={orgBikes}
-						user={user}
-						myBike={myBike}
-					/>
-				)}
-			</View>
-		</ScreenWrapper>
-	);
-}
+	if(user.is_admin){
+		return (
+			<ScreenWrapper background={{ backgroundColor: "#fff" }}>
+				<Text
+					style={{
+						fontSize: 25,
+						alignSelf: "flex-start",
+						fontWeight: "700",
+						color: "#1269A9",
+					}}
+				>
+					{myBike.bike_id === 0 ? `Reserve a Bike` : `Your Bike`}
+				</Text>
+				<View style={styles.sectionView}>
+					{myBike.bike_id !== 0 && <ManageMyBike myBike={myBike} />}
+					{myBike.bike_id === 0 && (
+						<AvailableBikeList
+							orgBikes={adminBikes}
+							user={user}
+							myBike={myBike}
+						/>
+					)}
+				</View>
+			</ScreenWrapper>
+		);
+	}
+		return (
+			<ScreenWrapper background={{ backgroundColor: "#fff" }}>
+				<Text
+					style={{
+						fontSize: 25,
+						alignSelf: "flex-start",
+						fontWeight: "700",
+						color: "#1269A9",
+					}}
+				>
+					{myBike.bike_id === 0 ? `Reserve a Bike` : `Your Bike`}
+				</Text>
+				<View style={styles.sectionView}>
+					{myBike.bike_id !== 0 && <ManageMyBike myBike={myBike} />}
+					{myBike.bike_id === 0 && (
+						<AvailableBikeList
+							orgBikes={orgBikes}
+							user={user}
+							myBike={myBike}
+						/>
+					)}
+				</View>
+			</ScreenWrapper>
+		);
+	}
 
 const styles = StyleSheet.create({
 	container: {

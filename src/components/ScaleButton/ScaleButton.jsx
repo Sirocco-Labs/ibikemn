@@ -12,7 +12,6 @@ export default function ScaleButton({
 	loading
 }) {
 	const scale = useRef(new Animated.Value(0)).current;
-
 	const handlePressIn = () => {
 		scale.setValue(0);
 		Animated.timing(scale, {
@@ -71,7 +70,7 @@ export default function ScaleButton({
 		>
 			<Animated.View
 				style={[
-					looks[0].backgroundColor
+					looks && looks[0].backgroundColor
 						? styles.ripple
 						: styles.outlineRipple,
 					rippleStyle,

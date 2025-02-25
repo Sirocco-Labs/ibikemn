@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import ScaleButton from "../components/ScaleButton/ScaleButton";
 import Toast from "react-native-toast-message";
-
+import { clearFeedback } from "../redux/slices/feedbackSlice";
 function RegisterScreen() {
 	const dispatch = useDispatch();
 

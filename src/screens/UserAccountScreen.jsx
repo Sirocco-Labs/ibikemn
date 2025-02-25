@@ -127,7 +127,7 @@ export default function UserAccountScreen() {
 
 	const handleDeleteAccount = () => {
 		// console.log(user);
-		dispatch(deleteAccount(user.user_id))
+		dispatch(deleteAccount(user.user_id));
 	};
 
 	return (
@@ -347,30 +347,55 @@ export default function UserAccountScreen() {
 							)}
 						</View>
 					</TouchableWithoutFeedback>
-					<View style={styles.contentSection}>
+					{user.user_id && (
+						<View style={styles.contentSection}>
+							<ScaleButton
+								looks={[styles.deleteButton, { width: 250 }]}
+								onPress={() =>
+									Alert.alert(
+										"Delete Account",
+										`\nAre you sure you want to delete your account? Deleting your account will permanently delete all data and information associated with your account, it can't be restored.`,
+										[
+											{
+												text: "Delete My Account",
+												onPress: () =>
+													handleDeleteAccount(),
+											},
+											{
+												text: "No",
+												style: "cancel",
+											},
+										],
+										{ cancelable: true }
+									)
+								}
+							>
+								<Icon
+									name="delete"
+									type="material-community"
+									size={25}
+									style={{ marginRight: 5 }}
+									color="#fff"
+								/>
+								<Text
+									style={{
+										fontSize: 20,
+										fontWeight: "700",
+										color: "#fff",
+									}}
+								>
+									Delete Account
+								</Text>
+							</ScaleButton>
+						</View>
+					)}
+					{user.user_id && (
 						<ScaleButton
-							looks={[styles.deleteButton, { width: 250 }]}
-							onPress={() =>
-								Alert.alert(
-									"Delete Account",
-									`\nAre you sure you want to delete your account? Deleting your account will permanently delete all data and information associated with your account, it can't be restored.`,
-									[
-										{
-											text: "Delete My Account",
-											onPress: () =>
-												handleDeleteAccount(),
-										},
-										{
-											text: "No",
-											style: "cancel",
-										},
-									],
-									{ cancelable: true }
-								)
-							}
+							looks={[styles.solidButton, { width: 250 }]}
+							onPress={clearUserThenLogout}
 						>
 							<Icon
-								name="delete"
+								name="logout"
 								type="material-community"
 								size={25}
 								style={{ marginRight: 5 }}
@@ -383,31 +408,10 @@ export default function UserAccountScreen() {
 									color: "#fff",
 								}}
 							>
-								Delete Account
+								Log Out
 							</Text>
 						</ScaleButton>
-					</View>
-					<ScaleButton
-						looks={[styles.solidButton, { width: 250 }]}
-						onPress={clearUserThenLogout}
-					>
-						<Icon
-							name="logout"
-							type="material-community"
-							size={25}
-							style={{ marginRight: 5 }}
-							color="#fff"
-						/>
-						<Text
-							style={{
-								fontSize: 20,
-								fontWeight: "700",
-								color: "#fff",
-							}}
-						>
-							Log Out
-						</Text>
-					</ScaleButton>
+					)}
 				</View>
 			</View>
 		</KeyboardAvoidingScrollView>

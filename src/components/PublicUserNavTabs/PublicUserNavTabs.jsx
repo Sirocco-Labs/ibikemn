@@ -3,12 +3,16 @@ import RideScreen from "../../screens/RideScreen";
 import UserAccountScreen from "../../screens/UserAccountScreen";
 import HomeScreenStackNav from "../HomeScreenStackNav/HomeScreenStackNav";
 
-import { NavigationContainer } from "@react-navigation/native";
+import {
+	NavigationContainer,
+	createNavigationContainerRef
+} from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { Platform, StatusBar } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
+
 
 export default function PublicUserNavTabs() {
 	const Tab = createBottomTabNavigator();
@@ -82,7 +86,6 @@ export default function PublicUserNavTabs() {
 						children={({ route }) => (
 							<HomeScreenStackNav
 								action={{ hide, setHide }}
-								topRoute={route}
 							/>
 						)}
 						options={{

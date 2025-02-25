@@ -64,12 +64,12 @@ export const loginUser = (credentials) => async (dispatch) => {
 export const logoutUser = () => async (dispatch) => {
 	console.log("IN AUTH THUNK ----> logoutUser()");
 	try {
-		await dispatch(clearUserData());
+		dispatch(clearUserData());
 		const response = await supabase.auth.signOut();
 		if (response.error) {
 			console.log("SUPABASE LOGOUT ERROR!: ", response.error.message);
 		} else {
-			await dispatch(clearUserData());
+			dispatch(clearUserData());
 			console.log("SUPABASE LOGOUT SUCCESS!: ", response.status);
 		}
 	} catch (error) {

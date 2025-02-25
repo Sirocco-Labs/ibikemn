@@ -94,7 +94,10 @@ export default function AvailableBikeList({ orgBikes, user, myBike }) {
 			<View style={styles.checkoutSection}>
 				{user.is_admin
 					? orgBikes.map((org, i) => (
-							<>
+							<View
+							style={{width:'100%'}}
+							key={i}
+							>
 								<Text
 									style={{
 										fontSize: 22,
@@ -127,7 +130,7 @@ export default function AvailableBikeList({ orgBikes, user, myBike }) {
 										}
 									/>
 								))}
-							</>
+							</View>
 					  ))
 					: orgBikes.map((bike) => (
 							<BikeCheckoutItem

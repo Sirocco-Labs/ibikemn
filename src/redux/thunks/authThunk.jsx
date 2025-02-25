@@ -3,6 +3,8 @@ import { getUserQuery, addUser } from "./userThunk";
 import { clearUserData } from "../slices/userSlice";
 import { setIntakeSecret } from "../slices/intakeFormSlice";
 import { setFeedback } from "../slices/feedbackSlice";
+import { clearOrgBikes } from "../slices/private/orgBikeSlice";
+import { clearOrgList } from "../slices/private/orgListSlice";
 
 export const emailSignUp = (regData) => async (dispatch) => {
 	console.log("IN AUTH THUNK ----> emailSignUp(regData): ", regData);
@@ -64,12 +66,13 @@ export const loginUser = (credentials) => async (dispatch) => {
 export const logoutUser = () => async (dispatch) => {
 	console.log("IN AUTH THUNK ----> logoutUser()");
 	try {
-		dispatch(clearUserData());
 		const response = await supabase.auth.signOut();
 		if (response.error) {
 			console.log("SUPABASE LOGOUT ERROR!: ", response.error.message);
 		} else {
 			dispatch(clearUserData());
+			dispatch(clearOrgBikes())
+			dispatch(clearOrgList())
 			console.log("SUPABASE LOGOUT SUCCESS!: ", response.status);
 		}
 	} catch (error) {

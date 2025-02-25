@@ -8,7 +8,7 @@ import { StatusBar, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import { useCallback } from "react";
 
-export default function AuthNavTabs() {
+export default function AuthNavTabs({actions}) {
 	const Tab = createBottomTabNavigator();
 	const styleOptions = {
 		headerStyle: { backgroundColor: "#1269A9" },
@@ -18,16 +18,32 @@ export default function AuthNavTabs() {
 	useFocusEffect(
 		useCallback(()=>{
 			const parent = nav.getParent().getParent()
-			console.log("PARENT",parent.getState());
-			parent.setOptions({ tabBarStyle: { display: "none" } });
+			const drawer = nav.getParent()
+			console.log("Drawer", drawer);
+			if(parent){
+				parent.setOptions({ tabBarStyle: { display: "none" } });
+
+			}
+			if(drawer){
+				drawer.setOptions({headerShown:false });
+
+			}
 			return() =>{
-				parent.setOptions({
-					tabBarStyle: { backgroundColor: "#1269A9" },
-				});
+				if(parent){
+					parent.setOptions({
+						tabBarStyle: { backgroundColor: "#1269A9" },
+					});
+				}
+				if(drawer){
+					drawer.setOptions({headerShown:true });
+
+				}
 
 			}
 		}, [nav])
 	)
+
+	const {setHeading} = actions
 
 	const tabStyle =
 		Platform.OS === "ios"
@@ -76,6 +92,11 @@ export default function AuthNavTabs() {
 					tabBarActiveTintColor: "#F7B247",
 					tabBarInactiveTintColor: "#FFF",
 					tabBarHideOnKeyboard: true,
+				})}
+				screenListeners={({ route }) => ({
+					state: () => {
+						setHeading(route.name)
+					},
 				})}
 			>
 				<Tab.Screen

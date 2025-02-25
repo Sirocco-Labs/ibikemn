@@ -21,17 +21,19 @@ export default function CreateAccountPrompt({ params }) {
 						Welcome to iBikeMN!
 					</Text>
 					<Text style={[styles.mv10, { fontSize: 18 }]}>
-						Thanks for joining in our mission to reduce motor
+						Thanks for joining us in our mission to reduce motor
 						vehicle transit. We hope you are as passionate about it
-						as we are. To track your stats and participate in our
-						challenges, please Sign In or Create an Account!
+						as we are.
+					</Text>
+					<Text style={[styles.mv10, { fontSize: 18 }]}>
+						To track your stats and participate in challenges, please Sign In or Create an Account!
 					</Text>
 				</View>
 				<ScaleButton
 					onPress={() => {
 						navigation.navigate('Auth')
 					}}
-					looks={[styles.solidButton, { width: 350 }]}
+					looks={[styles.solidButton, { width: 300, alignSelf:'center' }]}
 				>
 					<Text
 						style={{
@@ -75,7 +77,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		width: "100%",
-		padding: 5,
+		// padding: 5,
 		marginBottom: 10,
 	},
 	dialogContent: {
@@ -173,8 +175,9 @@ const styles = StyleSheet.create({
 	},
 	sectionText: {
 		fontWeight: "700",
-		fontSize: 25,
+		fontSize: 30,
 		color: "#1269A9",
+		marginBottom:15
 	},
 	rewardTitle: {
 		fontWeight: "700",

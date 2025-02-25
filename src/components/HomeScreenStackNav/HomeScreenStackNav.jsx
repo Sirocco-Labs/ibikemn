@@ -168,6 +168,8 @@ function HomeScreenStack({ dynamicHeader }) {
 	useEffect(() => {
 		setHeader(headerHeight);
 	}, [headerHeight]);
+	const [heading, setHeading] = useState("");
+
 
 	const styleOptions = {
 		headerStyle: { backgroundColor: "#1269A9" },
@@ -236,9 +238,9 @@ function HomeScreenStack({ dynamicHeader }) {
 			/>
 			<Stack.Screen
 				name="Auth"
-				children={({ route }) => <AuthNavTabs />}
+				children={({ route }) => <AuthNavTabs actions={{heading, setHeading}}/>}
 				// component={AuthNavTabs}
-				options={{ ...styleOptions, title: "" }}
+				options={{ ...styleOptions, title:`${heading}` }}
 			/>
 		</Stack.Navigator>
 	);

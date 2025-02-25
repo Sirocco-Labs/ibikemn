@@ -3,12 +3,10 @@ import RideScreen from "../../screens/RideScreen";
 import UserAccountScreen from "../../screens/UserAccountScreen";
 import BikeListScreen from "../../screens/private/BikeListScreen";
 import HomeScreenStackNav from "../HomeScreenStackNav/HomeScreenStackNav";
-import RideScreenStackNav from "../RideScreenStackNav/RideScreenStackNav";
 import { NavigationContainer } from "@react-navigation/native";
 import {
 	createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Platform, StatusBar } from "react-native";
 import { useState } from "react";
 
@@ -60,10 +58,10 @@ export default function StaffUserNavTabs() {
 								iconName = focused ? "bike-fast" : "bike";
 							} else if (route.name === "Ride") {
 								iconName = focused ? "road-variant" : "road";
-							} else if (route.name === "Account") {
+							} else if (route.name === "Info") {
 								iconName = focused
-									? "account"
-									: "account-outline";
+									? "information"
+									: "information-outline";
 							}
 							return (
 								<MCIcons
@@ -98,7 +96,7 @@ export default function StaffUserNavTabs() {
 						}}
 					/>
 					<Tab.Screen
-						name="Account"
+						name="Info"
 						component={UserAccountScreen}
 						options={styleOptions}
 					/>

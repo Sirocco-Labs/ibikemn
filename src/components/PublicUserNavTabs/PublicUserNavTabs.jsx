@@ -58,10 +58,10 @@ export default function PublicUserNavTabs() {
 									: "home-circle-outline";
 							} else if (route.name === "Ride") {
 								iconName = focused ? "road-variant" : "road";
-							} else if (route.name === "Account") {
+							} else if (route.name === "Info") {
 								iconName = focused
-									? "account"
-									: "account-outline";
+									? "information"
+									: "information-outline";
 							}
 							return (
 								<MCIcons
@@ -93,7 +93,7 @@ export default function PublicUserNavTabs() {
 						}}
 					/>
 					<Tab.Screen
-						name="Account"
+						name="Info"
 						component={UserAccountScreen}
 						options={styleOptions}
 					/>

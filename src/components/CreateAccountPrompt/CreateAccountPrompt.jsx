@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function CreateAccountPrompt({ params }) {
 	const [open, setOpen] = useState(false);
-    const navigation = useNavigation()
+	const navigation = useNavigation();
 
 	return (
 		<View style={styles.centered}>
@@ -20,20 +20,27 @@ export default function CreateAccountPrompt({ params }) {
 					<Text style={[styles.sectionText, { textAlign: "center" }]}>
 						Welcome to iBikeMN!
 					</Text>
-					<Text style={[styles.mv10, { fontSize: 18 }]}>
-						Thanks for joining us in our mission to reduce motor
-						vehicle transit. We hope you are as passionate about it
-						as we are.
-					</Text>
-					<Text style={[styles.mv10, { fontSize: 18 }]}>
-						To track your stats and participate in challenges, please Sign In or Create an Account!
-					</Text>
+					<View
+					>
+						<Text style={[styles.mv10, { fontSize: 18, textAlign:'center'}]}>
+							Thanks for joining us in our mission to reduce motor
+							vehicle transit. We hope you are as passionate about
+							it as we are!
+						</Text>
+						<Text style={[styles.mv10, { fontSize: 18, textAlign:'center'}]}>
+							To track your stats and participate in challenges,
+							please Sign In or Create an Account.
+						</Text>
+					</View>
 				</View>
 				<ScaleButton
 					onPress={() => {
-						navigation.navigate('Auth')
+						navigation.navigate("Auth");
 					}}
-					looks={[styles.solidButton, { width: 300, alignSelf:'center' }]}
+					looks={[
+						styles.solidButton,
+						{ width: 300, alignSelf: "center" },
+					]}
 				>
 					<Text
 						style={{
@@ -76,8 +83,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "space-between",
-		width: "100%",
-		// padding: 5,
 		marginBottom: 10,
 	},
 	dialogContent: {
@@ -177,7 +182,7 @@ const styles = StyleSheet.create({
 		fontWeight: "700",
 		fontSize: 30,
 		color: "#1269A9",
-		marginBottom:15
+		marginBottom: 15,
 	},
 	rewardTitle: {
 		fontWeight: "700",
